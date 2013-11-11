@@ -1,0 +1,396 @@
+/*
+version:umt-2013
+author:zhangshixiang@cstnet.cn
+data:2013-01-15
+*/
+
+/* black banner */
+body.login {font-family:Arial,"宋体"; font-size:14px; background:url(../images/body_bg.png) repeat-x #ebeded;}
+.clear {clear:both;}
+img {border:none;}
+.small-font {font-size:13px;}
+.gray-text {color:#aaa;}
+.sub-gray-text,.login .login-right .sub-gray-text a {color:#888;}
+.success-text {color:#0a0;}
+.warnning-text {color:#fd0;}
+.messagebar,.error,.error-text,span.error lable.error{color:#cc0000;}
+input {font-family:Arial,"宋体"}
+a.return {display:inline-block; margin-left:1em; text-decoration:none; cursor:pointer;}
+a.delete{margin-left:10px; cursor:pointer;}
+.replenish {margin-left:60px;}
+.gray_bg {background:#f8f8f8;}
+.btn.long {padding:10px 3em; font-family:Arial,"微软雅黑";font-weight:bold; font-size:16px;}
+.dashBorder {border-top:1px dotted #ccc;}
+
+.nav-bar.fix-top {
+	height:40px; background:#1b1b1b; padding:0; margin:0;
+	color:#999; box-shadow:0 -1px 0 rgba(0, 0, 0, 0.1) inset, 0 1px 10px rgba(0, 0, 0, 0.1);
+	position:fixed; top:0; left:0; width:100%; z-index:99999;
+	margin-bottom:50px;
+}
+.nav-bar .logoDiv {float:left;}
+.login-right .duckling-logo {background:url(../images/login/logo-duckling.png) 2px 0px no-repeat; cursor:pointer; margin-top:5px; display:inline-block; width:22px; height:16px;} 
+.nav-bar .logo-title {cursor:pointer;display:inline-block; width:150px; height:30px; color:#fff; font-weight:bold; vertical-align:middle; margin-top:10px;}
+.nav-bar ul.nav {float:left; list-style:none; padding-left:0em; margin:0;}
+.nav-bar ul.nav-right {float:right; list-style:none; margin:0;}
+.nav-bar ul li {float:left; margin:10px 10px;}
+.nav-bar ul.nav > li {margin:0;}
+.nav-bar ul.nav-right li:first-child {margin:10px 10px 0 0;}
+.nav-bar ul li a {color:#999;text-decoration:none; cursor:pointer;}
+.nav-bar ul li:hover a,.nav-bar ul li.active a {color:#fff;}
+
+.login.container {
+	margin-top:90px; margin-bottom:40px; border:1px solid #ddd;
+	background:#fefefe; box-shadow:0px 0px 5px #ccc;
+}
+.container.gray {
+	background:#fefefe; border:1px solid #ddd; padding:20px 0 60px; margin-bottom:40px;
+	min-height:400px; *padding-top:70px;
+}
+.login h2.login-title {
+	font-family:Arial,"微软雅黑"; font-size:28px;
+	color:#333;
+	padding:10px 2% 10px; margin:0 5% 10px;
+	border-bottom:1px solid #eee;
+}
+.login #loginForm h2.login-title,.login h2.both.login-title {
+	border-bottom:1px solid #eee; padding-bottom:2px;
+	font-size:28px; 
+}
+.login  h2 .btn.btn-success.hide768 {float:right; margin-top:7px;}
+a.tendaysHelp {
+	width:20px; height:20px; display:inline-block;
+	background:url("../images/icon_help.gif") no-repeat scroll 0 -30px transparent
+}
+
+.login .login-left a.btn.cancle { color:#fff;}
+.login .login-left {
+	float:left; 
+	padding-top:2em; 
+}
+.login .login-left h3 {
+	background:url(../images/login/logo-duckling.png) 170px 2px no-repeat;text-align:center;
+}
+.login .login-left table.form_table td.mail-title,h2 .mail-title {
+	font-weight:normal; font-family:Arial,sans-serif,"宋体"; font-size:14px;
+	color:#999;
+}
+.login .login-left h3 .cstnet {font-weight:normal; }
+.login .login-left a {color:#08c; text-decoration:none;}
+.login .login-left a:hover {color:#079;}
+.login .login-left a img,.login .login-right .sub-header a img,.oauth .thirdLogin a img {margin:-3px 5px; padding:3px; background:#f8f8f8; border:1px solid #eee; border-radius:4px;width:20px;}
+.login .login-left table.form_table {margin:20px auto; font-size:13px;  word-break:break-all;}
+.login .login-left #loginForm table.form_table {margin-top:50px; margin-bottom:40px;}
+.login .login-left table.registtable.form_table {margin-bottom:70px;}
+.login .login-left table.form_table span.ness,span.ness {color:#cc0000; margin-right:5px;}
+.login .login-left table.form_table .text-note,.red {color:#a00;}
+.login .login-left table.form_table .text-quote,.text-quote {color:#999; margin:7px 0 2px; font-size:13px;}
+.login .login-left table.form_table .help-quote,a.help-quote {
+	display:inline-block; width:20px; height:20px; 
+	background:url(../images/icon_help.png) 4px 5px no-repeat; cursor:pointer;
+}
+.login .login-left table.form_table tr {margin:7px 0px;}
+.login .login-left table.form_table th {font-weight:bold; width:30%; text-align:right; font-size:16px; padding-right:10px; padding-top:10px; vertical-align:top;}
+.login .login-left table.form_table td {padding:7px 2px;}
+.login .login-left table.form_table td.mail {font-size:16px;}
+.login .login-left table.form_table td .escience-mail {font-size:16px;}
+.login .login-left table.form_table td input[type="text"],
+.login .login-left table.form_table td input[type="password"] {padding:5px 10px; max-width:17em; font-size:16px; font-family:Arial,sans-serif,"宋体"}
+.login .login-left table.form_table td input[type="text"].logininput,input.ValidCode,
+.login .login-left .control-group input[type="text"].logininput {width:5em;}
+.login .login-left table.form_table td input[type="checkbox"] {margin-left:0;}
+.login .login-left p.regist {text-align:center; font-size:13px; margin:0; padding:30px;}
+.login .login-left .forgetpsw {display:inline-block; margin-left:1em;}
+.login .login-left img#ValidCodeImage {vertical-align:middle;}
+.login .login-left .login-b {padding:0 0 2em 12em; font-size:13px; margin:0; }
+.login .login-right {
+	float:right; padding-bottom:20px;
+	font-size:13px; color:#333; margin-left:-1px;
+	margin-top:-1px; border-top:1px solid #ddd; border-left:1px solid #ddd;
+}
+.login .login-right a {color:#333; border-bottom:1px dotted #333; text-decoration:none;}
+.login .login-right h3 {font-size:14px; padding:30px 5% 10px 5%; margin:30px 5% 0; border-top:1px solid #f5f5f5;}
+.login .login-right p {padding:5px 10% 5px 10%; margin:5px 0; line-height:1.7em;text-align:justify; text-justify:inter-ideograph;}
+.login .login-right p.header {margin-top:40px; margin-bottom:30px; font-weight:bold; font-size:16px; text-align:center; line-height:1em;}
+.login .login-right p.header .small-font {font-weight:normal;}
+.login .login-right p.sub-header {text-align:center; margin:-20px 20px;}
+.login .login-right p.sub-header a {border:none;}
+
+/*accountBind*/
+#bind_table {padding:15px 0 10px;}
+p.hasMarign {margin:-10px 0 15px 7%}
+
+/*footer*/
+.footer {font-size:13px; text-align:center;}
+.footer ul.umt-footer-nav {list-style:none; margin:15px 0 0 60px;}
+.footer ul.umt-footer-nav li {float:left; padding:5px 10px;}
+.footer ul.umt-footer-nav li#footer-logo {background:url(../images/login/logo-rol-beta.png) 0 -37px no-repeat; height:20px; width:70px;}
+.footer ul.umt-footer-nav li a {text-decoration:none; color:#666;}
+.footer p {margin:3px 0 10px 0; color:#666; }
+.footer p a {color:#666; border-bottom:1px dotted #333; text-decoration:none;}
+
+/*login and regist*/
+.container.gray table.form_table {margin:30px 7%;}
+.container.gray table.form_table th {text-align:right; color:#333;}
+.container.gray table.form_table.setMail th {vertical-align:top; padding-top:20px;}
+.container.gray table.form_table td {padding:10px;}
+.container.gray table.form_table td a {color:#08c;}
+.container.gray table.form_table td input[type="text"],.container.gray table.form_table td input[type="password"] {padding:7px; width:20em;}
+
+/*congratulation login success*/
+div.congratulation {margin:60px 7%;}
+p.congratulation {margin-left:7%; margin-top:10px; text-align:left;}
+p.congratulation.sorry {margin-top:60px;}
+p.congratulation span.email {font-weight:bold; font-size:22px; color:#0a0;}
+.content.container.login.gray p.congratulation {margin:20px 6%;}
+.content.container.login.gray p.congratulation:first-child {margin-top:60px;}
+h3.success {margin:20px 60px 0px 60px; padding:5px 10px 5px 10px; font-size:18px; background:#f8f8f8;}
+h3.success.slide {background:#71C271; color:#fff;}
+h2.total-title {
+	font-family:Arial,"微软雅黑"; font-size:28px;
+	color:#333;
+	padding:10px 2% 5px 0; 
+	border-bottom:1px solid #eee;
+	margin:0 5% 10px;word-break:break-all;}
+h2.total-title span a {margin:0 0 0 2em; color:#08c; text-decoration:none; font-weight:normal;}
+div.congratulation h3{font-size:22px;}
+p.config {margin:25px 0 10px 60px; font-size:13px;}
+p.config a {color:#08c;}
+p.content-text {margin:30px 5% 10px 5%; line-height:1.7em; text-align:justify; text-justify:newspaper; text-indent:2em; word-break:break-all;}
+p.content-text-mid{margin:20px 5% 10px 5%; line-height:1.7em; text-align:justify; text-justify:newspaper; text-indent:2em; word-break:break-all;}
+
+.thirdPartyLogin {margin:10px 8%;}
+.thirdPartyLogin .thirdPartyLeft {float:left; width:80px}
+.thirdPartyLogin .thirdPartyLeft img {width:60px; height:60px; padding:2px; background:#fff; border:1px solid #ddd; border-radius:5px;}
+.thirdPartyLogin .thirdPartyRight {float:left; min-width:40%}
+.thirdPartyLogin .thirdPartyRight h2 {font-size:20px; font-weight:600; font-family:Arial,"微软雅黑"; margin-top:0;}
+.thirdPartyLogin .thirdPartyRight .hint {margin:-10px 0 60px 0; width:auto;}
+.headerBar {
+	list-style:none; margin:10px 0 20px 5.3%; padding:0;
+}
+.headerBar li {float:left; list-style:none; margin:0 5px 7px -3px; border:3px solid transparent;}
+.headerBar li:hover {border:3px solid #f90;}
+.headerBar li.active {border:3px solid #f90;}
+.headerBar li a {padding:3px 0px; text-decoration:none;}
+.headerBar .header-block {display:block; width:110px; height:100px; margin-bottom:0;}
+.headerBar .header-block .logo {background:url(../images/regist/escience-big-icon.png) 5px -10px no-repeat; width:100px; height:80px; display:block;}
+.headerBar .header-block.escience {background:url(../images/regist/escience-35.png) 8px 33px #da8302 no-repeat;}
+.headerBar .header-block.escience .logo{background-position:5px 90px;}
+.headerBar .header-block.dhome {background:#3498DB;}
+.headerBar .header-block.dhome .logo {background-position:5px -410px;}
+.headerBar .header-block.ddl {background:#16A085;}
+.headerBar .header-block.ddl .logo {background-position:5px -10px;}
+.headerBar .header-block.csp {background:#F1C40F;}
+.headerBar .header-block.csp .logo {background-position:5px -110px;}
+.headerBar .header-block.dchat {background:#7F8C8D;}
+.headerBar .header-block.dchat .logo {background-position:5px -1410px;}
+.headerBar .header-block.vmt {background:#E67E22;}
+.headerBar .header-block.vmt .logo {background-position:5px -1310px;}
+.headerBar .header-block.rol {background:#1ABC9C;}
+.headerBar .header-block.rol .logo {background-position:5px -210px;}
+.headerBar .header-block.email {background:#0F5083;}
+.headerBar .header-block.email .logo {background-position:5px -1110px;}
+.headerBar .header-block.nav {background:#8E44AD;}
+.headerBar .header-block.nav .logo {background-position:5px -1210px;}
+.headerBar_s .header-block.cos {background:#BDC3C7;}
+.headerBar_s .header-block.cos .logo {background-position:-35px -1030px;}
+.headerBar .header-block .header-text {
+	display:block; color:#fff; text-align:center; 
+	position:relative; top:-5px; font-size:13px;
+}
+.headerBar ul li {float:left; margin-right:40px;}
+
+/*account safty */
+ul.sub-nav {list-style:none; border-bottom:1px solid #ccc; margin:30px 7%; padding-left:10px; *height:37px;}
+ul.sub-nav li {float:left; margin-bottom:-1px; border-top-left-radius:5px; border-top-right-radius:5px; border:1px solid #ccc; background:#e3e3e3; margin-left:10px;}
+ul.sub-nav li.active {border-bottom:1px solid #fefefe; background:#fefefe; color:#08a; font-weight:bold;}
+ul.sub-nav li a {display:inline-block; padding:10px 30px; cursor:pointer; text-decoration:none; color:#333;}
+table.saftyList {margin:20px 60px; padding:0; font-size:13px; border-collapse:collapse; word-break:break-all;}
+table.saftyList td,table.saftyList th {padding:7px 20px; vertical-align:top;}
+table.saftyList th {text-align:left; vertical-align:middle;}
+table.saftyList.alignRight th {text-align:right}
+table.saftyList td.gray-text { color:#aaa;}
+table.saftyList td.alignRight {text-align:right;padding-top:15px; vertical-align:top;}
+table.saftyList td input {padding:7px 10px;}
+table.saftyList.alignRight td input {width:17em;}
+table.saftyList.alignRight td input[type="submit"] {width:10em;}
+table.saftyList th .safty-ok {margin-left:-15px; margin-right:5px; display:inline-block; background:url(../images/ok-sorry.png) 0 0 no-repeat; width:12px; height:12px;}
+table.saftyList th .safty-sorry {margin-left:-15px; margin-right:5px; display:inline-block; background:url(../images/ok-sorry.png) 0 -18px no-repeat; width:12px; height:12px;}
+table.saftyList td a {color:#08c;}
+
+ul.oper {list-style:none;height:400px; font-size:13px; width:20%; background:#f5f5ff; float:left; margin:0; border-right:1px solid #ddd; padding:0px;}
+ul.oper li {margin-right:-1px;}
+ul.oper li a { display:block; border-bottom:1px solid #ddd; padding:10px; cursor:pointer; text-decoration:none; word-break:break-all;}
+ul.oper li.active a {background:#fff; font-weight:bold; border-right:1px solid #fff; color:#08a}
+#operListShow { margin:20px 6%; border:1px solid #ddd;}
+#operListShow .loginList {float:left; margin:0; padding:0 2%; width:70%}
+#operListShow table.saftyList {margin:0 2%; width:90%}
+#operListShow table.saftyList td,#operListShow table.saftyList th {padding:10px 3%;border-bottom:1px solid #eee;}
+
+/*create_success_message*/
+.create_success,.send_mail {margin:0 5% 10px; padding:10px 2% 5px}
+.create_success .success_left,.send_mail .mail_left {float:left; width:85px; min-height:62px; background:url(../images/mail_success.png) no-repeat;}
+.create_success .success_right,.send_mail .mail_right {float:left; margin-left:2%; width:80%}
+.create_success .success_right .no_reply,.send_mail .mail_right .no_reply {border-bottom:1px solid #ccc; margin-top:60px;}
+
+.send_mail.manage {padding-top:20px}
+.send_mail.manage.second {margin-top:30px;}
+.send_mail.manage .mail_left {background:url(../images/primary_mail.png) no-repeat; width:60px}
+.send_mail.manage.second .mail_left {background:url(../images/second_mail.png) no-repeat;}
+.send_mail.manage .mail_right {line-height:1.7em}
+.send_mail .mail_detail {margin:10px 0 0;}
+.send_mail .mail_detail .success-text,.send_mail .mail_detail .small-font {margin-left:5%; font-size:13px;}
+
+.send_mail.safty {margin:10px 7% 10px;}
+.send_mail.safty .mail_left {background:url(../images/safty_mail.png) no-repeat; width:60px}
+
+/*find psw*/
+.findPsw {border:1px solid #ddd; margin:30px 6%;}
+h2.login-title span.sub-title {margin:5px 0 0 10px; font-weight:normal; color:#999; font-size:14px; font-family:Arial,sans-serif,"宋体";}
+h4.sub-title {padding-left:2%; margin:10px 1%}
+h4.sub-title.gray_bg {padding:10px 0 10px 50px; margin:20px}
+table.findPsw {border-collapse:collapse; margin:30px 60px; border:none;}
+table.findPsw td,table.findPsw th {padding:10px;}
+table.findPsw th {text-align:right;}
+table.findPsw td input {padding:7px; width:20em;}
+table.findPsw td input.ValidCode {width:5em}
+table.findPsw td a {font-size:13px;color:#08a; text-decoration:none;}
+table.findPsw td img {margin:-3px 5px;}
+.findPsw .right-content {float:left; margin:0px; padding:3% 5%; width:65%}
+.findPsw .right-content h3 {margin-left:2%; word-break:break-all;}
+.findPsw .right-content table {margin:2%; min-width:50%}
+.findPsw .right-content table td, .findPsw .right-content table th {padding:7px 1% 7px 0; font-size:13px; width:48%}
+.findPsw .right-content td input {padding:7px; width:12em;}
+.findPsw .right-content td input.ValidCode {width:5em;}
+.findPsw .right-content td input[type="radio"] {padding:7px; width:1em; margin-bottom:8px;}
+.findPsw .right-content td a{color:#08a; text-decoration:none;}
+.sub-content {margin:20px 5%;}
+p.sub-text,.sub-text {margin:10px 5%; font-size:13px; color:#999;}
+.sub-text.inner {margin:0; font-weight:normal}
+.congratulation .sub-text {margin:10px 0px;}
+h4.sub-title span.sub-text {margin-left:30px; font-weight:normal;}
+p.hint{margin:15px 0 30px 7%; font-size:14px; color:#999;width:80%;}
+p.common {margin:15px 7%; font-size:14px; color:#333;}
+
+/* account manage*/
+table.saftyList.manage {/* margin-top:40px; */}
+table.saftyList.manage th,table.saftyList.manage td {padding:7px; vertical-align:middle;}
+table.saftyList.manage th{text-align:right; vertical-align:top; padding-top:15px;}
+table.saftyList.manage th.left {text-align:left; padding-top:7px;}
+table.saftyList.manage.mid th {text-align:center; background:#eef; width:16em;}
+table.saftyList.manage.mid td {text-align:center;}
+table.saftyList.manage.mid td img {margin:-3px 5px; width:16px; height:16px;}
+table.saftyList.manage td input {padding:7px; width:15em;}
+
+/*umt help*/
+.help-content{margin:20px 6% 5px;}
+.left-nav {width:20%; min-width:120px; max-width:200px; float:left; background:#f8f8f8; border:1px solid #eee; margin:0px 2% 30px 2%; font-size:15px; *position:static;}
+.left-nav ul.nav {margin:0; padding:0;list-style:none}
+.left-nav ul.nav li a {list-style:none; cursor:pointer;padding:0.8em 0 0.8em 10%; border-bottom:1px solid #eee;}
+.left-nav ul.nav li:last-child a {border:none;}
+.left-nav ul.nav li.active a {color:#fff; font-weight:bold; background:#08c;}
+.left-nav ul.nav li a {display:block;}
+
+.right-content {margin:0px 5% 30px 2%; width:65%; float:left; line-height:1.7em;min-height:400px}
+.right-content .commonQA > ol {font-weight:bold; }
+.right-content .commonQA > ol > li {margin-bottom:20px;}
+.right-content .commonQA > ol > li > h4 {margin:0; font-family:Arial,"宋体"; font-size:15px;}
+.right-content .commonQA > ol > li > p {line-height:1.7em; margin:0.5em 0 0 0; font-weight:normal; text-align:justify; text-justify:inter-cluster;}
+.right-content .commonQA > ol > li > p.img {background:url(../images/help_commonQA.jpg) 0 0 no-repeat; width:552px; height:62px;}
+.right-content .commonQA > ol > li > p.center {text-align:center;}
+.right-content .commonQA > ol > li > p > img {width:200px; margin-right:10px; margin-bottom:10px; border-radius:4px;}
+.right-content .commonQA > ol > li > p > img.large {width:400px;}
+.right-content .commonQA > ol > li > p > img.whole {width:100%;}
+.right-content .commonQA > ol > li > ol {margin-top:0.5em;font-weight:normal; list-style-type:lower-latin;}
+.right-content .commonQA > ol > li > ol > li {margin-top:0.5em;}
+.right-content .changeLog p {font-weight:bold; margin:15px;}
+.right-content .changeLog p:first-child {margin-top:0;}
+.right-content .changeLog ul {list-style-type:circle;}
+.right-content .changeLog ul li {margin:0.5em 0;}
+.right-content .proIntro .img {background:url(../images/help_proIntro.jpg) 0 0 no-repeat; width:500px; height:377px; margin-left:200px; margin-bottom:30px;}
+.right-content .proIntro p,
+	#developDoc p { margin:15px;}
+.right-content .proIntro h4,
+	#developDoc h4 {margin:15px; font-family:Arial,"宋体"; font-size:15px;}
+.right-content .proIntro p a:hover,
+	#developDoc p a:hover {text-decoration:underline;}
+
+#developDoc,
+	#myOauth {padding:0px 4%}
+#myOauth .oAuthList {border:1px solid #eee; margin-bottom:1em;}
+#myOauth .oAuthList h3 {border-bottom:1px dotted #eee; margin:2%}
+#myOauth .oAuthList h3 span {margin-left:10px; font-weight:normal; font-size:14px;}
+#myOauth .oAuthList h3 button {float:right; margin-left:1em;}
+#myOauth .addNewOauth {margin:1em; text-align:center;}
+.smallBottom#edit-popup .form-horizontal .control-group{margin-bottom:5px;}
+
+.right-content .tendays h4 {font-size:15px; font-family:Arial,"宋体"; margin:2em 0 5px 0}
+.right-content .tendays > ol > li {margin-bottom:0.5em;}
+.right-content .tendays > ol > li > ol {list-style-type:lower-latin;}
+
+/*processBar*/
+.processBarContainer {position:relative; background:white; margin:35px 5% 15px 5%;height:70px; padding:0;}
+.processBarContainer .processBar {padding:0; margin:0;}
+.processBarContainer .processBar:after{ 
+	clear: both; content: " "; display: block;
+    font-size: 0; height: 0; visibility: hidden;
+}
+.processBarContainer .processBar li {list-style:none; list-style-position:outside; position:relative; text-align:left; float:left;}
+.processBarContainer .processBar li span.step-num {
+	background:url(../images/process.png) 0 -68px no-repeat;
+	display: inline-block; font-size: 22px; height: 38px; line-height: 38px;
+    position: relative; z-index: 80; margin:0;
+    text-align: center; width: 42px; color:#fff;
+}
+.processBarContainer .processBar li span.step-text {
+	background: #E6E6E6; color: #A6A6A6; font-family: "Microsoft YaHei","黑体";
+    display: inline-block; font-size: 12px;height: 20px; line-height: 20px; padding: 1px 0 1px 10px; width:120px;
+    position: relative; top: 8px;
+}
+.processBarContainer .processBar li .em1 {left:-8px;}
+.processBarContainer .processBar li .em2 {left:-25px;}
+.processBarContainer .processBar li .em3 {left:-37px;}
+.processBarContainer .processBar li .em4 {left:-50px;}
+.processBarContainer .processBar li .span2 {left:-18px;}
+.processBarContainer .processBar li .span3 {left:-30px}
+.processBarContainer .processBar li .span4 {left:-42px;}
+
+.processBarContainer .processBar li.current span.step-num {
+	background-position:0 0;color:#fff;
+}
+.processBarContainer .processBar li.current span.step-text {
+	background:#92CF74; color:#fff;
+}
+
+/*CSS3 extras*/
+.tooltip {border-radius:4px;-moz-border-radius: 4px;-webkit-border-radius: 4px;-moz-box-shadow: 5px 5px 8px #CCC;-webkit-box-shadow: 5px 5px 8px #CCC;box-shadow: 5px 5px 8px #CCC;}
+.popover.right {min-width:276px;}
+
+/*oauth*/
+.login.oauth .container {max-width:500px}
+.oauth.form-horizontal {padding:20px 0 0;}
+.login.oauth .oauth_log {margin:10px 5% 20px}
+.form-horizontal.oauth .control-label {width:100px}
+.form-horizontal.oauth .controls {margin-left:110px;}
+.login.oauth a.help-quote {background-position:0 5px; margin-left:-20px;}
+.errorText {padding:2em 8%; min-height:400px;}
+.errorText p {margin:15px 0;}
+
+/*sth changed from bootstrap*/
+#infoForm.form-horizontal {margin:30px 0;}
+#secondaryForm.form-horizontal,#changepassForm.form-horizontal {margin:30px 5%}
+#loginForm.form-horizontal .control-label,#createRequestForm.form-horizontal .control-label { 
+	font-weight:bold; text-align:right; font-size:16px; 
+	padding-right:10px; padding-top:10px; vertical-align:top;
+	margin-top:5px;
+}
+.form-horizontal#securityEmailForm{padding:0 5%}.form-horizontal#findPswForm { padding:30px 5%;}
+.form-horizontal .control-label {font-weight:bold; }
+.form-horizontal .control-label.nopadding {padding-top:0}
+#createRequestForm.form-horizontal .control-label {margin-top:-5px;}
+#loginForm.form-horizontal .controls {margin-top:10px;}
+#loginForm.form-horizontal input[type="checkbox"],
+.form-search input, .form-inline input, .form-horizontal input, .form-search textarea, .form-inline textarea, .form-horizontal textarea, .form-search select, .form-inline select, .form-horizontal select, .form-search .help-inline, .form-inline .help-inline, .form-horizontal .help-inline, .form-search .uneditable-input, .form-inline .uneditable-input, .form-horizontal .uneditable-input, .form-search .input-prepend, .form-inline .input-prepend, .form-horizontal .input-prepend, .form-search .input-append, .form-inline .input-append, .form-horizontal .input-append{
+	margin-bottom:6px;}
+	
+.duckling-logo-small {background:url(../images/login/logo-duckling.png) 2px 0px no-repeat; cursor:pointer; margin-top:5px; display:inline-block; width:22px; height:16px;} 

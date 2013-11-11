@@ -1,0 +1,194 @@
+/*
+version:umt-embed
+author:zhangshixiang@cstnet.cn
+data:2013-03-27
+*/
+
+.cst-clear {clear:both;}
+.cst-container {width:100%; margin:0 auto;}
+.cst-container-logined {display:none; width:100%; height:55px; text-align:center; line-height:55px; font-size:13px; background:#f8f8f8;}
+.cst-controls {margin-top:8px;}
+.cst-controls .control-label {float:left; width:40%; text-align:right; margin-top:4px;}
+.cst-controls .controls {margin-left:42%}
+p.cst-title {padding-bottom:5px; border-bottom:1px solid #eee; padding-left:20%}
+p.cst-title .sup a {
+	vertical-align:super; color:#08c; font-size:14px; font-family:Arial, Helvetica, sans-serif;
+	display:inline-block; text-decoration:none;
+}
+.cst-controls span.third {
+	display:block; padding:10px 0; font-size:13px;
+}
+.cst-controls span.error {color:#a00; margin:5px 0 0 10px; display:inline-block;}
+.cst-controls.thirdLogin a img {
+	/* margin:-9px 5px; */ padding:3px; background:#f8f8f8; 
+	border:1px solid #eee; border-radius:4px;width:20px;
+}
+.cst-controls a.cst-forget {margin-left:7px; font-size:13px; color:#08a; text-decoration:none;}
+/*common views as bootstrap*/
+.cst-controls .btn{
+  *display: inline;
+  padding: 4px 12px;
+  margin-bottom: 0;
+  *margin-left: .3em;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  *background-color: #e6e6e6;
+  background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-repeat: repeat-x;
+  border: 1px solid #cccccc;
+  *border: 0;
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  *zoom: 1;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.cst-controls .btn-primary {
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #006dcc;
+  *background-color: #0044cc;
+  background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+  background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+  background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+  background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+  background-repeat: repeat-x;
+  border-color: #0044cc #0044cc #002a80;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0044cc', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+.cst-controls .btn-primary:hover,
+.cst-controls .btn-primary:focus,
+.cst-controls .btn-primary:active,
+.cst-controls .btn-primary.active,
+.cst-controls .btn-primary.disabled,
+.cst-controls .btn-primary[disabled] {
+  color: #ffffff;
+  background-color: #0044cc;
+  *background-color: #003bb3;
+}
+
+.cst-controls .btn-primary:active,
+.cst-controls .btn-primary.active {
+  background-color: #003399 \9;
+}
+.cst-controls .btn.long {
+  	font-family: Arial,"微软雅黑";
+  	font-size: 16px;
+    font-weight: bold;
+    padding: 10px 3em;
+}
+.cst-controls input[type="text"],.cst-controls input[type="password"] {
+	display: inline-block;
+	height: 20px;
+	padding: 4px 6px;
+	margin-bottom: 10px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555555;
+	vertical-align: middle;
+	-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;
+	        background-color: #ffffff;
+	border: 1px solid #cccccc;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+	   -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+	     -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+	        transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+
+
+/********************responsive design*/
+
+/*common for the small screen and esp for */
+@media (max-width:700px) {
+	.cst-container {font-size:14px;}
+	p.cst-title {display:none;}
+	.cst-controls .control-label {width:20%; font-weight:bold; margin-top:6px; color:#888}
+	.cst-controls .controls {margin-left:22%}
+	.cst-controls .control-label.hideBig {display:none;}
+	.cst-controls .control-label.hideBig .sup a {
+		vertical-align:super; color:#08c; font-size:10px; font-family:Arial, Helvetica, sans-serif;
+		display:inline-block; text-decoration:none;}
+	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {
+		width:70%;  padding:7px 6px; height:16px; border-radius:2px;
+	}
+	.cst-controls input.btn.long[type="submit"] {
+		border-radius:2px; margin-bottom:2px; margin-top:0;
+	}
+	
+}
+
+/*inline layout esp for dhome index*/
+@media (min-width:661px) and (max-width: 700px) {
+	.cst-container {font-size:13px;}
+	.cst-container { position:relative; margin-top:30px;}
+	.cst-controls .control-label {float:left;width:auto; text-align:left; margin-top:4px; font-weight:normal; margin-left:1%;}
+	.cst-controls .controls {float:left;  margin-left:1%; }
+	.cst-controls .control-label.hideBig {display:inline-block; margin-top:1px; *margin-top:-4px;}
+	.cst-controls .control-label.showBig {display:none;}
+	.cst-controls a.cst-forget {display:inline-block; padding:2px 0;}
+	.cst-controls span.third {display:inline-block; padding:0; font-size:13px;}
+	.cst-controls span.third .thirdText {display:none;}
+	.cst-controls.thirdLogin a img {padding:0 2px; margin-right:0px;}
+	.cst-controls span.error {
+		display:block; font-size:13px; position:absolute; top:-25px; z-index:9999; 
+		padding-left:0; margin-left:0;
+	}
+	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {
+		width:auto; max-width:8.5em; font-size:13px; padding:2px 6px; height:16px; border-radius:2px;
+	}
+	.cst-controls input.btn.long[type="submit"] {
+		padding:0px 6px; font-size:13px; 
+	}
+}
+
+/*max and full layout  esp for dhome login*/
+@media (min-width:701px) {
+	p.cst-title {font-size:22px; font-weight:bold; font-family:Arial,"微软雅黑"; padding-left:5%}
+	.cst-controls .control-label {float:left; width:25%; text-align:right; margin-top:4px; font-weight:bold;}
+	.cst-controls .control-label.hideBig {display:none;}
+	.cst-controls .control-label.showBig {display:inline;}
+	.cst-controls .controls {margin-left:27%}
+	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {max-width:20em; width:40%;}
+}
+
+/*small layout esp for mail.cnic*/
+@media (max-width:370px) {
+	.cst-controls .control-label {width:100%; text-align:left; margin:4px 1% 10px; font-weight:normal; margin-left:1%;}
+	.cst-controls .controls {width:100%; margin:4px 1% 10px;}
+	.cst-controls span.error {margin-left:0;}
+	.cst-controls .control-label.hideBig {display:none; color:#999}
+	.cst-controls .control-label.showBig {display:inline;}
+	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {
+		padding:6px; max-width:auto; width:80%;
+	}
+	.cst-controls input.btn.long[type="submit"] {
+		padding:5px 8%; font-size:14px; 
+	}
+}

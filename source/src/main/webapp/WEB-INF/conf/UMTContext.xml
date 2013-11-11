@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+	default-lazy-init="true">
+	<bean id="Config" class="cn.vlabs.umt.common.util.Config">
+		<constructor-arg>
+			<ref bean="PathMapper"/>
+		</constructor-arg>
+		<constructor-arg>
+			<value>/WEB-INF/conf/umt.properties</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="database" class="cn.vlabs.umt.common.datasource.DatabaseUtil"
+		destroy-method="close">
+		<constructor-arg>
+			<ref bean="Config"/>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="Email" class="cn.vlabs.umt.common.mail.MessageSender">
+		<constructor-arg>
+			<ref bean="Config"/>
+		</constructor-arg>
+	</bean>
+	<bean id="RequestEmail" class="cn.vlabs.umt.services.requests.impl.RequestMails">
+		<constructor-arg>
+			<ref bean="Email"/>
+		</constructor-arg>
+	</bean>
+	<bean id="tokenService" class="cn.vlabs.umt.services.user.service.impl.TokenService">
+		<property name="tokenDAO" ref="TokenDAO"></property>
+	</bean>
+	
+	<bean id="TicketService" class="cn.vlabs.umt.services.ticket.impl.TicketServiceImpl"
+		init-method="init" destroy-method="destroy">
+		<constructor-arg>
+			<description>Ticket Random's length</description>
+			<value>16</value>
+		</constructor-arg>
+		<constructor-arg>
+			<description>Ticket's life time(minute)</description>
+			<value>5</value>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="ScheduleService"/>
+		</constructor-arg>
+		<property name="ticketDAO">
+			<ref bean="TicketDAO"/>
+		</property>
+	</bean>
+	<bean id="SessionService" class="cn.vlabs.umt.services.session.impl.SessionServiceImpl"
+	 init-method="setUp" destroy-method="tearDown">
+		<constructor-arg>
+			<ref bean="SessionDAO"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="ScheduleService"/>
+		</constructor-arg>
+		<property name="interval">
+			<description>Session clean work interval(minute)</description>
+			<value>10</value>
+		</property>
+		<property name="timeOut">
+			<description>Session's live time</description>
+			<value>35</value>
+		</property>
+	</bean>
+	<bean id="TicketDAO" class="cn.vlabs.umt.services.ticket.impl.TicketDAOImpl">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="RoleDAO" class="cn.vlabs.umt.services.role.impl.RoleDAOImpl">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="SessionDAO" class="cn.vlabs.umt.services.session.impl.SessionDAOImpl">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="AccountDAO" class="cn.vlabs.umt.services.account.AccountDAOImpl">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="AccountService" class="cn.vlabs.umt.services.account.AccountServiceImpl">
+		<constructor-arg>
+			<ref bean="AccountDAO"/>
+		</constructor-arg>
+	</bean>
+	<bean id="LoginService" class="cn.vlabs.umt.services.user.service.impl.PasswordLogin">
+		<property name="transform" ref="transform"/>
+		<property name="userDAO" ref="UserDAO"/>
+		<property name="loginNameDAO" ref="loginNameDAO"></property>
+	</bean>
+	<bean id="ScheduleService" class="cn.vlabs.umt.common.schedule.ScheduleService"
+		init-method="setUp" destroy-method="tearDown">
+	</bean>
+	<bean id="PathMapper" class="cn.vlabs.umt.ui.PathMapper"></bean>
+	<bean id="PCookie" class="cn.vlabs.umt.ui.servlet.PCookie">
+		<constructor-arg>
+			<ref bean="UMTCredUtil"/>
+		</constructor-arg>
+	</bean>
+	<bean id="KeyDAO" class="cn.vlabs.umt.services.site.impl.KeyDAOImpl">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="ApplicationDAO" class="cn.vlabs.umt.services.site.impl.ApplicationDAOImpl">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="UserDAO" class="cn.vlabs.umt.services.user.dao.impl.UserDAOImpl">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="RequestDAO" class="cn.vlabs.umt.services.requests.impl.RequestDAOImpl">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="TokenDAO" class="cn.vlabs.umt.services.user.dao.impl.TokenDAO">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="bindDAO" class="cn.vlabs.umt.services.user.dao.impl.BindThirdPartyDAO">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="ApplicationService" class="cn.vlabs.umt.services.site.impl.AppServiceImpl">
+		<constructor-arg>
+			<ref bean="KeyDAO"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="ApplicationDAO"/>
+		</constructor-arg>
+	</bean>
+	<bean id="UserService" class="cn.vlabs.umt.services.user.service.impl.UserServiceImpl">
+		<constructor-arg>
+			<ref bean="tokenService"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="UserDAO"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="Email"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="bindDAO"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="loginNameDAO"/>
+		</constructor-arg>
+		<property name="transform" ref="transform"/>
+	</bean>
+	<bean id="userLoginNameService" class="cn.vlabs.umt.services.user.service.impl.UserLoginNameService">
+		<constructor-arg>
+			<ref bean="loginNameDAO"/>
+		</constructor-arg>
+	</bean>
+	<bean id="loginNameDAO" class="cn.vlabs.umt.services.user.dao.impl.UserLoginNameDAO">
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="RoleService" class="cn.vlabs.umt.services.role.impl.RoleServiceImpl">
+		<constructor-arg>
+			<ref bean="UserService"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="RoleDAO"/>
+		</constructor-arg>
+	</bean>
+	
+	
+	<bean id="RequestService" class="cn.vlabs.umt.services.requests.impl.RequestServiceImpl">
+		<constructor-arg>
+			<ref bean="RequestDAO"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="Email"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="UserService"/>
+		</constructor-arg>
+	</bean>
+	<bean id="UMTKeyFactory" class="cn.vlabs.umt.ui.rest.UMTKeyFactory">
+		<constructor-arg>
+			<ref bean="ApplicationService"/>
+		</constructor-arg>
+	</bean>
+	<bean id="CreateTable" class="cn.vlabs.umt.common.datasource.CreateTable">
+		<constructor-arg>
+			<ref bean="PathMapper"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="database"/>
+		</constructor-arg>
+	</bean>
+	<bean id="UMTSystem" class="cn.vlabs.umt.common.util.UMTSystem">
+		<constructor-arg>
+			<ref bean="PathMapper"/>
+		</constructor-arg>
+	</bean>
+	<bean id="PrincipalUtil" class="cn.vlabs.umt.common.util.PrincipalUtil"></bean>
+	<bean id="UMTCredUtil" class="cn.vlabs.umt.ui.servlet.UMTCredential">
+		<constructor-arg>
+			<ref bean="runTimePropService"/>
+		</constructor-arg>
+	</bean>
+	<bean id="transform" class="cn.vlabs.umt.services.user.service.EncryptorTransform">
+		<property name="config"  ref="Config"/>
+	</bean>
+	<bean id="runTimePropService" class="cn.vlabs.umt.services.runtime.impl.RunTimePropService">
+		<constructor-arg ref="runTimePropDAO"/>
+	</bean>
+	<bean id="runTimePropDAO" class="cn.vlabs.umt.services.runtime.impl.RunTimePropDAO">
+		<constructor-arg ref="database"/>
+	</bean>
+	<bean id="appAccessService" class="cn.vlabs.umt.services.user.service.impl.AppAccessService">
+		<constructor-arg ref="appAccessDAO"/>
+	</bean>
+	<bean id="appAccessDAO" class="cn.vlabs.umt.services.user.dao.impl.AppAccessDAO">
+		<constructor-arg ref="database"/>
+	</bean>
+	<bean id="accessIPDAO" class="cn.vlabs.umt.services.user.dao.impl.AccessIPDAO">
+		<constructor-arg ref="database"/>
+	</bean>
+	<bean id="accessIPService" class="cn.vlabs.umt.services.user.service.impl.AccessIPService">
+		<constructor-arg ref="accessIPDAO"/>
+	</bean>
+	<!-- oauth config begin -->
+	<bean id="oauthTokenDAO" class="cn.vlabs.umt.services.user.dao.impl.OauthTokenDAO">
+		<constructor-arg ref="database"/>
+	</bean>
+	<bean id="oauthClientDAO" class="cn.vlabs.umt.services.user.dao.impl.OauthClientDAO">
+		<constructor-arg ref="database"/>
+	</bean>
+	
+	<bean id="oauthTokenService" class="cn.vlabs.umt.services.user.service.impl.OauthTokenService">
+		<property name="cacheService" ref="cacheService"/>
+		<property name="oauthTokenDAO" ref="oauthTokenDAO"/>
+	</bean>
+	
+	<bean id="oauthClientService" class="cn.vlabs.umt.services.user.service.impl.OauthClientService">
+		<property name="cacheService" ref="cacheService"/>
+		<property name="oauthClientDAO" ref="oauthClientDAO"/>
+		<property name="emailSender" ref="Email"></property>
+		<property name="roleService" ref="RoleService"></property>
+	</bean>
+	<bean id="authorizationCodeServer" class="cn.vlabs.umt.services.user.service.impl.AuthorizationCodeServer">
+		<property name="cacheService" ref="cacheService"/>
+	</bean>
+	<!-- oauth config end -->
+	<bean id="cacheService" class="net.duckling.falcon.api.cache.impl.MemcachedCacheService" 
+			init-method="doInit" destroy-method="doDestroy">
+		<property name="memcachedURL" value="${umt.memcachedURL}"/>
+	</bean>
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+		<property name="location">  
+		<value>classpath:../conf/umt.properties</value>  
+		</property>  
+	</bean> 
+	<bean id="UAFAppCredUtil" class="cn.vlabs.umt.ui.servlet.UAFAppCredentail">
+		<constructor-arg>
+			<ref bean="Config"/>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="unuseableCoreMailClient" class="cn.vlabs.umt.services.account.CoreMailUnuseableClient">
+	</bean>
+	<import resource="UMTContext_ext.xml"/>
+</beans>

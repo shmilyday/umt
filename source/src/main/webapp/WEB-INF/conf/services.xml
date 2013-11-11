@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceConfig>
+<validator>cn.vlabs.rest.examples.NullValidator</validator>
+<!-- API包的类型，请每个应用自行改变 -->
+<type>UMT</type>
+<!-- API包的版本，请每个应用自行改变 -->
+<version>4.2.0</version>
+<entires>
+  <Service>
+  	<!-- 这个服务是回显服务，用于测试连接状态 -->
+    <servicename>System.echo</servicename>
+    <clazz>cn.vlabs.rest.examples.EchoService</clazz>
+    <validAppAuth>false</validAppAuth>
+  </Service>
+  <Service>
+  	<!-- 这个服务显示服务信息，包括API版本，类型和框架的版本 -->
+  	<servicename>System.info</servicename>
+  	<clazz>cn.vlabs.rest.examples.SystemInfo</clazz>
+  	<validAppAuth>false</validAppAuth>
+  </Service>
+  <Service>
+    <servicename>System.upload</servicename>
+    <clazz>cn.vlabs.rest.examples.UploadFile</clazz>
+    <validAppAuth>false</validAppAuth>
+  </Service>
+  <Service>
+  	<servicename>Login</servicename>
+  	<clazz>cn.vlabs.umt.ui.rest.LoginService</clazz>
+  	<validAppAuth>false</validAppAuth>
+  </Service>
+  <Service>
+  	<servicename>CreateUser</servicename>
+  	<clazz>cn.vlabs.umt.ui.rest.CreateUserService</clazz>
+    <validAppAuth>false</validAppAuth>
+  </Service>
+  <Service>
+  	<servicename>UpdateUser</servicename>
+  	<clazz>cn.vlabs.umt.ui.rest.UpdateUserService</clazz>
+    <validAppAuth>false</validAppAuth>
+  </Service>
+  <!-- VMT更新用户信息，不更新UMT上的pws -->
+   <Service>
+  	<servicename>UpdateUserWithoutPwd</servicename>
+  	<clazz>cn.vlabs.umt.ui.rest.UpdateUserWithoutPwdService</clazz>
+    <validAppAuth>false</validAppAuth>
+  </Service>
+  <Service>
+  	<servicename>UserExist</servicename>
+  	<clazz>cn.vlabs.umt.ui.rest.UserExistService</clazz>
+    <validAppAuth>false</validAppAuth>
+  </Service>
+  <!-- 获取UMT用户对象 -->
+  <Service>
+  	<servicename>GetUMTUser</servicename>
+  	<clazz>cn.vlabs.umt.ui.rest.GetUMTUserService</clazz>
+    <validAppAuth>false</validAppAuth>
+  </Service>
+  
+  <Service>
+  	<servicename>searchUserLikeName</servicename>
+  	<clazz>cn.vlabs.umt.ui.rest.SearchUserService</clazz>
+    <validAppAuth>false</validAppAuth>
+  </Service>
+  
+ </entires>
+</ServiceConfig>
