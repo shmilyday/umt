@@ -76,7 +76,7 @@
 		                	</umt:HasLogin>
 				</ul>
 				<ul class="nav">
-					<li><a href="<umt:url value="/"/>"><fmt:message key="banner.index"/></a></li>
+					<li id="banner_index"><a href="<umt:url value="/"/>"><fmt:message key="banner.index"/></a></li>
 					<li id="banner_help"><a href="<umt:url value="/help.jsp"/>"><fmt:message key="banner.help"/></a></li>
 				</ul>
 			</div>
@@ -114,7 +114,7 @@
 		            <li id="banner_regist"> <umt:registerLink><fmt:message key='login.regist'/></umt:registerLink></li>
 				</ul>
 				<ul class="nav">
-					<li><a href="<umt:url value=""/>"><fmt:message key="banner.index"/></a></li>
+					<li id="banner_index"><a href="<umt:url value=""/>"><fmt:message key="banner.index"/></a></li>
 					<li id="banner_forgot_password"><a  href="<umt:url value="/findPsw.do?act=stepOne"/>" class="small_link forgetpsw"><fmt:message key="remindpass.title" /></a></li>
 					<li id="banner_help"><a href="<umt:url value="/help.jsp"/>"><fmt:message key="banner.help"/></a></li>
 				</ul>
@@ -168,8 +168,8 @@
 		                		}
 		                	%>
 				</ul>
-				<ul class="nav">
-					<li><a href="<umt:url value=""/>"><fmt:message key="banner.index"/></a></li>
+				<ul class="nav"> 
+					<li id="banner_index"><a href="<umt:url value=""/>"><fmt:message key="banner.index"/></a></li>
 					<umt:HasLogin>
 					<li id="banner_user_info"><a href="<umt:url value="/user/info.do?act=show"/>"><fmt:message key="banner.userinfo"/></a></li>
 					<li id="banner_user_manage"><a href="<umt:url value="/user/manage.do?act=showManage"/>"><fmt:message key="banner.accountSetting"/></a></li>
@@ -202,8 +202,15 @@
         function changeLocale(lang){
                 var cookie=new Cookie();
                 cookie.setCookie('umt.locale', lang, {expireDays:365, path:'${empty contextPath?"/":contextPath}'});
-                window.location.reload(true);
+                removeURILocale();
         };
+        function removeURILocale(){
+        	var url=location.href;
+        	if(url.indexOf('locale=en_US')>-1||url.indexOf('locale=zh_CN')>-1){
+        		url=url.replace('locale=en_US','locale=').replace('locale=zh_CN','locale=');
+        	}
+        	location.href=url;
+        }
         $(document).ready(function(){
                 $('#lang').menu({menuid:'#langmenu'});
                 $('.slide').each(function (i,n){

@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +19,8 @@
 package cn.vlabs.umt.domain;
 
 import java.util.Date;
+
+import net.duckling.cloudy.common.CommonUtils;
 
 /**
  * umt日志信息
@@ -67,6 +71,64 @@ public class UMTLog {
 	 *  未知
 	 * */
 	private String remark;
+	
+	private String country;
+	private String city;
+	private String province;
+	private int id;
+	private boolean sendWarnEmail;
+	private boolean isCstnetUnit;
+	private String unitName;
+	private boolean fromDip;
+	
+	public boolean isFromDip() {
+		return fromDip;
+	}
+	public void setFromDip(boolean fromDip) {
+		this.fromDip = fromDip;
+	}
+	public boolean isCstnetUnit() {
+		return isCstnetUnit;
+	}
+	public void setCstnetUnit(boolean isCstnetUnit) {
+		this.isCstnetUnit = isCstnetUnit;
+	}
+	public String getUnitName() {
+		return unitName;
+	}
+	public void setUnitName(String unitName) {
+		this.unitName = unitName;
+	}
+	public boolean isSendWarnEmail() {
+		return sendWarnEmail;
+	}
+	public void setSendWarnEmail(boolean sendWarnEmail) {
+		this.sendWarnEmail = sendWarnEmail;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getCountry() {
+		return CommonUtils.killNull(country);
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	public String getCity() {
+		return CommonUtils.killNull(city);
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getProvince() {
+		return CommonUtils.killNull(province);
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
 	public String getEventType() {
 		return eventType;
 	}
@@ -97,6 +159,17 @@ public class UMTLog {
 	public void setUserIp(String userIp) {
 		this.userIp = userIp;
 	}
+	public GEOInfo getGEOInfo(){
+		GEOInfo info=new GEOInfo();
+		info.setCity(this.city);
+		info.setCountry(this.country);
+		info.setCstnetUnit(this.isCstnetUnit);
+		info.setFromDip(this.fromDip);
+		info.setIp(this.userIp);
+		info.setProvince(this.province);
+		info.setUnitName(this.unitName);
+		return info;
+	}
 	public Date getOccurTime() {
 		return occurTime;
 	}
@@ -115,8 +188,46 @@ public class UMTLog {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+	public boolean isNullGEO(){
+		return CommonUtils.isNull(this.city)&&CommonUtils.isNull(this.province)&&CommonUtils.isNull(this.country);
+	}
+	private String displayWhere(){
+		if("中国".equals(getCountry())){
+			if("北京".equals(getProvince())){
+				return getProvince()+"市";
+			}else if("上海".equals(getProvince())){
+				return getProvince()+"市";
+			}else if("天津".equals(getProvince())){
+				return getProvince()+"市";
+			}else if("重庆".equals(getProvince())){
+				return getProvince()+"市";
+			}else{
+				if(CommonUtils.isNull(getProvince())&&CommonUtils.isNull(getCity())){
+					return "未知地区";
+				}else{
+					return getProvince()+"省 "+getCity()+"市";
+				}
+			}
+		}
+		else{
+			if(CommonUtils.isNull(getCountry())&&CommonUtils.isNull(getProvince())&&CommonUtils.isNull(getCity())){
+				return "未知地区";
+			}else{
+				return getCountry()+" "+getProvince()+" "+getCity();
+			}
+		}
+	}
 	
 	
-	
-	
+	public String displayGEO(){
+		if(isCstnetUnit){
+			String where=displayWhere();
+			if(!CommonUtils.isNull(where)){
+				where="<span>("+where+")</span>";
+			}
+			return CommonUtils.isNull(unitName)?"科技网"+where:unitName+where;
+		}else{
+			return displayWhere();
+		}
+	}
 }

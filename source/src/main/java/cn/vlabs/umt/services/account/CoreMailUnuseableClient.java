@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +21,7 @@ package cn.vlabs.umt.services.account;
 import java.util.List;
 
 import cn.vlabs.duckling.api.umt.rmi.userv7.SearchField;
+import cn.vlabs.umt.services.user.bean.CoreMailUserInfo;
 import cn.vlabs.umt.services.user.bean.User;
 
 /**
@@ -43,7 +46,7 @@ public class CoreMailUnuseableClient extends ICoreMailClient {
 	}
 
 	@Override
-	public User getCoreMailUserInfo(String userName) {
+	public CoreMailUserInfo getCoreMailUserInfo(String userName) {
 		return null;
 	}
 

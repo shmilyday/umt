@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +21,7 @@ package cn.vlabs.umt.ui.servlet.login;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
 
@@ -42,6 +45,8 @@ import cn.vlabs.duckling.common.util.Base64Util;
 import cn.vlabs.umt.common.util.CommonUtils;
 import cn.vlabs.umt.common.util.RequestUtil;
 import cn.vlabs.umt.services.account.IAccountService;
+import cn.vlabs.umt.services.auth.IAuthService;
+import cn.vlabs.umt.services.auth.ThirdPartyAuth;
 import cn.vlabs.umt.services.role.RoleService;
 import cn.vlabs.umt.services.role.UMTRole;
 import cn.vlabs.umt.services.session.SessionService;
@@ -59,14 +64,14 @@ import cn.vlabs.umt.services.user.bean.UsernamePasswordCredential;
 import cn.vlabs.umt.services.user.utils.ServiceFactory;
 import cn.vlabs.umt.ui.Attributes;
 import cn.vlabs.umt.ui.UMTContext;
-import cn.vlabs.umt.ui.servlet.PCookie;
-import cn.vlabs.umt.ui.servlet.UMTCredential;
 
 public abstract class LoginMethod {
-
+	private IAuthService authService;
+	private IAccountService acct;
 	public LoginMethod(BeanFactory factory) {
 		this.factory = factory;
 		acct = (IAccountService) factory.getBean("AccountService");
+		authService = factory.getBean(IAuthService.class);
 	}
 
 	private void login(HttpServletRequest request, int uid, String authBy) {
@@ -80,12 +85,10 @@ public abstract class LoginMethod {
 				"");
 	}
 
-	private IAccountService acct;
-
 	public void doLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String act = request.getParameter("act");
 		String type = request.getParameter("type");
-		if (BindInfo.isThirdParty(type)) {
+		if (BindInfo.isThirdParty(type) || authService.existAuth(type)) {
 			insertThirdBind(request);
 		}
 		try {
@@ -96,6 +99,11 @@ public abstract class LoginMethod {
 				if (!loginBySession(request, response) && !loginByCookie(request, response)) {
 					// 记录登录的应用
 					request.setAttribute(Attributes.APP_NAME, request.getParameter(Attributes.APP_NAME));
+					HttpSession session=request.getSession();
+					String requireValid=(String) session.getAttribute("requireValid");
+					if(StringUtils.isNotBlank(requireValid)&&StringUtils.equals(requireValid, "true")){
+						request.setAttribute("showValidCode", "true");
+					}
 					redirectToLogin(request, response);
 				}
 			}
@@ -141,7 +149,7 @@ public abstract class LoginMethod {
 	protected abstract boolean checkValidateCode(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException;
 
-	protected abstract void onWrongPassword(HttpServletRequest request, HttpServletResponse response)
+	protected abstract void onWrongPassword(HttpServletRequest request, HttpServletResponse response,String wrongType)
 			throws ServletException, IOException;
 
 	private boolean loginByDeputy(HttpServletRequest request, HttpServletResponse response) throws ServletException,
@@ -217,14 +225,14 @@ public abstract class LoginMethod {
 
 		if (StringUtils.isEmpty(username)) {
 			request.setAttribute("username", username);
-			onWrongPassword(request, response);
+			onWrongPassword(request, response,"true");
 			return;
 		}
 		LoginInfo info = this.checkUser(username, password, authBy);
 		User prins = (info != null) ? info.getUser() : null;
 		if (prins == null) {
 			request.setAttribute("username", username);
-			onWrongPassword(request, response);
+			onWrongPassword(request, response,info.getValidateResult());
 			return;
 		}
 		// 保存第三用户凭证信息
@@ -236,9 +244,12 @@ public abstract class LoginMethod {
 		User user = SessionUtils.getUser(request);
 		login(request, user.getId(), authBy);
 		LoginNameInfo nameInfo = info.getLoginNameInfo();
-		boolean isThirdBind = BindInfo.isThirdParty(authBy);
+		ThirdPartyAuth otherUmt=authService.find(authBy);
+		info.setRequireUpgrade(otherUmt!=null || BindInfo.TYPE_QQ.equals(authBy));
+		boolean isThirdBind = BindInfo.isThirdParty(authBy) || otherUmt!=null;
 		if (!isThirdBind || CommonUtils.isNull(siteInfo)) {
 			if (LoginNameInfo.STATUS_TEMP.equals(nameInfo.getStatus())) {
+				SessionUtils.setSessionVar(request, "otherUmt", otherUmt);
 				String showUrl = RequestUtil.getContextPath(request) + "/show.do";
 				showUrl = RequestUtil.addParam(showUrl, "act", "showFilterActive");
 				if (isThirdBind) {
@@ -264,11 +275,29 @@ public abstract class LoginMethod {
 		}
 		generateAutoFill(response, request, info);
 		// 加密用户凭证
-		if (siteInfo != null && !siteInfo.isEmpty()) {
+		if (siteInfo != null && !siteInfo.isEmpty()&&!isThirdBind) {
 			SessionUtils.setSessionVar(request, Attributes.SITE_INFO, null);
 			sendTicket(prins, siteInfo, request, response);
 		} else {
-			response.sendRedirect(RequestUtil.getContextPath(request) + "/index.jsp");
+			String returnUrl=request.getParameter("returnUrl");
+			if(siteInfo!=null&&StringUtils.isBlank(returnUrl)){
+				returnUrl=siteInfo.get(Attributes.RETURN_URL);
+			}
+			//如果是弱密码，且使用coreMail密码登录，请跳转到修改密码
+			if(info.isWeak()&&LoginInfo.TYPE_CORE_MAIL.equals(info.getPasswordType())){
+				String redirectUrl=RequestUtil.getContextPath(request)+"/user/manage.do?act=showChangePassword&weakPassword=true";
+				
+				if(!CommonUtils.isNull(returnUrl)){
+					redirectUrl+="&returnUrl="+URLEncoder.encode(returnUrl, "UTF-8"); 
+				}
+				response.sendRedirect(redirectUrl);
+			}else{
+				if(!CommonUtils.isNull(returnUrl)){
+					response.sendRedirect(returnUrl);
+				}else{
+					response.sendRedirect(RequestUtil.getContextPath(request) + "/index.jsp");
+				}
+			}
 		}
 	}
 

@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +24,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,13 +40,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.duckling.cloudy.common.CommonUtils;
+import net.duckling.falcon.api.cache.ICacheService;
+import net.duckling.vmt.api.IRestOrgService;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.BeanFactory;
 
+import com.octo.captcha.module.servlet.image.SimpleImageCaptchaServlet;
+import com.octo.captcha.service.CaptchaServiceException;
+
 import cn.vlabs.commons.principal.UserPrincipal;
+import cn.vlabs.umt.common.digest.Md5CryptDigest;
+import cn.vlabs.umt.common.util.Config;
 import cn.vlabs.umt.common.util.RequestUtil;
+import cn.vlabs.umt.domain.OauthLog;
 import cn.vlabs.umt.oauth.as.issuer.MD5Generator;
 import cn.vlabs.umt.oauth.as.issuer.OAuthIssuer;
 import cn.vlabs.umt.oauth.as.issuer.OAuthIssuerImpl;
@@ -51,12 +67,15 @@ import cn.vlabs.umt.oauth.common.exception.OAuthProblemException;
 import cn.vlabs.umt.oauth.common.exception.OAuthSystemException;
 import cn.vlabs.umt.oauth.common.message.OAuthResponse;
 import cn.vlabs.umt.services.account.IAccountService;
+import cn.vlabs.umt.services.account.IOauthLogService;
 import cn.vlabs.umt.services.session.SessionUtils;
+import cn.vlabs.umt.services.user.LoginService;
 import cn.vlabs.umt.services.user.bean.AuthorizationCodeBean;
 import cn.vlabs.umt.services.user.bean.LoginInfo;
 import cn.vlabs.umt.services.user.bean.LoginNameInfo;
 import cn.vlabs.umt.services.user.bean.OAuthAuthzRequestWrap;
 import cn.vlabs.umt.services.user.bean.OauthClientBean;
+import cn.vlabs.umt.services.user.bean.OauthCredential;
 import cn.vlabs.umt.services.user.bean.OauthScopeBean;
 import cn.vlabs.umt.services.user.bean.OauthToken;
 import cn.vlabs.umt.services.user.bean.User;
@@ -67,6 +86,7 @@ import cn.vlabs.umt.services.user.service.IOauthTokenService;
 import cn.vlabs.umt.services.user.utils.ServiceFactory;
 import cn.vlabs.umt.ui.Attributes;
 import cn.vlabs.umt.ui.UMTContext;
+import cn.vlabs.umt.ui.servlet.login.LocalLogin;
 import cn.vlabs.umt.ui.servlet.login.LoginMethod;
 
 /**
@@ -85,16 +105,51 @@ public class AuthorizationCodeServlet extends HttpServlet {
 	private IOauthClientService oauthClientServer;
 	private IOauthTokenService oauthTokenServer;
 	private IAuthorizationCodeServer authorizationCodeServer;
+	private ICacheService cacheService;
+	private IOauthLogService oauthLogService;
+	private IRestOrgService orgService;
+	private Config config;
+	private IRestOrgService getOrgService(){
+		if(orgService==null){
+			orgService=(IRestOrgService)getBeanFactory().getBean("restOrgService");
+		}
+		return orgService;
+	}
+	
+	private Config getConfig(){
+		if(config==null){
+			config=(Config) getBeanFactory().getBean(Config.BEAN_ID);
+		}
+		return config;
+	}
+	
+	private Set<String> getCompulsionPwdScope(){
+		Set<String> result=new HashSet<String>();
+		
+		String pwdScopeStr=this.getConfig().getStringProp("compulsion.pwd.strong.scope", "");
+		if(StringUtils.isNotBlank(pwdScopeStr)){
+			result.addAll(Arrays.asList(StringUtils.split(pwdScopeStr, ";")));
+		}
+		return result;
+	}
+	
+	private IOauthLogService getOauthLogService(){
+		if(oauthLogService==null){
+			oauthLogService=(IOauthLogService)getBeanFactory().getBean(IOauthLogService.BEAN_ID);
+		}
+		return oauthLogService;
+	}
+	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		addCrossDomainHeader(response);
 		String pageInfo = request.getParameter("pageinfo");
 		if(StringUtils.isEmpty(pageInfo)){
 			authorization(request, response);
-		}else if("userinfo".equals(pageInfo)){
+		}else if("userinfo".equals(pageInfo)){ 
 			validationUser(request, response,null);
 		}else if("userscope".equals(pageInfo)){
-			sendAuthorization(request,response,null);
+			sendAuthorization(request,response,null,null,null);
 		}else if("cancelauthorization".equals(pageInfo)){
 			cancelAuthorization(request,response);
 		}else if("checkPassword".equals(pageInfo)){
@@ -129,6 +184,7 @@ public class AuthorizationCodeServlet extends HttpServlet {
 			Set<String> scope = oauthRequest.getScopes();
 			redirectURI = oauthRequest.getRedirectURI();
 			if(!validateClient(clientId,  redirectURI,request,response)){
+				
 				return;
 			}
 			OauthClientBean bean = getClientServer().findByClientId(clientId);
@@ -148,6 +204,7 @@ public class AuthorizationCodeServlet extends HttpServlet {
 			siteInfo.put(Attributes.RETURN_URL, URLEncoder.encode(RequestUtil.getFullRequestUrl(request),"UTF-8"));
 			siteInfo.put(Attributes.APP_NAME,"umtOauth2");
 			SessionUtils.setSessionVar(request, Attributes.SITE_INFO, siteInfo);
+			request.setAttribute("showValidCode", StringUtils.equals(StringUtils.defaultIfEmpty((String)request.getSession().getAttribute("requireValid"), "false"), "true"));
 			forwordUserInfoPage(request, response);
 		} catch (OAuthProblemException ex) {
 			if(StringUtils.isEmpty(redirectURI)){
@@ -206,12 +263,16 @@ public class AuthorizationCodeServlet extends HttpServlet {
 		String theme = request.getParameter("theme");
 		if("full".equals(theme)){
 			request.getRequestDispatcher("/oauth/login_full.jsp").forward(request, response);
-		}else if("simple".equals(theme)){
+		}else if("simple".equals(theme)){//验证码
 			request.getRequestDispatcher("/oauth/login_simple.jsp").forward(request, response);
 		}else if("embed".equals(theme)){
 			request.getRequestDispatcher("/oauth/login_embed.jsp").forward(request, response);
+		}else if("shibboleth".equals(theme)){
+			request.getRequestDispatcher("/oauth/login_shibboleth.jsp").forward(request, response);
 		}else if("coremail".equals(theme)){
 			request.getRequestDispatcher("/oauth/login_coremail.jsp").forward(request, response);
+		}else if("coremail30".equals(theme)){
+			request.getRequestDispatcher("/oauth/login_coremail30.jsp").forward(request, response);
 		}else if("coremail_mobile".equals(theme)){
 			request.getRequestDispatcher("/oauth/login_coremail_mobile.jsp").forward(request, response);
 		}else if("coremail_mobile_ipad".equals(theme)){
@@ -219,7 +280,21 @@ public class AuthorizationCodeServlet extends HttpServlet {
 			request.getRequestDispatcher("/oauth/login_coremail_mobile.jsp").forward(request, response);
 		}else if("cstnet_wifi".equals(theme)){
 			request.getRequestDispatcher("/oauth/login_cstnet_wifi.jsp").forward(request, response);
-		}else{
+		}else if("fellowship".equals(theme)){
+			request.getRequestDispatcher("/oauth/login_fellowship.jsp").forward(request, response);
+		}else if("dchat".equals(theme)){//验证码
+			request.getRequestDispatcher("/oauth/login_dchat.jsp").forward(request, response);
+		}
+		else if("csp".equals(theme)){
+			request.getRequestDispatcher("/oauth/login_csp.jsp").forward(request, response);
+		}
+		//add by lvly @20140514
+		else if("embed_pc".equals(theme)){//验证码
+			request.getRequestDispatcher("/oauth/login_embed_pc.jsp").forward(request, response);
+		}else if("embed_mobile".equals(theme)){//验证码
+			request.getRequestDispatcher("/oauth/login_embed_mobile.jsp").forward(request, response);
+		}
+		else{
 			request.getRequestDispatcher("/oauth/login_full.jsp").forward(request, response);
 		}
 	}
@@ -314,27 +389,47 @@ public class AuthorizationCodeServlet extends HttpServlet {
 	private boolean validateClient(String clientId,String redirectURI,HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
 		IOauthClientService server = getClientServer();
 		OauthClientBean bean = server.findAcceptByClientId(clientId);
+		OauthLog oauthLog=new OauthLog();
+		oauthLog.setClientId(clientId);
+		oauthLog.setClientName(bean==null?null:bean.getClientName());
+		oauthLog.setIp(RequestUtil.getRemoteIP(request));
+		oauthLog.setUserAgent(request.getHeader("User-Agent"));
+		oauthLog.setAction(OauthLog.ACTION_VALIDATE_CLIENT);
 		try{
 			new URI(redirectURI);
 		}catch(Exception e){
+			String errorMsg="redirect_uri格式不正确";
+			oauthLog.setResult(OauthLog.RESULT_REDIRECT_URL_ERROR);
+			oauthLog.setDesc(redirectURI);
+			getOauthLogService().addLog(oauthLog);
 			request.setAttribute("redirect_uri", redirectURI);
 			request.setAttribute("client_id", clientId);
 			request.setAttribute("errorCode", "invalid_request");
-			request.setAttribute("errorDescription", "redirect_uri格式不正确");
+			request.setAttribute("errorDescription", errorMsg);
 			dealClientRedirectError(request, response);
 			return false;
 		}
 		if(bean==null||!bean.getClientId().equals(clientId)){
+			oauthLog.setResult(OauthLog.RESULT_CLIENT_ID_ERROR);
+			getOauthLogService().addLog(oauthLog);
 			dealAppError("unauthorized_client","client_id["+clientId+"]未获取授权" ,redirectURI, response);
 			return false;
 		}
 		if(!bean.getRedirectURI().equals(redirectURI)){
-			dealAppError("redirect_uri_mismatch","redirectURI["+bean.getRedirectURI()+"]与服务器配置的不一致", redirectURI, response);
+			oauthLog.setResult(OauthLog.RESULT_REDIRECT_URL_MISMATCH);
+			oauthLog.setAssertDesc(bean.getRedirectURI(), redirectURI);
+			getOauthLogService().addLog(oauthLog);
+			request.setAttribute("redirect_uri", redirectURI);
+			request.setAttribute("client_id", clientId);
+			request.setAttribute("errorCode", "invalid_request");
+			request.setAttribute("errorDescription", "redirect_url_mismatch");
+			dealClientRedirectError(request, response);
 			return false;
-		}
+		}	
+		oauthLog.setResult(OauthLog.RESULT_SUCCESS);
+		getOauthLogService().addLog(oauthLog);
 		return true;
 	}
-	
 	/**
 	 * 第二步<br/>
 	 * 授权请求处理，认证用户信息
@@ -347,10 +442,29 @@ public class AuthorizationCodeServlet extends HttpServlet {
 		if(oauthRequest==null){
 			oauthRequest = new OAuthAuthzRequestWrap(request);
 		}
+		OauthClientBean bean = getClientServer().findByClientId(oauthRequest.getClientId());
 		UserPrincipal info = getLoginInfo(request,getClientServer().findByClientId(oauthRequest.getClientId()));
+		String clientId=bean==null?null:bean.getClientId();
+		OauthLog log=new OauthLog();
+		log.setAction(OauthLog.ACTION_VALIDATE_USERINFO);
+		log.setClientId(clientId);
+		log.setClientName(bean==null?null:bean.getClientName());
+		log.setUserAgent(request.getHeader("User-Agent"));
+		log.setIp(RequestUtil.getRemoteIP(request));
+		String username=request.getParameter("userName");
+		String password=request.getParameter("password");
+		LoginInfo loginInfo=null;
 		if(info==null){
-			request.setAttribute("userName", request.getParameter("userName"));
-			request.setAttribute("password", request.getParameter("password"));
+			LoginService ls=ServiceFactory.getLoginService(request);
+			loginInfo=ls.loginAndReturnPasswordType(new OauthCredential(clientId, username, password));
+			info=loginInfo.getUserPrincipal();
+		}
+		if(info==null){
+			log.setResult(OauthLog.RESULT_VALIDATE_USER_ERROR);
+			log.setDesc("{\"username\":\""+username+"\",\"password\":\"****\"}");
+			getOauthLogService().addLog(log);
+			request.setAttribute("userName", username);
+			request.setAttribute("password", password);
 			if(StringUtils.isEmpty(request.getParameter("userName"))){
 				request.setAttribute("userNameNull", true);
 			}else if(StringUtils.isEmpty(request.getParameter("password"))){
@@ -361,7 +475,6 @@ public class AuthorizationCodeServlet extends HttpServlet {
 			if(!validateClient(oauthRequest.getClientId(),  oauthRequest.getRedirectURI(),request,response)){
 				return;
 			}
-			OauthClientBean bean = getClientServer().findByClientId(oauthRequest.getClientId());
 			request.setAttribute("client_name", bean.getClientName());
 			request.setAttribute("client_website", bean.getClientWebsite());
 			request.setAttribute(USER_OAUTH_REQUEST, oauthRequest);
@@ -370,19 +483,26 @@ public class AuthorizationCodeServlet extends HttpServlet {
 			request.setAttribute(USER_OAUTH_REQUEST, oauthRequest);
 			request.setAttribute("client_id", oauthRequest.getClientId());
 			doCoremailRequest(request,response);
-			LoginInfo userLogin = UMTContext.getLoginInfo(request.getSession());
+			loginInfo =loginInfo==null? UMTContext.getLoginInfo(request.getSession()):loginInfo;
+			log.setResult(OauthLog.RESULT_SUCCESS);
+			log.setUid(loginInfo.getUser().getId());
+			log.setCstnetId(loginInfo.getUser().getCstnetId());
+			log.setDesc(loginInfo.getPasswordType());
+			getOauthLogService().addLog(log);
 			if(StringUtils.isNotEmpty(request.getParameter("remember"))){
-				LoginMethod.generateSsoCookie(response, request, userLogin);
+				LoginMethod.generateSsoCookie(response, request, loginInfo);
 			}
-			LoginMethod.generateAutoFill(response,request,userLogin);
+			LoginMethod.generateAutoFill(response,request,loginInfo);
+			sendAuthorization(request, response, oauthRequest,bean,loginInfo);
+			/*下列几行代码, 是正规流程，但是鉴于开发成本，先不走，按用户全部同意算*
 			Set<String> s =getClientServer().findByClientId(oauthRequest.getClientId()).getScopeSet();
-			//如果client没有scope就直接返回
+			//如果client没有scope就直接返回,这里先不提示用户操作
 			if(s==null||s.isEmpty()){
-				sendAuthorization(request, response, oauthRequest);
 				return;
 			}
-			request.setAttribute("scopes", dealScope(oauthRequest.getClientId(), oauthRequest.getScopes()));
-			request.getRequestDispatcher("/oauth/userscopeinfo.jsp").forward(request, response);
+			//request.setAttribute("scopes", dealScope(oauthRequest.getClientId(), oauthRequest.getScopes()));
+			//request.getRequestDispatcher("/oauth/userscopeinfo.jsp").forward(request, response);
+			 * */
 		}
 	}
 	
@@ -409,23 +529,97 @@ public class AuthorizationCodeServlet extends HttpServlet {
 			}
 		}
 	}
-
-
+	private String validateUP(String userName,String password,LoginService ls,String clientId){
+		LoginInfo info = ls.loginAndReturnPasswordType(new UsernamePasswordCredential(userName,password));
+		String result="true";
+		if(info.getUser()==null){
+			LoginInfo oauthInfo=ls.loginAndReturnPasswordType(new OauthCredential(clientId,userName,password));
+			if(oauthInfo.getUser()==null){
+				result= info.getValidateResult();
+			}else{
+				result=oauthInfo.getValidateResult();
+			}
+		}
+		return result;
+	}
 	private void checkPassword(HttpServletRequest request, HttpServletResponse response) {
+		boolean validateCodeResult=validateCode(request, response);
+		
+		if(!validateCodeResult){
+			return;
+		}
+		
 		String userName = request.getParameter("userName");
 		String password = request.getParameter("password");
-		boolean result = false;
+		String clientId=request.getParameter("clientId");
+		String result="true";
+		OauthLog log=new OauthLog();
+		log.setAction(OauthLog.ACTION_CHECK_PASSWORD);
+		log.setClientId(clientId);
+		log.setClientName(request.getParameter("clientName"));
+		log.setCstnetId(userName);
+		log.setIp(RequestUtil.getRemoteIP(request));
+		log.setUserAgent(request.getHeader("User-Agent"));
 		if(StringUtils.isNotEmpty(userName)&&StringUtils.isNotEmpty(password)){
-			UsernamePasswordCredential cred = new UsernamePasswordCredential(userName,password);
-			result = ServiceFactory.getLoginService(request).passwordRight(cred);
+			LoginService ls=ServiceFactory.getLoginService(request);
+			result=validateUP(userName,password,ls,clientId);
+		}else{
+			result="false";
 		}
 		JSONObject obj = new JSONObject();
-		obj.put("status", String.valueOf(result));
+		if(!"true".equals(result)){
+			log.setResult(OauthLog.RESULT_VALIDATE_USER_ERROR);
+			log.setDesc("{\"username\":\""+userName+"\",\"password\":\"****\"}");
+			getOauthLogService().addLog(log);
+			
+			
+			int counts =Integer.parseInt(StringUtils.defaultIfEmpty((String)(request.getSession().getAttribute("_wrongInputCountKey")), "0"));
+			request.getSession().setAttribute("_wrongInputCountKey", (++counts)+"");
+			
+			if(counts>4){
+				obj.put("showValidCode", true);
+				obj.put("lastErrorValidCode", "");
+				request.getSession().setAttribute("requireValid", "true");
+			}
+			
+		}
+		obj.put("status", result);
 		writeJSONResponse(response, obj);
-		
 	}
 
-
+	private boolean validateCode(HttpServletRequest request,
+			HttpServletResponse response) {
+		HttpSession session =request.getSession();
+		String requireValid = (String)session.getAttribute("requireValid");
+		if (requireValid != null) {
+			String validCode = request.getParameter("ValidCode");
+			boolean validWrong=true;
+			try{
+				validWrong=SimpleImageCaptchaServlet.validateResponse(request,validCode );
+			}catch(CaptchaServiceException e){
+			}
+			if (!validWrong) {
+				
+				JSONObject validJSON = new JSONObject();
+				
+				validJSON.put("WrongValidCode", true);
+				validJSON.put("showValidCode", true);
+				if(!CommonUtils.isNull(validCode)){
+					validJSON.put("lastErrorValidCode", "error");
+				}else{
+					validJSON.put("lastErrorValidCode", "required");
+				}
+				validJSON.put("status", "validCode.error");
+				writeJSONResponse(response, validJSON);
+				return false;
+			}
+			
+		}
+		
+		return true;
+	}
+	
+	
 
 	public void writeJSONResponse(HttpServletResponse response, JSONObject obj) {
 		PrintWriter writer = null;
@@ -450,30 +644,52 @@ public class AuthorizationCodeServlet extends HttpServlet {
 	 * 处理用户的scope数据，并返回授权结果
 	 * @param request
 	 * @param response
+	 * @param bean
 	 * @throws IOException
-	 * @throws ServletException 
+	 * @throws ServletException
 	 */
-	private void sendAuthorization(HttpServletRequest request, HttpServletResponse response,OAuthAuthzRequestWrap oauthRequest) throws IOException, ServletException {
+	private void sendAuthorization(HttpServletRequest request, HttpServletResponse response,OAuthAuthzRequestWrap oauthRequest, OauthClientBean bean,LoginInfo loginInfo) throws IOException, ServletException {
 		if(oauthRequest==null){
 			oauthRequest = new OAuthAuthzRequestWrap(request);
 		}
 		String responseType = oauthRequest.getResponseType();
 		if("code".equals(responseType)){
-			responseTypeIsCode(request, response, oauthRequest);
-		}else if("token".equals(responseType)){
-			responseTypeIsToken(request, response, oauthRequest);
-		}else{
+				responseTypeIsCode(request, response, oauthRequest,bean,loginInfo);
+		}
+		//较为危险，不使用
+		//		else if("token".equals(responseType)){
+		//			responseTypeIsToken(request, response, oauthRequest);
+		//		}
+		else{
+
 			dealAppError("unsupported_response_type","response_type["+ responseType+"]请求的响应类型授权服务器不支持", oauthRequest.getRedirectURI(), response);
 		}
 		cleanSession(request);
 	}
-
+	private String getEncPassword(HttpServletRequest request,OauthClientBean bean){
+		if(bean==null){
+			return null;
+		}
+		if(OauthClientBean.PWD_TYPE_NONE.equals(bean.getPwdType())){
+			return null;
+		} 
+		String password=request.getParameter("password");
+		String encedPassword=null;
+		if(OauthClientBean.PWD_TYPE_SHA.equals(bean.getPwdType())){
+			encedPassword=DigestUtils.shaHex(password);
+		}else if(OauthClientBean.PWD_TYPE_MD5.equals(bean.getPwdType())){
+			encedPassword=DigestUtils.md5Hex(password);
+		}else{
+			//Crypt加密使用MD5算法，返回MD5Crypt加密后的密码，和MD5加密后的“用户名+产品名+密码”作为digest，模拟PHP里面的crypt（）方法
+			encedPassword=Md5CryptDigest.md5Crpt(password);
+			encedPassword+="_"+DigestUtils.md5Hex(request.getParameter("userName")+":"+ServiceFactory.getConfig(request).getStringProp("dcloud.calendar.product.name", "calendar")+":"+password);
+		}
+		return encedPassword;
+	}
 	private void cleanSession(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		session.removeAttribute("coremailSecureLogon");
 	}
-
-
 	/**
 	 * 处理responseType为token类型
 	 * @param request
@@ -487,10 +703,21 @@ public class AuthorizationCodeServlet extends HttpServlet {
 		String[] scopes = request.getParameterValues("userScopes");
 		String redirectURI =  oauthRequest.getRedirectURI();
 		try {
-			String uid = ServiceFactory.getUserService(request).getUserByLoginName(getLoginInfo(request,getClientServer().findByClientId(oauthRequest.getClientId())).getName()).getId()+"";
-			OauthToken token = OauthTokenServlet.createToken(oauthRequest.getClientId(), redirectURI, request, tansferScope(scopes), uid);
+			OauthClientBean bean=getClientServer().findByClientId(oauthRequest.getClientId());
+			OauthLog oauthLog=new OauthLog();
+			oauthLog.setClientId(bean.getClientId());
+			oauthLog.setClientName(bean.getClientName());
+			oauthLog.setIp(RequestUtil.getRemoteIP(request));
+			oauthLog.setUserAgent(request.getHeader("User-Agent"));
+			oauthLog.setAction(OauthLog.ACTION_VALIDATE_USERINFO_TOKEN);
+			oauthLog.setResult(OauthLog.RESULT_SUCCESS);
+			User user = ServiceFactory.getUserService(request).getUserByLoginName(getLoginInfo(request,bean).getName());
+			oauthLog.setUid(user.getId());
+			oauthLog.setCstnetId(user.getCstnetId());
+			getOauthLogService().addLog(oauthLog);
+			OauthToken token = OauthTokenServlet.createToken(oauthRequest.getClientId(), redirectURI, request, tansferScope(scopes), user.getId()+"", "token--已废弃不用");
 			StringBuilder sb = new StringBuilder();
-			addTokenParam(sb,token,request,oauthRequest.getState());
+			addTokenParam(sb,token,request,oauthRequest.getState(),bean);
 			if(redirectURI.contains("#")){
 				if(redirectURI.endsWith("#")){
 					redirectURI=redirectURI+sb.toString();
@@ -507,11 +734,11 @@ public class AuthorizationCodeServlet extends HttpServlet {
 		}
 	}
 
-	private void addTokenParam(StringBuilder sb, OauthToken token,HttpServletRequest request,String state) {
+	private void addTokenParam(StringBuilder sb, OauthToken token,HttpServletRequest request,String state,OauthClientBean bean) {
 		User user = ServiceFactory.getUserService(request).getUserByUid(Integer.parseInt(token.getUid()));
 		LoginNameInfo loginInfo = ServiceFactory.getLoginNameService(request).getALoginNameInfo(user.getId(), user.getCstnetId());
 		LoginInfo userLogin = UMTContext.getLoginInfo(request.getSession());
-		String userInfo = OauthTokenServlet.getUserAsJSON(loginInfo, user,userLogin.getPasswordType());
+		String userInfo = OauthTokenServlet.getUserAsJSON(loginInfo, user,userLogin.getPasswordType(),null,bean.isNeedOrgInfo(),getOrgService());
 		sb.append("access_token=").append(encodeURL(token.getAccessToken()));
 		sb.append("&");
 		sb.append("expires_in=").append(encodeURL(getExpired(token.getAccessExpired())+""));
@@ -524,7 +751,6 @@ public class AuthorizationCodeServlet extends HttpServlet {
 		long re = date.getTime()-System.currentTimeMillis();
 		return (re/1000);
 	}
-	
 	private String encodeURL(String url){
 		try {
 			return URLEncoder.encode(url, "utf-8");
@@ -532,7 +758,6 @@ public class AuthorizationCodeServlet extends HttpServlet {
 			return url;
 		}
 	}
-
 
 	/**
 	 * 处理responseType为code类型
@@ -543,14 +768,14 @@ public class AuthorizationCodeServlet extends HttpServlet {
 	 * @throws ServletException 
 	 */
 	private void responseTypeIsCode(HttpServletRequest request, HttpServletResponse response,
-			OAuthAuthzRequestWrap oauthRequest) throws IOException, ServletException {
+			OAuthAuthzRequestWrap oauthRequest,OauthClientBean clientBean,LoginInfo loginInfo) throws IOException, ServletException {
 		String[] scopses = request.getParameterValues("userScopes");
 		String redirectURI = getRedirectURI(request,oauthRequest);
 		OAuthResponse resp;
 		try {
-			LoginInfo userLogin = UMTContext.getLoginInfo(request.getSession());
-			AuthorizationCodeBean bean = createAuthCodeBean(userLogin, oauthRequest);
-			bean.updateScope(scopses);
+			AuthorizationCodeBean bean = createAuthCodeBean(loginInfo, oauthRequest);
+			//这里本来应该设置用户选择的信息，但是鉴于开发成本，暂时默认选择全部
+			bean.setScope(clientBean.getScope());
 			//设置过期时间
 			bean.setExpiredTime( new Date(System.currentTimeMillis()+authorTimeout*60l*1000l));
 			getCodeServer().save(bean);
@@ -558,12 +783,43 @@ public class AuthorizationCodeServlet extends HttpServlet {
 					.authorizationResponse(request,
 							HttpServletResponse.SC_FOUND)
 					.setCode(bean.getCode())
+					.setScope(bean.getScope())
 					.setParam("state", bean.getState())
 					.location(redirectURI).buildQueryMessage();
-			response.sendRedirect(resp.getLocationUri());
+			String encPwd=getEncPassword(request, clientBean);
+			if(encPwd!=null){
+				getCacheService().set("pwd.enc."+bean.getCode(), encPwd);
+			}
+
+			//判断该用户邮箱是否在弱密码验证范围内
+			boolean isInScope=isInCompulsionPwdScop(getEmailScope(loginInfo.getUser().getCstnetId()));
+			if(clientBean.isCompulsionStrongPwd()&&LoginInfo.TYPE_CORE_MAIL.equals(loginInfo.getPasswordType())&&isInScope&&loginInfo.isWeak()){
+				String encodedReturnUrl=URLEncoder.encode(resp.getLocationUri(),"UTF-8");
+				String changePasswordUrl=request.getContextPath()+"/user/manage.do?act=showChangePassword&weakPassword=true&returnUrl="+encodedReturnUrl+"&showCoremailTip=true";
+				StringBuffer javaScript=new StringBuffer();
+				javaScript.append("<script>");
+				javaScript.append(String.format("window.top.location.href='%s';",changePasswordUrl));
+				javaScript.append("</script>");
+				response.getWriter().print(javaScript.toString());
+			}else{
+				response.sendRedirect(resp.getLocationUri());
+			}
+			
+			
+			
 		} catch (OAuthSystemException e) {
 			dealOAuthSystemError(redirectURI, e,request, response);
 		}
+	}
+	
+	public boolean isInCompulsionPwdScop(String emailDomail){
+		Collection<String> scopes=getCompulsionPwdScope();
+		if(scopes==null||scopes.isEmpty()){
+			return true;
+		}
+		
+		return scopes.contains(emailDomail);
+		
 	}
 	
 	private String getRedirectURI(HttpServletRequest request, OAuthAuthzRequestWrap oauthRequest) {
@@ -608,8 +864,9 @@ public class AuthorizationCodeServlet extends HttpServlet {
 			if(StringUtils.isEmpty(userName)||StringUtils.isEmpty(password)){
 				return null;
 			}
+			LoginService ls=ServiceFactory.getLoginService(request);
 			UsernamePasswordCredential cred = new UsernamePasswordCredential(userName,password);
-			LoginInfo info =  ServiceFactory.getLoginService(request).loginAndReturnPasswordType(cred);
+			LoginInfo info =  ls.loginAndReturnPasswordType(cred);
 			user = info.getUser();
 			if(user!=null){
 				UMTContext.saveUser(request.getSession(), info);
@@ -734,6 +991,12 @@ public class AuthorizationCodeServlet extends HttpServlet {
 		return (BeanFactory) getServletContext()
 				.getAttribute(Attributes.APPLICATION_CONTEXT_KEY);
 	}
+	private ICacheService getCacheService(){
+		if(cacheService==null){
+			this.cacheService=(ICacheService)getBeanFactory().getBean("cacheService");
+		}
+		return cacheService;
+	}
 	
 	private void dealOAuthSystemError(String redirectURI,OAuthSystemException e,HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException{
 		if(StringUtils.isEmpty(redirectURI)){
@@ -757,6 +1020,17 @@ public class AuthorizationCodeServlet extends HttpServlet {
 	
 	private void dealClientRedirectError(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException{
 		request.getRequestDispatcher("/oauth/redirecturlerror.jsp").forward(request, response);
+	}
+	
+	
+	private String getEmailScope(String email){
+		if(StringUtils.isBlank(email)){
+			return "";
+		}
+		if(StringUtils.contains(email, "@")){
+			return StringUtils.split(email, "@")[1];
+		}
+		return "";
 	}
 	
 }

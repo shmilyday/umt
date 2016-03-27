@@ -9,7 +9,7 @@
 <html>
 	<head>
 		<title><fmt:message key="login.title"/></title>
-		<link href="images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
+		<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="cache-control" content="no-cache" />
 		<f:script src="js/ValidateCode.js"/>
@@ -145,8 +145,8 @@
 				</p>
 				<h3><fmt:message key='common.duckling.QA'/></h3>
 				<p class="sub-gray-text"><fmt:message key='common.duckling.description'/><a href="http://www.escience.cn" target="_blank"><fmt:message key='common.escience'/></a><fmt:message key='common.quote'/><a href="http://ddl.escience.cn" target="_blank"><fmt:message key='common.ddl.escience'/></a><fmt:message key='common.quote'/><a href="http://csp.escience.cn" target="_blank"><fmt:message key='common.csp'/></a><fmt:message key='common.quote'/><a href="http://www.escience.cn/people" target="_blank"><fmt:message key='common.scholarPage'/></a><fmt:message key='common.quote'/><a href="http://mail.escience.cn" target="_blank"><fmt:message key='common.casMail'/></a><fmt:message key='common.duckling.description.more'/></p>
-				<p><strong><fmt:message key='common.duckling.defination'/></strong></p>
 				<p><strong><fmt:message key='common.casMailLogin.hint'/></strong></p>
+				<p><strong><fmt:message key='common.duckling.defination'/></strong></p>
 			</div>
 			<div class="clear"></div>
 		</div>
@@ -182,7 +182,7 @@
 				 rules: {
 					 username:{required:true,email:true},
 					 password:{required:true/*,minlength:6*/},
-					 ValidCode:{required:true,number:true}
+					 ValidCode:{required:true}
 				 },
 				 messages: {
 					 username: {
@@ -194,8 +194,7 @@
 						 /*minlength:toRed('<fmt:message key="common.validate.password.minlength"/>')*/
 					 },
 					 ValidCode:{
-						 required:toRed('<fmt:message key="common.validate.validateCode.required"/>'),
-						 number:toRed('<fmt:message key="common.validate.validateCode.number"/>')
+						 required:toRed('<fmt:message key="common.validate.validateCode.required"/>')
 					 }
 					 
 				 },

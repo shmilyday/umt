@@ -6,23 +6,31 @@
 <%@taglib uri="WEB-INF/tld/falcon.tld" prefix="f"%>
 <fmt:setBundle basename="application" />
 <umt:AppList/>
+<umt:oauthContext/>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<% pageContext.setAttribute("context", request.getContextPath()); %>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<f:script src="${context }/thirdparty/respond.src.js"/>
+	<f:css href="${context }/thirdparty/bootstrap/css/bootstrap.min.css"/>
 	<f:script src="${context }/js/cookie.js"/>
-	<f:css href="${context }/css/embed.css"/>
+	<f:script src="${context }/thirdparty/respond.src.js"/>
 	<title>iframe page</title>
+	<f:css href="${context }/css/oauth.css"/>
+	<f:css href="${context }/css/embed.css"/>
+	<!--[if IE 8]> 
+		<f:css href="${context }/css/embedIE8.css"/>
+	<![endif]-->
 </head>
-<body>
+<body class="embed" style="background:transparent">
+	<!--[if IE 8]> 
+		<f:css href="${context }/css/embedIE8.css"/>
+	<![endif]-->
 	<div class="cst-container-logined"><fmt:message key="common.duckling.redirect"/></div>
-	<div class="cst-container">
+	<div class="cst-container embed">
 		<p class="cst-title">
 			<fmt:message key="common.duckling.use.login"/>
-			<span class="sup"><a href="http://passport.escience.cn/help.jsp" target="_blank">[?]</a></span>
+			<span class="sup"><a tabindex=-1 href="https://passport.escience.cn/what-is-cstnet-passport.jsp" target="_blank">[?]</a></span>
 		</p>
 		<form id="loginForm" action="authorize?${user_oauth_request.url}" method="post" class="cst-oauth"  target="_parent">
 			<input type="hidden" id="login" value="${login }">
@@ -33,10 +41,13 @@
 				</label>
 				<label class="control-label hideBig" for="userName">
 					<fmt:message key="common.duckling.cstnetuser"/>
-					<span class="sup"><a href="http://passport.escience.cn/help.jsp" target="_blank">[?]</a></span>
+					<span class="sup"><a href="https://passport.escience.cn/what-is-cstnet-passport.jsp" target="_blank">[?]</a></span>
 				</label>
 				<div class="controls">
-	           		<input tabindex=1 type="text" id="userName" placeholder="<fmt:message key='login.username.placeholder'/>" name="userName" value="${userName }"/>
+				 <div class="input-prepend">
+					<span class="add-on" id="user">
+					 </span>
+	           		<input tabindex=1 type="text" id="userName" placeholder="<fmt:message key='login.username.placeholder'/>" name="userName" value="${!empty userName?userName:autoFill }"/>
 	           		<span class="error">
 						<c:if test="${userNameNull}">
 						<fmt:message key="remindpass.username.required"/>
@@ -45,6 +56,7 @@
 						<fmt:message key="login.password.wrong"/>
 						</c:if>
 					</span>
+					</div>
 				</div>
             </div>
 		    <div class="cst-controls">
@@ -52,19 +64,25 @@
 					<fmt:message key="login.password"/>
 				</label>
 				<div class="controls">
+				<div class="input-append">
+					<span class="add-on preparePopover" data-html='true' data-animation='false' data-trigger="click" data-placement="top" 
+								data-content="<a tabindex='-1' href='${context }/help_https.jsp' target='blank' ><fmt:message key='${isHttps?"oauth.https.hint":"oauth.http.hint" }'/></a>" id="${preSpanId }">
+							<a tabindex=-1 target="_blank" href="${context }/help_https.jsp"></a>	
+					</span>
 	           		<input tabindex=2 type="password" id="password" placeholder="<fmt:message key="login.password"/>" name="password" value="${password }">
 	           		<span class="error">
 						<c:if test="${passwordNull}">
 							<fmt:message key="common.validate.password.required"/>
 						</c:if>
 					</span>
+					</div>
 				</div>
 				<input type="checkbox"  name="remember" id="remember" value="yes" style="display:none"/>
             </div>   
             <div class="cst-controls">
             	<div class="controls">
-              		<input type="submit" class="btn long btn-primary" value='<fmt:message key="common.banner.login"/>'>
-              		<a class="cst-forget" href="<umt:config key="umt.this.base.url"/>/findPsw.do?act=stepOne" target="_blank"><fmt:message key="login.forgetpassword"/></a>
+              		<input tabindex=3 type="submit" class="btn long btn-primary" value='<fmt:message key="common.banner.login"/>'>
+              		<a tabindex=4 class="cst-forget" href="<umt:config key="umt.this.base.url"/>/findPsw.do?act=stepOne" target="_blank"><fmt:message key="login.forgetpassword"/></a>
               	</div>
             </div>
             <c:if test="${!empty thirdPartyList }">
@@ -73,16 +91,19 @@
 		           		<span class="third">
 		           			<span class="thirdText"><fmt:message key='common.login.userOtherName'/></span>  
 		           			<c:if test="${!empty thirdPartyList['weibo'] }">
-		           				<a href	="<umt:url value="/thirdParty/login?type=weibo"/>" target="_parent"><img src="<umt:url value="/images/login/weibo.png"/>" alt="使用新浪微博登录" title="使用新浪微博登录" /></a>
+		           				<a tabindex=5 href	="<umt:url value="/thirdParty/login?type=weibo"/>" target="_parent"><img src="<umt:url value="/images/login/weibo.png"/>" alt="<fmt:message key='oauth.3pt.sina.login'/>" title="<fmt:message key='oauth.3pt.sina.login'/>" /></a>
 		           			</c:if>
 		           			<c:if test="${!empty thirdPartyList['qq'] }">
-								<a href="<umt:url value="/thirdParty/login?type=qq"/>" target="_parent"><img src="<umt:url value="/images/login/qq.png"/>" alt="使用QQ账号登录" title="使用QQ账号登录" /></a>
+								<a tabindex=6 href="<umt:url value="/thirdParty/login?type=qq"/>" target="_parent"><img src="<umt:url value="/images/login/qq.png"/>" alt="<fmt:message key='oauth.3pt.qq.login'/>" title="<fmt:message key='oauth.3pt.qq.login'/>" /></a>
 							</c:if>
 							<c:if test="${!empty thirdPartyList['cashq'] }">
-								<a href="<umt:url value="/thirdParty/login?type=cashq"/>" target="_parent"><img src="<umt:url value="/images/login/cas.png"/>" alt="使用院机关认证平台账号登录" title="使用院机关认证平台账号登录" /></a>
+								<a tabindex=7 href="<umt:url value="/thirdParty/login?type=cashq"/>" target="_parent"><img src="<umt:url value="/images/login/cas.png"/>" alt="<fmt:message key='oauth.coremail.use.cashq'/>" title="<fmt:message key='oauth.coremail.use.cashq'/>" /></a>
 							</c:if>
 							<c:if test="${!empty thirdPartyList['uaf'] }">
-								<a href="<umt:url value="/thirdParty/login?type=uaf"/>" target="_parent"><img src="<umt:url value="/images/login/uaf.png"/>" alt="使用UAF登录" title="使用UAF登录" /></a>
+								<a tabindex=8 href="<umt:url value="/thirdParty/login?type=uaf"/>" target="_parent"><img src="<umt:url value="/images/login/uaf.png"/>" alt="<fmt:message key='oauth.coremail.use.uaf'/>" title="<fmt:message key='oauth.coremail.use.uaf'/>" /></a>
+							</c:if>
+							<c:if test="${!empty thirdPartyList['geo'] }">
+								<a  tabindex=9 href="<umt:url value="/thirdParty/login?type=geo"/>" target="_parent"><img src="<umt:url value="/images/login/cas_geo.png"/>" alt="<fmt:message key='oauth.3pt.geodata.login'/>" title="<fmt:message key='oauth.3pt.geodata.login'/>" /></a>
 							</c:if>
 					 		<a class="btn cancle bit right" style='display:none'><fmt:message key='common.login.returnBack'/></a>
 						</span>
@@ -93,21 +114,19 @@
 	</div>
 	<script type="text/javascript" src="<umt:url value="/js/jquery-1.7.2.min.js"/>"></script>
 	<script type="text/javascript" src="<umt:url value="/js/jquery.validate.min.js"/>"></script>
+	<f:script  src="${context }/thirdparty/bootstrap/js/bootstrap.min.js"/>
+	<f:script src="${context }/js/oauth.js"/> 
 	<script type="text/javascript">
+	var showValidCode="${showValidCode}";
+	if(showValidCode=="true"||showValidCode==true){
+		var oauthUrl=window.location.href;
+		oauthUrl=oauthUrl.replace("theme=embed","theme=full");
+		window.parent.window.location.href=oauthUrl;
+	}
+	
+	
+	
 	$(document).ready(function(){
-		//auto fill
-		(function autoFill(selector){
-			var $input=$(selector);
-			var cookie=new Cookie();
-			var loginName=cookie.getCookie('AUTO_FILL');
-			if(loginName!=null&&$.trim(loginName)!=''){
-				$input.val(loginName.replace(/\"/gm,""));
-				$('#password').focus();
-			}else{
-				$input.focus();
-			}
-		})('#userName');
-		
 		islogin();
 		function islogin(){
 			var login = $("#login").val();
@@ -124,6 +143,8 @@
 				ff.userName=$("input[name='userName']").val();
 				ff.password=$("input[name='password']").val();
 				ff.pageinfo="checkPassword";
+				ff.clientId=request('client_id');
+				ff.clientName='${client_name }';
 				$.ajax({
 					url:"authorize" ,
 					data:ff,
@@ -132,9 +153,29 @@
 					success : function(data){
 						if(data.status=='true'){
 							form.submit();
-						}else{
-							$("input[name='userName']").next(".error").html("<label class='error' for='userName' generated='true' style='display: inline;'>用户名或者密码错误</label>");
+							return;
 						}
+						
+						if(data.showValidCode==true){
+							var oauthUrl=window.location.href;
+							oauthUrl=oauthUrl.replace("theme=embed","theme=full");
+							window.parent.window.location.href=oauthUrl;
+							return;
+						}
+						
+						
+						if(data.status=='user.expired'){
+							errorMsg='<fmt:message key="login.user.expired"/>';
+						}else if(data.status=='user.locked'){
+							errorMsg='<fmt:message key="login.user.locked"/>';
+						}else if(data.status=='user.stop'){
+							errorMsg='<fmt:message key="login.user.stop"/>';
+						}else{
+							errorMsg='<fmt:message key="login.password.wrong"/>';
+						}
+						
+						
+						$("input[name='userName']").next(".error").html("<label class='error' for='userName' generated='true' style='display: inline;'>"+errorMsg+"</label>");
 					}
 				});
 			},
@@ -144,7 +185,7 @@
 				password:{required:true/*,minlength:8*/ }
 			},
 			messages:{
-				userName:{required:"<fmt:message key='common.validate.email.required'/>" },
+				userName:{required:"<fmt:message key='common.validate.email.required'/>", email:'<fmt:message key="common.validate.email.invalid"/>'},
 				password:{required:"<fmt:message key='common.validate.password.required'/>"
 					/*,	minlength:"<fmt:message key='common.validate.password.minlength'/>"*/ 
 					}

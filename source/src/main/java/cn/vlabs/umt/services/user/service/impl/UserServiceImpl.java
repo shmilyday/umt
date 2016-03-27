@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +29,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
+import net.duckling.falcon.api.cache.ICacheService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -41,6 +45,7 @@ import cn.vlabs.umt.common.util.RequestUtil;
 import cn.vlabs.umt.services.account.ICoreMailClient;
 import cn.vlabs.umt.services.user.UserService;
 import cn.vlabs.umt.services.user.bean.BindInfo;
+import cn.vlabs.umt.services.user.bean.CoreMailUserInfo;
 import cn.vlabs.umt.services.user.bean.LoginNameInfo;
 import cn.vlabs.umt.services.user.bean.Token;
 import cn.vlabs.umt.services.user.bean.User;
@@ -50,6 +55,7 @@ import cn.vlabs.umt.services.user.dao.IUserDAO;
 import cn.vlabs.umt.services.user.dao.IUserLoginNameDAO;
 import cn.vlabs.umt.services.user.exception.InvalidUserNameException;
 import cn.vlabs.umt.services.user.exception.UserNotFound;
+import cn.vlabs.umt.services.user.service.IDomainService;
 import cn.vlabs.umt.services.user.service.ITokenService;
 import cn.vlabs.umt.services.user.service.ITransform;
 
@@ -75,7 +81,11 @@ public class UserServiceImpl implements UserService {
 	}
 	@Override
 	public User upgradeCoreMailUser(String loginName) {
-		User user=coreMailClient.getCoreMailUserInfo(loginName);
+		CoreMailUserInfo coreMailUserInfo=coreMailClient.getCoreMailUserInfo(loginName);
+		if(coreMailUserInfo==null){
+			return null;
+		}
+		User user=coreMailUserInfo.getUser();
 		if(user!=null){
 			user.setId(ud.create(user));
 			if(user.getId()>0){
@@ -117,6 +127,10 @@ public class UserServiceImpl implements UserService {
 	}
 	@Override
 	public void updateValueByColumn(int uid,String columnName, String value) {
+		ud.updateValueByColumn(new int[]{uid},columnName,value);
+	}
+	@Override
+	public void updateValueByColumn(int[] uid, String columnName, String value) {
 		ud.updateValueByColumn(uid,columnName,value);
 	}
 	@Override
@@ -135,8 +149,40 @@ public class UserServiceImpl implements UserService {
 			LOGGER.debug("information", e);
 		}
 	}
+	private boolean checkRefrequentlyLoginMainAndSecurity(int uid){
+		String timeKey="login.mail.security.time."+uid;
+		String countKey="login.mail.security.count."+uid;
+		Long lastTime=(Long)cacheService.get(timeKey);
+		//第一次
+		if(lastTime==null){
+			cacheService.set(timeKey,System.currentTimeMillis());
+			cacheService.set(countKey, 1);
+			return true;
+		}
+		//已过期
+		if((System.currentTimeMillis()-lastTime)>3600*1000l){
+			cacheService.set(timeKey,System.currentTimeMillis());
+			cacheService.set(countKey, 1);
+			return true;
+		}
+		Integer count=(Integer)cacheService.get(countKey);
+		if(count==null||count==0){
+			cacheService.set(countKey, 1);
+			return true;
+		}
+		//超过允许次数
+		if(count>=5){
+			return false;
+		}
+		//可以发送邮件
+		cacheService.set(countKey, ++count);
+		return true;
+	}
 	@Override
-	public void sendActivateionLoginMailAndSecurity(Locale locale, int uid, String loginName, String baseUrl,int loginNameInfoId) {
+	public boolean sendActivateionLoginMailAndSecurity(Locale locale, int uid, String loginName, String baseUrl,int loginNameInfoId) {
+		if(!checkRefrequentlyLoginMainAndSecurity(uid)){
+			return false;
+		}
 		Properties prop = new Properties();
 		tokenService.removeTokensUnsed(uid,  Token.OPERATION_ACTIVATION_PRIMARY_AND_SECURITY);
 		Token token = tokenService.createToken(uid, Token.OPERATION_ACTIVATION_PRIMARY_AND_SECURITY,loginName);
@@ -151,6 +197,7 @@ public class UserServiceImpl implements UserService {
 			LOGGER.error(e.getMessage());
 			LOGGER.debug("information", e);
 		}
+		return true;
 		
 	}
 	@Override
@@ -194,13 +241,15 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	public UserServiceImpl(ITokenService tokenService, IUserDAO ud,
-			MessageSender sender,IBindThirdPartyDAO bindDAO,IUserLoginNameDAO loginNameDAO) {
+			MessageSender sender,IBindThirdPartyDAO bindDAO,IUserLoginNameDAO loginNameDAO,IDomainService domainService,ICacheService cacheService) {
 		this.tokenService = tokenService;
 		this.ud = ud;
 		this.email = sender;
 		this.coreMailClient=ICoreMailClient.getInstance();
 		this.bindDAO=bindDAO;
 		this.loginNameDAO=loginNameDAO;
+		this.domainService=domainService;
+		this.cacheService=cacheService;
 	}
 
 	public synchronized int create(User user,String status) throws InvalidUserNameException {
@@ -209,15 +258,16 @@ public class UserServiceImpl implements UserService {
 		}
 		if(User.USER_TYPE_CORE_MAIL.equals(user.getType())){
 			user.setCstnetId(coreMailClient.formatEmail(user.getCstnetId()));
-			
+		}else{
+			if(isUsed(user.getCstnetId())!=USER_NAME_UNUSED){
+				throw new InvalidUserNameException(user);
+			}
 		}
 		if(!User.USER_TYPE_CORE_MAIL.equals(user.getType())&&LoginNameInfo.STATUS_ACTIVE.equals(status)){
 			user.setSecurityEmail(user.getCstnetId());
 		}
+	    user.setCstnetId(user.getCstnetId().trim());
 		if (EmailFormatChecker.isValidEmail(user.getCstnetId())){
-			if(loginNameDAO.isUsed(user.getCstnetId())){
-				throw new InvalidUserNameException(user);
-			}
 			user.setId(ud.create(user));
 			loginNameDAO.createLoginName(user.getCstnetId(), user.getId(),LoginNameInfo.LOGINNAME_TYPE_PRIMARY,status);
 			return user.getId();
@@ -348,6 +398,9 @@ public class UserServiceImpl implements UserService {
 	private IBindThirdPartyDAO bindDAO;
 	
 	private IUserLoginNameDAO loginNameDAO;
+	private IDomainService domainService;
+	
+	private ICacheService cacheService;
 	
 	@Override
 	public User getUserByUid(int uid) {
@@ -374,7 +427,7 @@ public class UserServiceImpl implements UserService {
 	}
 	
 
-	public Set<String> isExist(String[] usernames) {
+	public Set<String> isExist(String... usernames) {
 		if (CommonUtils.isNull(usernames)){
 			return null;
 		}
@@ -433,19 +486,34 @@ public class UserServiceImpl implements UserService {
 		return ud.getLastedUmtId();
 	}
 	@Override
-	public boolean isUsed(String loginName) {	
+	public int isUsed(String loginName) {	
 		if(CommonUtils.isNull(loginName)){
-			return true;
+			return USER_NAME_VALIDATE_ERROR;
 		}
 		loginName= loginName.toLowerCase();
 		boolean result=loginNameDAO.isUsed(loginName);
-		if(!result){
-			result=coreMailClient.isUserExt(loginName);
+		if(result){
+			return USER_NAME_USED;
 		}
-		return result;
+		//如果coreMail那边也没有,那就得验证域名是否可用了
+		result=coreMailClient.isUserExt(loginName);
+		if(result){
+			return USER_NAME_USED;
+		}
+		result=domainService.checkDomain(loginName);
+		if(result){
+			return USER_NAME_DOMAIN_NOT_ALLOWD;
+		}
+		return USER_NAME_UNUSED;
+		
+		
 	}
 	@Override
 	public Collection<User> searchUmtOnly(String keyword, int offset, int size) {
 		return ud.searchUmtOnly(keyword,offset,size);
+	}
+	@Override
+	public void switchGEOInfo(User user) {
+		ud.switchGEOInfo(user.getId(),user.isSendGEOEmailSwitch());
 	}
 }

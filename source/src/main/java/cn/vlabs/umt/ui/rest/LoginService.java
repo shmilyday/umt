@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +37,7 @@ public class LoginService extends ServiceWithInputStream {
 		if(ipService==null){
 			init();
 		}
-		if(ipService.canAccess(RequestUtil.getRemoteIP(getRequest()))){
+		if(ipService.canAccessScope_B(RequestUtil.getRemoteIP(getRequest()))){
 			AppPrincipal ap = new AppPrincipal(getRequest().getRemoteAddr());
 			LoginUtil.savePrincipal(session, ap);
 			return true;

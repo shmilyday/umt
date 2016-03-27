@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +31,11 @@ import cn.vlabs.umt.common.util.Config;
 
 public class DatabaseUtil {
 	public DatabaseUtil(Config config){
+		datasource=getDataScource(config);
+	}
+	
+	public BasicDataSource getDataScource(Config config){
 		BasicDataSource ds = new BasicDataSource();
-		
 		ds.setMaxActive(config.getInt("database.maxconn", 10));
 		ds.setMaxIdle(config.getInt("database.maxidle", 3));
 		ds.setMaxWait(100);
@@ -41,9 +46,9 @@ public class DatabaseUtil {
 		ds.setUrl(config.getStringProp("database.conn-url", null));
 		ds.setTimeBetweenEvictionRunsMillis(3600000);
 		ds.setMinEvictableIdleTimeMillis(1200000);
-		datasource=ds;
+		return ds;
 	}
-
+	
 	/**
 	 * 关闭连接池
 	 * 

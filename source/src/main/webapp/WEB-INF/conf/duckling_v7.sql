@@ -1,4 +1,4 @@
-\/*
+/*
 MySQL Data Transfer
 Source Host: localhost
 Source Database: duckling_new
@@ -70,6 +70,9 @@ CREATE TABLE `umt_log` (
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 alter table `umt_log` add index topTenIndex (`eventType`,`uid`);
+
+
+
 
 -- ----------------------------
 -- Table structure for umt_login_name
@@ -185,21 +188,6 @@ CREATE TABLE `umt_ticket` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPRESSED;
 
 -- ----------------------------
--- Table structure for umt_token
--- ----------------------------
-CREATE TABLE `umt_token` (
-  `id` int(11) NOT NULL auto_increment,
-  `token` varchar(255) default NULL,
-  `uid` int(11) default NULL,
-  `create_time` datetime default NULL,
-  `operation` varchar(50) default NULL,
-  `status` int(11) default NULL,
-  `expire_time` datetime default NULL,
-  `content` varchar(255) default NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
-
--- ----------------------------
 -- Table structure for umt_user
 -- ----------------------------
 CREATE TABLE `umt_user` (
@@ -211,6 +199,7 @@ CREATE TABLE `umt_user` (
   `security_email` varchar(255) default NULL,
   `cstnet_id` varchar(255) default NULL,
   `secondary_email` varchar(255) default NULL,
+  `account_status` enum('locked','normal') default 'normal',
   `type` varchar(255) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `username` (`umt_id`)
@@ -234,22 +223,61 @@ CREATE TABLE  `umt_oauth_client` (
   `company` varchar(255) default NULL,
   `client_website` VARCHAR(255) default null,
   `app_type` varchar(255) default 'webapp',
+  `pwd_type` varchar(10) DEFAULT 'none',
+  `need_org_info` int DEFAULT '0',
+  `logo_100` int , 
+  `logo_64` int ,
+  `logo_32` int ,
+  `logo_16` int,
+  `logo_custom` varchar(255),
+  `default_logo` int,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE  `umt_oauth_token` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `access_token` varchar(45) NOT NULL,
-  `refresh_token` varchar(45) NOT NULL,
-  `create_time` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  `access_expired` timestamp NOT NULL default '0000-00-00 00:00:00',
-  `refresh_expired` timestamp NOT NULL default '0000-00-00 00:00:00',
-  `client_id` varchar(45) NOT NULL,
-  `scope` varchar(45) NOT NULL,
-  `redirect_uri` varchar(255) NOT NULL,
-  `uid` varchar(45) NOT NULL,
+CREATE TABLE `umt_certificate` (
+  `id` int(11) NOT NULL auto_increment,
+  `dn` varchar(255)  NOT NULL default '',
+  `cstnetId` varchar(255)  NOT NULL default '',
+  `regist_time` datetime default NULL,
+  `pub_cert` text ,
+  `full_cert` text ,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `cstnetId` (`cstnetId`),
+  UNIQUE KEY `dn` (`dn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `umt_org` (
+  `id` int(11) NOT NULL auto_increment,
+  `org_symbol` varchar(255) NOT NULL,
+  `org_name` varchar(255) default NULL,
+  `is_cas` int(11) default '0',
+  `is_coremail` int(11) default '0',
+  `type` int(11) default '0',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `umt_org_domain` (
+  `id` int(11) NOT NULL auto_increment,
+  `org_id` varchar(255) default NULL,
+  `org_domain` varchar(255) default NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `org_domain_UNIQUE` (`org_domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `umt_ca` (
+  `id` int(11) NOT NULL auto_increment,
+  `uid` int(11) default NULL,
+  `dn` varchar(100) default NULL,
+  `cn` varchar(45) default NULL,
+  `type` tinyint(1) default NULL,
+  `valiFrom` timestamp NULL default NULL,
+  `expirationOn` timestamp NULL default NULL,
+  `password` varchar(45) default NULL,
+  `status` tinyint(1) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records 

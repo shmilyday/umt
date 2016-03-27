@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +29,13 @@ public interface RoleService {
 	 * @param rolename
 	 * @param username
 	 */
-	void addMember(String rolename, String username);
+	void addMember(String rolename, int uid);
 	/**
 	 * 删除成员
 	 * @param rolename
 	 * @param username
 	 */
-	void removeMemeber(String rolename, String username);
+	void removeMemeber(String rolename, int uid);
 	/**
 	 * 查询角色的用户列表
 	 * @param rolename
@@ -52,4 +54,6 @@ public interface RoleService {
 	 * @param usernames
 	 */
 	void removeMemeber(String string, String[] usernames);
+	
+	boolean isMemberOf(String roleName,int uid);
 }

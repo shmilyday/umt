@@ -7,8 +7,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-		<title>帮助</title>
-		<link href="images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
+		<title><fmt:message key="banner.help"/></title>
+		<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="cache-control" content="no-cache" />
 </head>

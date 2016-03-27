@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,37 +22,46 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import weibo4j.Oauth;
 import weibo4j.model.WeiboException;
 import cn.vlabs.umt.common.util.Config;
 import cn.vlabs.umt.common.util.RequestUtil;
+import cn.vlabs.umt.oauth.UMTOauthConnectException;
+import cn.vlabs.umt.services.auth.IAuthService;
+import cn.vlabs.umt.services.auth.ThirdPartyAuth;
 import cn.vlabs.umt.services.session.SessionUtils;
 import cn.vlabs.umt.ui.Attributes;
 
 import com.qq.connect.QQConnectException;
 
-@SuppressWarnings("serial")
 /**
  * 第三方登陆入口，比如新浪微博，扣扣等
  * */
-public class ThirdPartyLoginServlet extends HttpServlet {
+@Controller
+@RequestMapping("/thirdParty/login")
+public class ThirdPartyLoginServlet {
 	private static final Logger LOGGER = Logger.getLogger(ThirdPartyLoginServlet.class);
 	private static final String TYPE_WEIBO="weibo";
 	private static final String TYPE_QQ="qq";
+	private static final String TYPE_WEIXIN="weixin";
 	private static final String TYPE_CASHQ="cashq";
 	private static final String TYPE_UAF="uaf";
+	private static final String TYPE_GEO="geo";
+	@Autowired
 	private Config config;
-	
-	protected void service(HttpServletRequest request, HttpServletResponse response)
+	@Autowired
+	private IAuthService authService;
+	@RequestMapping
+	public void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		Map<String,String> siteInfo=new HashMap<String,String>();
 		for (String param:Attributes.SSO_PARAMS){
@@ -71,8 +82,16 @@ public class ThirdPartyLoginServlet extends HttpServlet {
 				doQQRequestToken(request, response);
 				break;
 			}
+			case TYPE_WEIXIN:{
+				WeiXinUrils.doWeiXinRequestToken(request, response);
+				break;
+			}
 			case TYPE_CASHQ:{
 				doCasSsoRequest(request,response);
+				break;
+			}
+			case TYPE_GEO:{
+				doGEOCasSsoRequest(request,response);
 				break;
 			}
 			case TYPE_UAF:
@@ -81,6 +100,14 @@ public class ThirdPartyLoginServlet extends HttpServlet {
 				break;
 			}
 			default:{
+				ThirdPartyAuth auth = authService.find(type);
+				if (auth!=null){
+					try {
+						response.sendRedirect(auth.createOauth().getAuthorizeURL(request));
+						return;
+					} catch (UMTOauthConnectException e) {
+					}
+				}
 				LOGGER.error("third party login error: the type is ["+type+"]");
 				break;
 			}
@@ -96,12 +123,6 @@ public class ThirdPartyLoginServlet extends HttpServlet {
 			LOGGER.error(e.getMessage(),e);
 		}
 	}
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		BeanFactory factory=(BeanFactory) getServletContext().getAttribute(Attributes.APPLICATION_CONTEXT_KEY);
-		this.config=(Config)factory.getBean("Config");
-	}
 	/**
 	 * 院机关工作平台登陆
 	 * @param request
@@ -110,6 +131,18 @@ public class ThirdPartyLoginServlet extends HttpServlet {
 	private void doCasSsoRequest(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			response.sendRedirect(RequestUtil.getContextPath(request)+"/cashq");
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+	}
+	/**
+	 * 物理所工作平台登陆
+	 * @param request
+	 * @param response
+	 */
+	private void doGEOCasSsoRequest(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			response.sendRedirect(RequestUtil.getContextPath(request)+"/geo");
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(),e);
 		}

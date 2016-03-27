@@ -51,8 +51,15 @@
 				function changeLocale(lang){
 					var cookie=new Cookie();
 					cookie.setCookie('umt.locale', lang, {expireDays:365, path:'${contextPath}'});
-					window.location.reload();
-				};
+					removeURILocale();
+		        };
+		        function removeURILocale(){
+		        	var url=location.href;
+		        	if(url.indexOf('locale=en_US')>-1||url.indexOf('locale=zh_CN')>-1){
+		        		url=url.replace('locale=en_US','locale=').replace('locale=zh_CN','locale=');
+		        	}
+		        	location.href=url;
+		        }
 				
 				$(document).ready(function(){
 					$('#lang').menu({menuid:'#langmenu'});

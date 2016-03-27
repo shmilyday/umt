@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +21,12 @@ package cn.vlabs.umt.services.user.bean;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.json.simple.JSONObject;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 
 public class OauthToken implements Serializable {
+	private static final long serialVersionUID = -7297480492302488426L;
 	private int id;
 	private String accessToken;
 	private String refreshToken;
@@ -32,23 +37,30 @@ public class OauthToken implements Serializable {
 	private String scope;
 	private String clientId;
 	private String redirectURI;
+	private String passwordType;
 	@Override
 	public String toString() {
 		return toJson().toString();
 	}
 	public JSONObject toJson(){
 		JSONObject object=new JSONObject();
-		object.put("id", id);
-		object.put("accessToken", accessToken);
-		object.put("refreshToken", refreshToken);
-		object.put("createTime", createTime);
-		object.put("accessExpired", accessExpired);
-		object.put("refreshExpired", refreshExpired);
-		object.put("uid", uid);
-		object.put("scope", scope);
-		object.put("clientId", clientId);
-		object.put("redirectURI", redirectURI);
-		return object;
+		try {
+			object.put("id", id);
+			object.put("accessToken", accessToken);
+			object.put("refreshToken", refreshToken);
+			object.put("createTime", createTime);
+			object.put("accessExpired", accessExpired);
+			object.put("refreshExpired", refreshExpired);
+			object.put("uid", uid);
+			object.put("scope", scope);
+			object.put("clientId", clientId);
+			object.put("redirectURI", redirectURI);
+			object.put("passwordType", passwordType);
+			return object;
+		} catch (JSONException e) {
+			return new JSONObject();
+		}
+		
 	}
 	public int getId() {
 		return id;
@@ -116,4 +128,11 @@ public class OauthToken implements Serializable {
 	public boolean isAccessExpired() {
 		return System.currentTimeMillis()>accessExpired.getTime();
 	}
+	public String getPasswordType() {
+		return passwordType;
+	}
+	public void setPasswordType(String passwordType) {
+		this.passwordType = passwordType;
+	}
+	
 }

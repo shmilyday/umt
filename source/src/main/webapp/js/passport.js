@@ -145,7 +145,7 @@ function Passport(option){
 		var self=this;
 		self.checkLogin(function(flag){
 			if(flag){
-				if(self.option.viewPort!=null){
+				if(self.option.viewPort!=null&&self.option.viewPort!=""){
 					self._showPrompt();
 				}
 				window.location.href=self._buildLoginUrl(returnUrl,params);

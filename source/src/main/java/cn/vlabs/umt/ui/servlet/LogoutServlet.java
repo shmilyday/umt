@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.BeanFactory;
 
 import cn.vlabs.duckling.common.crypto.HexUtil;
+import cn.vlabs.umt.common.ReturnURLUtils;
 import cn.vlabs.umt.common.util.CommonUtils;
 import cn.vlabs.umt.common.util.Config;
 import cn.vlabs.umt.common.util.RequestUtil;
@@ -41,8 +44,10 @@ import cn.vlabs.umt.services.user.bean.LoginInfo;
 import cn.vlabs.umt.services.user.bean.User;
 import cn.vlabs.umt.ui.Attributes;
 import cn.vlabs.umt.ui.UMTContext;
+import cn.vlabs.umt.ui.servlet.login.UMTCredential;
 
 public class LogoutServlet extends HttpServlet {
+
 	private static final long serialVersionUID = 1L;
 	private SessionService service;
 	private IAccountService acct;
@@ -74,6 +79,8 @@ public class LogoutServlet extends HttpServlet {
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 	}
+
+	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html");
@@ -103,6 +110,7 @@ public class LogoutServlet extends HttpServlet {
 			return;
 		}
 		String webServerURL=request.getParameter(Attributes.RETURN_URL);
+		webServerURL=ReturnURLUtils.checkUrl(webServerURL);
 		if (webServerURL==null){
 			webServerURL=RequestUtil.getContextPath(request)+"/index.jsp";
 		}

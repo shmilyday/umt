@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +20,9 @@ package cn.vlabs.umt.services.user.service.impl;
 
 import java.util.List;
 
+import net.duckling.cloudy.common.CommonUtils;
 import cn.vlabs.umt.services.user.bean.LoginNameInfo;
+import cn.vlabs.umt.services.user.bean.User;
 import cn.vlabs.umt.services.user.dao.IUserLoginNameDAO;
 import cn.vlabs.umt.services.user.service.IUserLoginNameService;
 
@@ -99,6 +103,21 @@ public class UserLoginNameService implements IUserLoginNameService{
 		loginNameDAO.removeLoginNamesByUid(new int[]{uid});
 		
 	}
+	@Override
+	public boolean isUsed(String loginName) {
+		return loginNameDAO.isUsed(loginName);
+	}
+	@Override
+	public void removeLdapLoginName(int uid) {
+		loginNameDAO.removeLdapLoginName(uid);
+	}
+	@Override
+	public LoginNameInfo getLdapLoginName(int uid) {
+		return CommonUtils.first(getLoginNameInfo(uid, LoginNameInfo.LOGINNAME_TYPE_LDAP));
+	}
 	
-
+	@Override
+	public User getUserByName(String loginName){
+		return loginNameDAO.getUserByLoginName(loginName);
+	}
 }

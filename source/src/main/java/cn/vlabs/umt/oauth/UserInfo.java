@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +27,28 @@ public class UserInfo {
 	private String cstnetIdStatus;
 	private String passwordType;
 	private String[] secondaryEmails;
+	
+	//add by lvly@20131111 加过密的密码
+	private String encPassword;
+	private OrgInfo[] orgInfo;
+	
+	
+	
+	public OrgInfo[] getOrgInfo() {
+		return orgInfo;
+	}
+
+	public void setOrgInfo(OrgInfo[] orgInfo) {
+		this.orgInfo = orgInfo;
+	}
+
+	public String getEncPassword() {
+		return encPassword;
+	}
+
+	public void setEncPassword(String encPassword) {
+		this.encPassword = encPassword;
+	}
 
 	public String getTrueName() {
 		return trueName;
@@ -42,7 +66,10 @@ public class UserInfo {
 		this.trueName = trueName;
 	}
 	public String getCstnetId() {
-		return cstnetId;
+		if(cstnetId==null){
+			return null;
+		}
+		return cstnetId.toLowerCase();
 	}
 	public void setCstnetId(String cstnetId) {
 		this.cstnetId = cstnetId;

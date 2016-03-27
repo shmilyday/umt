@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,6 +107,7 @@ public class TokenDAO implements ITokenDAO {
 			st.setInt(++index, token.getStatus());
 			st.setTimestamp(++index,new Timestamp(token.getExpireTime().getTime()));
 			st.setString(++index, token.getContent());
+			st.setString(++index, token.getPasswordType());
 			st.execute();
 			rs = st.getGeneratedKeys();
 			if (rs.next()){
@@ -207,6 +210,7 @@ public class TokenDAO implements ITokenDAO {
 		token.setExpireTime(rs.getTimestamp("expire_time"));
 		token.setContent(rs.getString("content"));
 		token.setRandom(rs.getString("token"));
+		token.setPasswordType(rs.getString("password_type"));
 		token.setUid(rs.getInt("uid"));
 		return token;
 	}
@@ -246,7 +250,7 @@ public class TokenDAO implements ITokenDAO {
 	
 	private static final Logger LOGGER = Logger.getLogger(TokenDAO.class);
 	private DatabaseUtil du;
-	private static final String CREATE_SQL="insert into umt_token(`token`, `uid`, `create_time`,`operation`,`status`,`expire_time`,`content`) values(?,?,?,?,?,?,?)";
+	private static final String CREATE_SQL="insert into umt_token(`token`, `uid`, `create_time`,`operation`,`status`,`expire_time`,`content`,`password_type`) values(?,?,?,?,?,?,?,?)";
 	private static final String TO_USED_SQL="update `umt_token` set `status`="+Token.STATUS_USED+" where `id`=?";
 	private static final String REMOVE_SQL="update `umt_token` set `status`='"+Token.STATUS_DELETED+"' where 1=1 ";
 	private static final String SELECT_SQL="select * from `umt_token` where 1=1 and `status`!='"+Token.STATUS_DELETED+"'";

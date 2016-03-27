@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,14 +40,15 @@ public class AccessIPDAO implements IAccessIPDAO {
 	private DatabaseUtil du;
 	public static final String SELECT="select * from `umt_access_ips` where 1=1 ";
 	public static final String DELETE="delete from `umt_access_ips` where id=? ";
-	public static final String INSERT="insert into `umt_access_ips`(`uid`,`ip`) values(?,?) ";
+	public static final String INSERT="insert into `umt_access_ips`(`uid`,`ip`,`scope`,`remark`) values(?,?,?,?) ";
 	public static final String BY_IP="and `ip`=? ";
+	public static final String BY_SCOPE=" and `scope`=? ";
 	public AccessIPDAO(DatabaseUtil du) {
 		this.du = du;
 	}
 
 	@Override
-	public void addAccessIp(int uid, String ip) {
+	public void addAccessIp(int uid, String ip, String scope, String remark) {
 		Connection conn = du.getConnection();
 		ResultSet rs = null;
 		PreparedStatement st=null;
@@ -54,6 +57,8 @@ public class AccessIPDAO implements IAccessIPDAO {
 			int index=0;
 			st.setInt(++index, uid);
 			st.setString(++index, ip);
+			st.setString(++index, scope);
+			st.setString(++index, remark );
 			st.execute();
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(),e);
@@ -87,6 +92,8 @@ public class AccessIPDAO implements IAccessIPDAO {
 		ip.setId(set.getInt("id"));
 		ip.setIp(set.getString("ip"));
 		ip.setUid(set.getInt("uid"));
+		ip.setRemark(set.getString("remark"));
+		ip.setScope(set.getString("scope"));
 		return ip;
 	}
 
@@ -98,6 +105,25 @@ public class AccessIPDAO implements IAccessIPDAO {
 		try{
 			st = conn.prepareStatement(SELECT+BY_IP);
 			st.setString(1, ip);
+			rs=st.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage(),e);
+		}finally{
+			DatabaseUtil.closeAll(rs, st, conn);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean canAccess(String ip,String scope) {
+		Connection conn = du.getConnection();
+		ResultSet rs = null;
+		PreparedStatement st=null;
+		try{
+			st = conn.prepareStatement(SELECT+BY_IP+BY_SCOPE);
+			st.setString(1, ip);
+			st.setString(2, scope);
 			rs=st.executeQuery();
 			return rs.next();
 		} catch (SQLException e) {

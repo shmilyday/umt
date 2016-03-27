@@ -56,8 +56,8 @@
                 <div  id="langmenu" style="display:none">
                         <ul>
                                 <li>
-                                        <a href="#" onclick="changeLocale('zh_CN')">中文</a>
-                                        <a href="#" onclick="changeLocale('en_US')">English</a>
+                                        <a onclick="changeLocale('zh_CN')">中文</a>
+                                        <a onclick="changeLocale('en_US')">English</a>
                                 </li>
                         </ul>
                 </div>
@@ -65,8 +65,16 @@
                                 function changeLocale(lang){
                                         var cookie=new Cookie();
                                         cookie.setCookie('umt.locale', lang, {expireDays:365, path:'${empty contextPath?"/":contextPath}'});
-                                        window.location.reload();
+                                        removeURILocale();
                                 };
+                                function removeURILocale(){
+                                	var url=location.href;
+                                	if(url.indexOf('locale=en_US')>-1||url.indexOf('locale=zh_CN')>-1){
+                                		url=url.replace('locale=en_US','locale=').replace('locale=zh_CN','locale=');
+                                	}
+                                	location.href=url;
+                                }
+                              
 
                                 $(document).ready(function(){
                                         $('#lang').menu({menuid:'#langmenu'});

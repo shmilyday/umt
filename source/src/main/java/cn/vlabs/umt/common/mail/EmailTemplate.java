@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +34,24 @@ public class EmailTemplate {
 	public static final String TARGET_REGISTER = "registuser.html";
 	public static final String TARGET_PASSWORD = "remindpass.html";
 	public static final String NOTICE_ADMIN_OAUTH_ADD="oauthAdd.html";
+	public static final String NOTICE_ADMIN_LDAP_ADD="ldapAdd.html";
+	public static final String NOTICE_ADMIN_WIFI_ADD="wifiAdd.html";
 	public static final String NOTICE_ADMIN_OAUTH_UPDATE="oauthUpdate.html";
 	public static final String NOTICE_USER_OAUTH_UPDATE="adminUpdateOauth.html";
+	public static final String NOTICE_USER_LDAP_UPDATE="adminUpdateLdap.html";
 	
+	public static final String NOTICE_LDAP_ADD_APPLY_MEMBER="addLdapMember.html";
+	public static final String NOTICE_LDAP_HAS_ADD_MEMBER="hasAddLdapMember.html";
+	public static final String NOTICE_LDAP_DELETE_MEMBER="deleteLdapMember.html";
+	public static final String NOTICE_WIFI_DELETE_MEMBER="deleteWifiMember.html";
+	public static final String NOTICE_LDAP_PASS_MEMBER="passLdapMember.html";
+	public static final String NOTICE_WIFI_PASS_MEMBER="passWifiMember.html";
 	public static final String CONFIG_SMTP="mail.host";
 	public static final String CONFIG_EMAIL="mail.username";
 	public static final String CONFIG_PASSWORD="mail.password";
 	public static final String TEMPLATE_DIR = "mail.template.dir";
+	
+	public static final String NOTICE_DIFF_REGISTER="diffrentRegister.html";
 
 	private String title;
 	private String content;

@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +24,15 @@ import org.springframework.beans.factory.BeanFactory;
 
 import cn.vlabs.umt.common.util.Config;
 import cn.vlabs.umt.services.account.IAccountService;
+import cn.vlabs.umt.services.account.IRegistLogDAO;
+import cn.vlabs.umt.services.role.RoleService;
 import cn.vlabs.umt.services.user.LoginService;
 import cn.vlabs.umt.services.user.UserService;
 import cn.vlabs.umt.services.user.service.IAppAccessService;
+import cn.vlabs.umt.services.user.service.IAppSecretService;
 import cn.vlabs.umt.services.user.service.IAssociateUserService;
+import cn.vlabs.umt.services.user.service.ILdapService;
+import cn.vlabs.umt.services.user.service.IOauthClientService;
 import cn.vlabs.umt.services.user.service.ITokenService;
 import cn.vlabs.umt.services.user.service.IUserLoginNameService;
 import cn.vlabs.umt.ui.Attributes;
@@ -103,5 +110,28 @@ public final class ServiceFactory {
 	public static IAccountService getLogService(HttpServletRequest request){
 		return (IAccountService)getBeanFactory(request).getBean(IAccountService.BEAN_ID);
 	}
+	/**
+	 * @param request
+	 */
+	public static RoleService getRoleService(HttpServletRequest request) {
+		return (RoleService)getBean(request, RoleService.BEAN_ID);
+	}
+	public static ILdapService getLdapService(HttpServletRequest request){
+		return (ILdapService)getBean(request,ILdapService.BEAN_ID);
+	}
+	public static IOauthClientService getOauthClientService(HttpServletRequest request) {
+		return (IOauthClientService)getBean(request,IOauthClientService.BEAN_ID);
+	}
+	public static IAppSecretService getAppSecretService(
+			HttpServletRequest request) {
+		return (IAppSecretService)getBean(request,IAppSecretService.BEAN_ID);
+	}
+	public static IAccountService getAccountService(HttpServletRequest request) {
+		return (IAccountService)getBean(request,IAccountService.BEAN_ID);
+	}
+	public static IRegistLogDAO getRegistLogDAO(HttpServletRequest request){
+		return (IRegistLogDAO)getBean(request, IRegistLogDAO.BEAN_ID);
+	}
+	
 
 }

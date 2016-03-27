@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,11 +42,11 @@ public class APIFilter implements Filter {
 
 	public Envelope doFilter(Method method, Object[] args, RequestContext context,
 			RestSession session) {
-		if (!ipService.canAccess(context.getRemoteAddr())){
+		if (!ipService.canAccessScope_B(context.getRemoteAddr())){
 			LOGGER.warn(context.getRemoteAddr());
 			return Predefined.AUTHORIZE_FAILED;
 		}
-		
+		LOGGER.info("api request! ip->"+context.getRemoteAddr());
 		return null;
 	}
 

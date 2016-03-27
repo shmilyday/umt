@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +37,7 @@ import cn.vlabs.umt.common.util.CommonUtils;
 import cn.vlabs.umt.services.account.ICoreMailClient;
 import cn.vlabs.umt.services.user.LoginService;
 import cn.vlabs.umt.services.user.UserService;
+import cn.vlabs.umt.services.user.bean.CoreMailUserInfo;
 import cn.vlabs.umt.services.user.bean.LoginNameInfo;
 import cn.vlabs.umt.services.user.bean.User;
 import cn.vlabs.umt.services.user.bean.UserField;
@@ -56,7 +59,10 @@ public class RestUserServiceImpl {
 	}
 	@RestMethod("createUser")
 	public void createUser(UMTUser user) throws ServiceException{
-		if (service.isUsed(user.getUsername())){
+		int rtnCode=service.isUsed(user.getUsername());
+		 if(rtnCode==UserService.USER_NAME_DOMAIN_NOT_ALLOWD){
+			throw new ServiceException(ErrorCode.USER_EXIST,"此域名不允许注册"+user.getUsername());
+		}else if (rtnCode!=UserService.USER_NAME_UNUSED){
 			throw new ServiceException(ErrorCode.USER_EXIST,"用户已存在"+user.getUsername());
 		}
 		try {
@@ -69,8 +75,12 @@ public class RestUserServiceImpl {
 	public UMTUser getUMTUser(String username){
 		User umtUser = service.getUserByLoginName(username); 
 		if(umtUser==null){
-			umtUser=coreMail.getCoreMailUserInfo(username);
-			return toUMTUser(umtUser);
+			CoreMailUserInfo coreMailUserInfo=coreMail.getCoreMailUserInfo(username);
+			if(coreMailUserInfo==null){
+				return null;
+			}
+			
+			return toUMTUser(coreMailUserInfo.getUser());
 		}
 		return toUMTUser(umtUser);
 	}
@@ -171,17 +181,17 @@ public class RestUserServiceImpl {
 
 	@RestMethod("updateUserWithoutPwd")
 	public synchronized void updateUserWithoutPwd(UMTUser user) throws ServiceException {
-		if (service.isUsed(user.getUsername())){
+		if (service.isUsed(user.getUsername())==UserService.USER_NAME_USED){
 			User localUser=service.getUserByLoginName(user.getUsername());
 			if(localUser!=null){
 				localUser.setTrueName(user.getTruename());
 				service.update(localUser, false);
 				return;
 			}
-			User coreMailUser=coreMail.getCoreMailUserInfo(user.getUsername());
+			CoreMailUserInfo coreMailUser=coreMail.getCoreMailUserInfo(user.getUsername());
 			if(coreMailUser!=null){
 				try {
-					service.create(coreMailUser, LoginNameInfo.STATUS_ACTIVE);
+					service.create(coreMailUser.getUser(), LoginNameInfo.STATUS_ACTIVE);
 				}catch (InvalidUserNameException e) {
 					throw new ServiceException(ErrorCode.USER_EXIST, "要创建的用户已存在");
 				}
@@ -189,7 +199,7 @@ public class RestUserServiceImpl {
 				throw new ServiceException(ErrorCode.USER_NOT_FOUND, "要更新的用户未找到");
 			}
 			coreMailUser.setTrueName(user.getTruename());
-			service.update(coreMailUser, false);
+			service.update(coreMailUser.getUser(), false);
 		}else{
 			throw new ServiceException(ErrorCode.USER_NOT_FOUND, "要更新的用户未找到");
 		}

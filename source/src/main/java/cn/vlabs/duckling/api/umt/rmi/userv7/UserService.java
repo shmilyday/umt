@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +57,6 @@ import cn.vlabs.rest.ServiceException;
  * @since 2013-4-24
  */
 public class UserService {
-	
 	/**
 	 * 以UMT服务的URL连接用户服务
 	 * 例如：String umtServiceURL = "http://localhost:8080/ServiceServlet"; 需要根据情况替换主机(localhost)和端口号(8080)
@@ -92,6 +93,7 @@ public class UserService {
 	 * 批量创建用户，会返回生成的umtId之类的东东，
 	 * @param user
 	 * */
+	@SuppressWarnings("unchecked")
 	public List<UMTUser> createUsers(List<UMTUser> user) {
 		try {
 			return (List<UMTUser>)sendService("UserV7.createUsers", user);
@@ -151,6 +153,7 @@ public class UserService {
 			throw new APIRuntimeException(e);
 		}
 	}
+	@SuppressWarnings("unchecked")
 	public List<UMTUser> getUMTUsers(List<String> umtIds){
 		try {
 			return (List<UMTUser>)sendService("UserV7.getUmtUsers", umtIds);
@@ -178,6 +181,7 @@ public class UserService {
 	 * @param size 数量
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public List<UMTUser> searchUserByKeyword(String keyWord,String domain,SearchScope scope,SearchField field,int offset,int size){
 		try {
 			return (List<UMTUser>)sendService("UserV7.searchByKeywordAndDomain", new Object[]{keyWord,domain,scope,field,offset,size});
@@ -185,6 +189,7 @@ public class UserService {
 			throw new APIRuntimeException(e);
 		}
 	}
+	@SuppressWarnings("unchecked")
 	public List<UMTUser> searchUserByKeyword(String keyWord,SearchScope scope,SearchField field,int offset,int size){
 		try {
 			return (List<UMTUser>)sendService("UserV7.searchByKeyword", new Object[]{keyWord,scope,field,offset,size});

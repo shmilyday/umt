@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +45,19 @@ public class LoginNameInfo implements Serializable{
 	
 	public static final String STATUS_ACTIVE="active";
 	public static final String STATUS_TEMP="temp";
+	public String getStatusDisplay(){
+		if(STATUS_ACTIVE.equals(this.status)){
+			return "已激活";
+		}else if(STATUS_TEMP.equals(this.status)){
+			return "未激活";
+		}
+		return "";
+	}
 	
 	public static final String LOGINNAME_TYPE_PRIMARY="primary";
 	public static final String LOGINNAME_TYPE_SECONDARY="secondary";
 	public static final String LOGINNAME_TYPE_MOBILE="mobile";
+	public static final String LOGINNAME_TYPE_LDAP="ldap";
 
 	public boolean isTmpAndSecondary(){
 		return this.type.equals(LOGINNAME_TYPE_SECONDARY)&&this.status.equals(STATUS_TEMP);

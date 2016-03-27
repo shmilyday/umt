@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +19,8 @@
 package cn.vlabs.umt.services.user.service.impl;
 
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -25,20 +29,53 @@ import cn.vlabs.umt.services.account.CoreMailAuthenticateResult;
 import cn.vlabs.umt.services.account.ICoreMailClient;
 import cn.vlabs.umt.services.user.Credential;
 import cn.vlabs.umt.services.user.LoginService;
+import cn.vlabs.umt.services.user.bean.AppSecret;
 import cn.vlabs.umt.services.user.bean.BindInfo;
 import cn.vlabs.umt.services.user.bean.CookieCredential;
+import cn.vlabs.umt.services.user.bean.CoreMailUserInfo;
 import cn.vlabs.umt.services.user.bean.LoginInfo;
 import cn.vlabs.umt.services.user.bean.LoginNameInfo;
+import cn.vlabs.umt.services.user.bean.OauthClientBean;
+import cn.vlabs.umt.services.user.bean.OauthCredential;
 import cn.vlabs.umt.services.user.bean.ThirdPartyCredential;
 import cn.vlabs.umt.services.user.bean.TokenLoginCredential;
 import cn.vlabs.umt.services.user.bean.User;
 import cn.vlabs.umt.services.user.bean.UsernamePasswordCredential;
 import cn.vlabs.umt.services.user.dao.IUserDAO;
 import cn.vlabs.umt.services.user.dao.IUserLoginNameDAO;
+import cn.vlabs.umt.services.user.service.IAppSecretService;
+import cn.vlabs.umt.services.user.service.IOauthClientService;
 import cn.vlabs.umt.services.user.service.ITransform;
 
 public class PasswordLogin implements LoginService {
 	private static final Logger LOGGER=Logger.getLogger(PasswordLogin.class);
+	private static Pattern smallLetterPattern = Pattern.compile("^[a-z]{8,50}$");
+	private static Pattern bigLetterPattern=Pattern.compile("^[A-Z]{8,50}$");
+	private static Pattern numberPattern=Pattern.compile("^[0-9]{8,50}$");
+	
+	private boolean isPasswordWeak(String password){
+		if(CommonUtils.isNull(password)){
+			return true;
+		}
+		password=CommonUtils.trim(password);
+		if(password.length()>50||password.length()<8){
+			return true;
+		}
+		Matcher sMatcher = smallLetterPattern.matcher(password);
+		if(sMatcher.find()){
+			return true;
+		}
+		Matcher bMatcher = bigLetterPattern.matcher(password);
+		if(bMatcher.find()){
+			return true;
+		}
+		Matcher nMatcher = numberPattern.matcher(password);
+		if(nMatcher.find()){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean passwordRight(Credential cred) {
 		return loginAndReturnPasswordType(cred).getUser()!=null;
@@ -55,11 +92,16 @@ public class PasswordLogin implements LoginService {
 		if(umtUser==null){
 			return info;
 		}
-		info.setPasswordType(LoginInfo.TYPE_WEB_LOGIN);
+		info.setPasswordType(cred.getToken().getPasswordType());
+		/*info.setPasswordType(LoginInfo.TYPE_WEB_LOGIN);*/
 		info.setUser(umtUser);
 		info.setLoginNameInfo(loginNameDAO.getALoginNameInfo(umtUser.getId(),umtUser.getCstnetId()));
 		return info;
 	}
+	public LoginInfo loginOauthAndReturnPasswordType(OauthCredential cred) {
+		return null;
+	}
+	
 	private LoginInfo doThirdPartyPasswordCredential(ThirdPartyCredential cred){
 		LoginInfo info=new LoginInfo();
 		if(cred==null){
@@ -71,12 +113,16 @@ public class PasswordLogin implements LoginService {
 		}
 		if(BindInfo.TYPE_SINA.equals(cred.getAuthBy())){
 			info.setPasswordType(LoginInfo.TYPE_THIRD_PARTY_SINA);
-		}else if(BindInfo.TYPE_SINA.equals(cred.getAuthBy())){
+		}else if(BindInfo.TYPE_QQ.equals(cred.getAuthBy())){
 			info.setPasswordType(LoginInfo.TYPE_THIRD_PARTY_QQ);
 		}else if(BindInfo.TYPE_CASHQ_SSO.equals(cred.getAuthBy())){
 			info.setPasswordType(LoginInfo.TYPE_THIRD_PARTY_CAS_HQ);
 		}else if(BindInfo.TYPE_UAF.equals(cred.getAuthBy())){
 			info.setPasswordType(LoginInfo.TYPE_THIRD_PARTY_UAF);
+		}else if(BindInfo.TYPE_CAS_GEO.equals(cred.getAuthBy())){
+			info.setPasswordType(LoginInfo.TYPE_THIRD_PARTY_CAS_GEO);
+		}else{
+			info.setPasswordType(cred.getAuthBy());
 		}
 		info.setUser(umtUser);
 		info.setLoginNameInfo(loginNameDAO.getALoginNameInfo(umtUser.getId(),cred.getUsername()));
@@ -95,19 +141,78 @@ public class PasswordLogin implements LoginService {
 		}
 		return flag;
 	}
-	
+	private boolean validateCoreMailUser(CoreMailUserInfo userInfo,LoginInfo info){
+		if(userInfo.isExpired()){
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_USER_EXPIRED);
+			return false;
+		}
+		if(CoreMailUserInfo.STATUS_LOCK.equals(userInfo.getStatus())){
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_USER_LOCKED);
+			return false;
+		}
+		if(CoreMailUserInfo.STATUS_STOP.equals(userInfo.getStatus())){
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_USER_STOP);
+			return false;
+		}
+		return true;
+	}
+	@Override
+	public boolean oauthPasswordRight(OauthCredential cred) {
+		return !CommonUtils.isNull(doOauthCredential(cred).getPasswordType());
+	}
+	private LoginInfo doOauthCredential(OauthCredential cred){
+		LoginInfo info=new LoginInfo();
+		if(cred==null){
+			return info;
+		}
+		OauthClientBean ocb=oauthClientService.findByClientId(cred.getClientId());
+		if(ocb==null||!"yes".equals(ocb.getEnableAppPwd())){
+			LOGGER.info("oauth:the clientId ["+cred.getClientId()+"] for oauth, disable app secret or not found");
+			return info;
+		}
+		User user=loginNameDAO.getUserByLoginName(cred.getUserName());
+		if(user==null){
+			LOGGER.info("oauth:can't found user["+cred.getUserName()+"]");
+			return info;
+		}
+		if(User.ACCOUNT_STATUS_LOCKED.equals( user.getAccountStatus())){
+			LOGGER.info("oauth: user["+cred.getUserName()+"]is locked!!!");
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_USER_LOCKED);
+			return info;
+		}
+		AppSecret appSecret=appSecretService.findAppSecretByUidAndAppId(cred.getClientId(),user.getId());
+		if(appSecret==null){
+			LOGGER.info("oauth:this user"+cred.getUserName()+" not have secret!");
+			return info;
+		}
+		if(!transform.transform(CommonUtils.trim(cred.getPassword())).equals(appSecret.getSecret())){
+			LOGGER.info("oauth:passwordError["+cred.getUserName()+"]");
+			return info;
+		}
+		info.setLoginNameInfo(loginNameDAO.getALoginNameInfo(user.getId(),cred.getUserName()));
+		info.setPasswordType("oauth."+cred.getClientId());
+		info.setValidateResult("true");
+		info.setUser(user);
+		return info;
+	}
 	
 	private LoginInfo doUsernamePasswordCredential(UsernamePasswordCredential cred){
 		LoginInfo info=new LoginInfo();
 		if(cred==null){
 			return info;
 		}
+		LOGGER.info("validate user["+cred.getUsername()+"] start!");
 		UsernamePasswordCredential ucred=(UsernamePasswordCredential)cred;
 		String password = transform.transform(ucred.getPassword());
 		User umtUser=loginNameDAO.getUserByLoginName(cred.getUsername());
 		boolean isUmtUser=(umtUser!=null);
+		//如果是umt用户且已经锁定，直接滚粗
+		if(isUmtUser&&(User.ACCOUNT_STATUS_LOCKED.equals(umtUser.getAccountStatus()))){
+			LOGGER.info("user ["+cred.getUsername()+"] is locked! but he want login");
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_USER_LOCKED); 
+			return info;
+		}
 		boolean isUmtPasswordRight=password.equals(isUmtUser?umtUser.getPassword():"");
-		
 		CoreMailAuthenticateResult coreMailResult=coreMailClient.authenticate(isUmtUser?umtUser.getCstnetId():ucred.getUsername(),ucred.getPassword());
 		boolean isMailUser=coreMailResult.isValidUserName();
 		boolean isMailPasswordRight=(isMailUser&&coreMailResult.isSuccess());
@@ -121,12 +226,15 @@ public class PasswordLogin implements LoginService {
 		}
 		//mail验证通过，但是以前umt未存在的用户
 		if(isMailPasswordRight&&(!isUmtUser)){
+			if(!validateCoreMailUser(coreMailResult.getCoreMailInfo(),info)){
+				return info;
+			}
 			if(loginNameDAO.isUsed(ucred.getUsername())){
 				User tmpUser=loginNameDAO.getUserByLoginName(ucred.getUsername());
 				info.setUser(tmpUser);
 				info.setLoginNameInfo(loginNameDAO.getALoginNameInfo(tmpUser.getId(),tmpUser.getCstnetId()));
 			}else{
-				User user=coreMailClient.getCoreMailUserInfo(ucred.getUsername());
+				User user=coreMailResult.getCoreMailInfo().getUser();
 				user.setId(userDAO.create(user));
 				if(user.getId()>0){
 					int infoId=loginNameDAO.createLoginName(user.getCstnetId(), user.getId(), LoginNameInfo.LOGINNAME_TYPE_PRIMARY,LoginNameInfo.STATUS_ACTIVE);
@@ -135,17 +243,24 @@ public class PasswordLogin implements LoginService {
 				}
 			}
 			info.setPasswordType(LoginInfo.TYPE_CORE_MAIL);
+			info.setWeak(isPasswordWeak(cred.getPassword()));
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_SUCCESS); 
 			return info;
 		}
 		//即是umt用户，也是mail用户，但是用mail密码登陆成功
 		else if(isMailPasswordRight&&(isUmtUser)){
+			if(!validateCoreMailUser(coreMailResult.getCoreMailInfo(),info)){
+				return info;
+			}
 			if(!User.USER_TYPE_CORE_MAIL.equals(umtUser.getType())){
 				umtUser.setType(User.USER_TYPE_MAIL_AND_UMT);
-				userDAO.updateValueByColumn(umtUser.getId(), "type",User.USER_TYPE_MAIL_AND_UMT );
+				userDAO.updateValueByColumn(new int[]{umtUser.getId()}, "type",User.USER_TYPE_MAIL_AND_UMT );
 			}
 			info.setUser(umtUser);
 			info.setPasswordType(LoginInfo.TYPE_CORE_MAIL);
 			info.setLoginNameInfo(loginNameInfo);
+			info.setWeak(isPasswordWeak(cred.getPassword()));
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_SUCCESS); 
 			return info;
 		}
 		//umt验证通过，但是mail未存在的用户
@@ -153,6 +268,7 @@ public class PasswordLogin implements LoginService {
 			info.setUser(umtUser);
 			info.setPasswordType(LoginInfo.TYPE_UMT);
 			info.setLoginNameInfo(loginNameInfo);
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_SUCCESS); 
 			return info;
 		}
 		//即是umt用户，也是mail用户，但是用umt密码登陆成功
@@ -163,19 +279,19 @@ public class PasswordLogin implements LoginService {
 			}
 			if(User.USER_TYPE_UMT.equals(umtUser.getType())){
 				umtUser.setType(User.USER_TYPE_MAIL_AND_UMT);
-				userDAO.updateValueByColumn(umtUser.getId(), "type",User.USER_TYPE_MAIL_AND_UMT);
+				userDAO.updateValueByColumn(new int[]{umtUser.getId()}, "type",User.USER_TYPE_MAIL_AND_UMT);
 			}
 			info.setUser(umtUser);
 			info.setLoginNameInfo(loginNameInfo);
 			info.setPasswordType(LoginInfo.TYPE_UMT);
+			info.setValidateResult(LoginInfo.VALIDATE_RESULT_SUCCESS); 
 			return info;
-		}
-		else{
+		}else{
 			return info;
 		}
 	}
 	@Override
-	public synchronized LoginInfo loginAndReturnPasswordType(Credential cred) {
+	public LoginInfo loginAndReturnPasswordType(Credential cred) {
 		if(cred==null){
 			return new LoginInfo();
 		}
@@ -187,6 +303,8 @@ public class PasswordLogin implements LoginService {
 			return doCookieCredential((CookieCredential)cred);
 		}else if(cred instanceof TokenLoginCredential){
 			return doWebLoginCredential((TokenLoginCredential)cred);
+		}else if(cred instanceof OauthCredential){
+			return doOauthCredential((OauthCredential)cred);
 		}
 		return new LoginInfo();
 	}
@@ -232,12 +350,21 @@ public class PasswordLogin implements LoginService {
 	private ITransform transform;
 	private IUserDAO userDAO;
 	private IUserLoginNameDAO loginNameDAO;
+	private IOauthClientService oauthClientService;
+	private IAppSecretService appSecretService;
+	
+	public void setAppSecretService(IAppSecretService appSecretService) {
+		this.appSecretService = appSecretService;
+	}
 	/**
 	 * CoreMail用户验证服务类
 	 **/
 	private ICoreMailClient coreMailClient;
 	
 	
+	public void setOauthClientService(IOauthClientService oauthClientService) {
+		this.oauthClientService = oauthClientService;
+	}
 	public void setLoginNameDAO(IUserLoginNameDAO loginNameDAO) {
 		this.loginNameDAO = loginNameDAO;
 	}

@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +26,8 @@ public class AccessIP {
 	private int id;
 	private int uid;
 	private String ip;
+	private String scope;
+	private String remark ;
 	public int getId() {
 		return id;
 	}
@@ -43,5 +47,22 @@ public class AccessIP {
 		this.ip = ip;
 	}
 	
+	public String getScope() {
+		return scope;
+	}
+	public void setScope(String scope) {
+		this.scope = scope;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+
+
+
+
 
 }

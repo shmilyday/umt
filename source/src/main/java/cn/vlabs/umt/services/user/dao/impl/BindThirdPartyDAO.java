@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +98,8 @@ public class BindThirdPartyDAO  implements IBindThirdPartyDAO{
 		PreparedStatement st=null;
 		List<BindInfo> infos=new ArrayList<BindInfo>();
 		try{
-			st = conn.prepareStatement(SELECT_SQL+BY_UID);
+			String sql ="select b.*, a.name from umt_third_party_bind b left join umt_third_auth a on a.code=b.type  where  b.uid=?";
+			st = conn.prepareStatement(sql);
 			int index=0;
 			st.setInt(++index, uid);
 			rs=st.executeQuery();
@@ -124,6 +127,7 @@ public class BindThirdPartyDAO  implements IBindThirdPartyDAO{
 			info.setType(rs.getString("type"));
 			info.setTrueName(rs.getString("true_name"));
 			info.setUrl(rs.getString("url"));
+			info.setTypeName(rs.getString("name"));
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(),e);
 		}

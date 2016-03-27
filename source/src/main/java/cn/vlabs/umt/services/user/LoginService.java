@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +19,7 @@
 package cn.vlabs.umt.services.user;
 
 import cn.vlabs.umt.services.user.bean.LoginInfo;
+import cn.vlabs.umt.services.user.bean.OauthCredential;
 import cn.vlabs.umt.services.user.bean.UsernamePasswordCredential;
 
 
@@ -47,6 +50,15 @@ public interface LoginService {
 	boolean passwordRight(Credential cred);
 	
 	/**
+	 * Oauth独立应用密码是否有效
+	 * @param cred 身份验证方式,
+	 * @return 密码是否正确
+	 * 
+	 * */
+	boolean oauthPasswordRight(OauthCredential cred);
+	
+	
+	/**
 	 * 验证用户名是否正确，且返回用神马密码登陆的信息,
 	 * @author lvly
 	 * @since 2013-2-4 
@@ -54,4 +66,5 @@ public interface LoginService {
 	 * @param LoginInfo 返回值永远不会是空
 	 * */
 	LoginInfo loginAndReturnPasswordType(Credential cred);
+	
 }

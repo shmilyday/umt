@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +18,6 @@
  */
 package cn.vlabs.umt.services.user.dao;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -114,7 +115,7 @@ public interface IUserDAO {
 	 * @param value 值
 	 * 
 	 **/
-	void updateValueByColumn(int uid,String columnName, String value);
+	void updateValueByColumn(int uid[],String columnName, String value);
 	
 	/**
 	 * 查询用户密码是否正确
@@ -141,4 +142,6 @@ public interface IUserDAO {
 	 * @return
 	 */
 	Collection<User> searchUmtOnly(String keyword, int offset, int size);
+	List<User> getUsersByIds(List<String> uids);
+	void switchGEOInfo(int uid, boolean userSwitch);
 }

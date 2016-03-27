@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +32,17 @@ public interface IOauthClientDAO {
 	void delete(int id);
 	void update(OauthClientBean bean);
 	List<OauthClientBean> getAll();
-	List<OauthClientBean> findByUid(int userId);
+	List<OauthClientBean> findByUid(int userId, String type);
 	/**
 	 * 用户更改时更新，避免管理员可操作字段被覆盖
 	 * @param bean
 	 */
 	void updateDevelop(OauthClientBean bean);
+	List<OauthClientBean> searchClientByKey(String key,int offset,int size); 
+	void updateLogo(OauthClientBean bean, boolean is100Updated,
+			boolean is64Updated, boolean is32Updated, boolean is16Updated);
+	void removeLogo(OauthClientBean bean, boolean is100Updated,
+			boolean is64Updated, boolean is32Updated, boolean is16Updated);
+	List<OauthClientBean> findEnableAppAndAccepted(String type);
+	List<String> getAllCallBack();
 }

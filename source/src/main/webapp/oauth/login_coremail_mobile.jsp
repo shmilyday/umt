@@ -7,25 +7,28 @@
 <%@taglib uri="WEB-INF/tld/falcon.tld" prefix="f"%>
 <fmt:setBundle basename="application" />
 <umt:AppList/>
+<umt:oauthContext/>
 <html>
 <head>
-<% pageContext.setAttribute("context", request.getContextPath()); %>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<f:script src="${context }/js/jquery-1.7.2.min.js"/>
 	<f:script src="${context }/js/cookie.js"/>
+	<f:script src="${context }/js/oauth.js"/>
 	<c:choose>
 		<c:when test="${ipadFlag }">
-			<link rel="stylesheet" type="text/css" href="<umt:url value="/css/coremail_pad.css"/>" />
+			<f:css href="${context }/css/coremail_pad.css"/>
 		</c:when>
 		<c:otherwise>
-			<link rel="stylesheet" type="text/css" href="<umt:url value="/css/coremail_mobile.css"/>" />
+			<f:css href="${context }/css/coremail_mobile.css"/>
 		</c:otherwise>
 	</c:choose>
-	<link rel="stylesheet" type="text/css" href="<umt:url value="/css/embed.css"/>" />
+	<f:css href="${context }/thirdparty/bootstrap/css/bootstrap.min.css"/>
+	<f:css href="${context }/css/oauth.css"/>
+	<f:css href="${context }/css/embed.css"/>
 	<title>coremail mobile page</title>
 </head>
-<body>
+<body class="mobile">
 	<div class="MainR">
 		<div id="logArea">
 			<form  id="loginForm" action="authorize?${user_oauth_request.url}" method="post" class="cst-oauth"  target="_parent">
@@ -33,26 +36,46 @@
 				<input type="hidden" name="pageinfo" value="userinfo">
 				<input type="hidden" name="themeinfo" value="coremail_mobile">
 				<div class="inptr">
-	                <label for="userName" style="margin-top:-6px; *margin-top:-13px;">通行证<span class="sup"><a href="http://passport.escience.cn/help.jsp" target="_blank">[?]</a></span></label>
-	                <input type="text" value="${userName }" class="input" name="userName" id="userName" placeholder="邮件地址/中国科技网通行证">
+	               
+	                <label for="userName" style="margin-top:-6px; *margin-top:-13px;"><fmt:message key="oauth.coremail.passport"/><span class="sup"> <a tabindex="-1" href="https://passport.escience.cn/what-is-cstnet-passport.jsp " target="_blank">[?]</a></span></label>
+	                 <div class="input-prepend">
+					<span class="add-on" id="user"> </span>
+	                <input type="text" value="${userName }" class="input" name="userName" id="userName" placeholder="<fmt:message key='oauth.coremail.username.placeholder'/>">
+	            	</div>
 	            </div>
 	            <div class="inptr">
-	                <label for="password">密&#12288;&#12288;码</label>
-	                <input type="password" id="password" name="password" value="${password }" class="input" placeholder="密码">
+	                <label for="password"><fmt:message key='oauth.coremail.password.lable'/></label>
+	                <div class="input-append">
+								<span class="add-on preparePopover" data-html='true' data-animation='false' data-trigger="click" data-placement="top" 
+								data-content="<a tabindex='-1' href='${context }/help_https.jsp' target='blank' ><fmt:message key='${isHttps?"oauth.https.hint":"oauth.http.hint" }'/></a>" id="${preSpanId }"> 
+								<a tabindex="-1" target="_blank" href="${context }/help_https.jsp"></a>
+								</span>
+	                
+	                <input type="password" id="password" name="password" value="${password }" class="input" placeholder="<fmt:message key='login.password'/>">
+	            	</div>
 	            </div>
 	            <div class="inptr">
 	                <label class="for wholeLine">
-	                   	<input type="checkbox" checked="checked" name=rememberUserName value="yes">记住我
+	                   	<input type="checkbox" checked="checked" name=rememberUserName value="yes" style="margin:0 5px 0 0"><fmt:message key="oauth.coremail.mobile.remember.me"/>
 	                </label>
 	            </div>
 			</form>
 		</div>
 	</div>
 	<div class="loginBtn">
-        <input id="submitButton" type="button" class="Button" value='登&#12288;录'>
+        <input id="submitButton" type="button" class="Button" value='<fmt:message key="oauth.coremail.button"/>'>
     </div>
-
+<f:script  src="${context }/thirdparty/bootstrap/js/bootstrap.min.js"/>
 	<script type="text/javascript">
+	
+	var showValidCode="${showValidCode}";
+	if(showValidCode=="true"||showValidCode==true){
+		var oauthUrl=window.location.href;
+		oauthUrl=oauthUrl.replace("theme=coremail_mobile","theme=full");
+		oauthUrl=oauthUrl.replace("theme=coremail_mobile_ipad","theme=full");
+		window.parent.window.location.href=oauthUrl;
+	}
+	
 	$(document).ready(function(){
 		islogin();
 		function islogin(){
@@ -74,23 +97,25 @@
 			var userName = $("input[name='userName']").val();
 			var password = $("input[name='password']").val();
 			if((userName==null||userName=="")&&(password==""||password==null)){
-				alert("必须填写用户名和密码");
+				alert("<fmt:message key='oauth.coremail.password.usrname.required'/>");
 				$("input[name='userName']").focus();
 				return;
 			}
 			if(userName==null||userName==''){
-				alert("必须填写用户名");
+				alert("<fmt:message key='oauth.coremail.username.required'/>");
 				$("input[name='userName']").focus();
 				return;
 			}
 			if(password==null||password==''){
-				alert("必须填写密码");
+				alert("<fmt:message key='oauth.coremail.passwored.required'/>");
 				$("input[name='password']").focus();
 				return;
 			}
 			var ff={'userName':$("input[name='userName']").val()
 					,'password':$("input[name='password']").val()
 					,'pageinfo':'checkPassword'};
+			ff.clientId=request('client_id');
+			ff.clientName='${client_name }';
 			$.ajax({
 				url:"authorize" ,
 				data:ff,
@@ -99,9 +124,28 @@
 				success : function(data){
 					if(data.status=='true'){
 						$("#loginForm").submit();
-					}else{
-						alert("认证失败, 请仔细检查你输入的用户名和密码");
+						return;
 					}
+					
+					if(data.showValidCode==true){
+						var oauthUrl=window.location.href;
+						oauthUrl=oauthUrl.replace("theme=coremail_mobile","theme=full");
+						oauthUrl=oauthUrl.replace("theme=coremail_mobile_ipad","theme=full");
+						window.parent.window.location.href=oauthUrl;
+						return;
+					}
+					
+					var errorMsg='';
+					if(data.status=='user.expired'){
+						errorMsg='<fmt:message key="login.user.expired"/>';
+					}else if(data.status=='user.locked'){
+						errorMsg='<fmt:message key="login.user.locked"/>';
+					}else if(data.status=='user.stop'){
+						errorMsg='<fmt:message key="login.user.stop"/>';
+					}else{
+						errorMsg='<fmt:message key="login.password.wrong"/>';
+					}
+					alert(errorMsg);
 				}
 			});
 		});

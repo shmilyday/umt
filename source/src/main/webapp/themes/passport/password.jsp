@@ -7,7 +7,7 @@
 	<head>
 		<title><fmt:message key="remindpass.title"/></title>
 		<link href="css/umt.css" rel="stylesheet" type="text/css"/>
-		<link href="images/favicon.ico" rel="shortcut icon"
+		<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon"
 			type="image/x-icon" />
 		<meta http-equiv="pragma" content="no-cache"/>
 		<meta http-equiv="cache-control" content="no-cache"/>

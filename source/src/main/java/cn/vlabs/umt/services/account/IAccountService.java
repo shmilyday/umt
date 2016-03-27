@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +65,8 @@ public interface IAccountService {
 	 **/
 	List<UMTLog> getTopTenLogByEventType(int uid,String eventType);
 	
+	UMTLog getLastLogByEventType(int uid,String eventType);
+	
 	/**
 	 * 记录日志
 	 * @param eventType 出发事件，请看UMTLog.EVENT_TYPE_XXX
@@ -71,4 +75,11 @@ public interface IAccountService {
 	 * @param browserType 浏览器类型
 	 * */
 	void log(String eventType,int uid, String userip, String browserType);
+	
+	List<UMTLog> getMyPreCommonUseGeos(int uid);
+	void removeCommonGEO(int id, int uid);
+	List<UMTLog> readCommonGEO(int uid);
+	void addCommonGEO(UMTLog umtLog);
+	int countCommonGEO(int uid);
+	boolean isExitsCommonGEO(UMTLog umtLog);
 }

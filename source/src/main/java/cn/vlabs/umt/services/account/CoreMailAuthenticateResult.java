@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +18,8 @@
  */
 package cn.vlabs.umt.services.account;
 
+import cn.vlabs.umt.services.user.bean.CoreMailUserInfo;
+
 /**
  * @author lvly
  * @since 2013-9-17
@@ -23,9 +27,21 @@ package cn.vlabs.umt.services.account;
 public class CoreMailAuthenticateResult {
 	private boolean isSuccess;
 	private boolean isValidUserName;
+	private CoreMailUserInfo coreMailInfo;
+	public CoreMailAuthenticateResult(boolean isSuccess,boolean isValidUserName,CoreMailUserInfo coreMailInfo){
+		this(isSuccess,isValidUserName);
+		this.coreMailInfo=coreMailInfo;
+	}
 	public CoreMailAuthenticateResult(boolean isSuccess,boolean isValidUserName){
 		this.isSuccess=isSuccess;
 		this.isValidUserName=isValidUserName;
+	}
+	
+	public CoreMailUserInfo getCoreMailInfo() {
+		return coreMailInfo;
+	}
+	public void setCoreMailInfo(CoreMailUserInfo coreMailInfo) {
+		this.coreMailInfo = coreMailInfo;
 	}
 	public boolean isSuccess() {
 		return isSuccess;

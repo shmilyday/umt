@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +18,7 @@
  */
 package cn.vlabs.umt.common.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,36 +28,37 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import cn.vlabs.umt.ui.PathMapper;
-
-public class Config{
-	public static final String BEAN_ID="Config";
-	public Config(PathMapper mapper, String filename) {
+public class Config {
+	public static final String BEAN_ID = "Config";
+	public Config(String rootPath, String filename) {
 		props = new Properties();
-		FileInputStream fis=null;
+		root = new File(rootPath);
+		FileInputStream fis = null;
 		try {
-			fis=new FileInputStream(mapper.getRealPath(filename));
+			fis = new FileInputStream(getRealPath(filename));
 			props.load(fis);
 		} catch (FileNotFoundException e) {
 			log.error("配置文件" + filename + "未找到。");
 		} catch (IOException e) {
 			log.error(e);
-		}finally{
-			if(fis!=null){
+		} finally {
+			if (fis != null) {
 				try {
 					fis.close();
 				} catch (IOException e) {
-					log.error("",e);
+					log.error("", e);
 				}
 			}
 		}
-		
-		this.mapper=mapper;
 	}
+
 	/**
 	 * 从配置文件中读取一个整数值
-	 * @param key	该配置项的关键字
-	 * @param defaultval	缺省值
+	 * 
+	 * @param key
+	 *            该配置项的关键字
+	 * @param defaultval
+	 *            缺省值
 	 * @return 如果找到了该配置项，并且能转换成整数值，则返回读取的内容。否则返回缺省值
 	 */
 	public int getInt(String key, int defaultval) {
@@ -71,12 +75,15 @@ public class Config{
 
 	/**
 	 * 从配置文件中读取一个布尔值
-	 * @param key	该配置项的关键字
-	 * @param defaultValue 缺省值
+	 * 
+	 * @param key
+	 *            该配置项的关键字
+	 * @param defaultValue
+	 *            缺省值
 	 * @return 如果找到了该配置项，并且能转换成布尔值，则返回读取的内容。否则返回缺省值
 	 */
 	public boolean getBooleanProp(String key, boolean defaultValue) {
-		String value =  getStringProp(key, null);
+		String value = getStringProp(key, null);
 		if (value != null)
 			return Boolean.parseBoolean(value);
 		else
@@ -85,9 +92,12 @@ public class Config{
 
 	/**
 	 * 从配置文件中获取一个字符串值
-	 * @param key	该配置项的关键字
-	 * @param defaultval 缺省值
-	 * @return	如果找到了该配置项，则返回读取的内容。否则返回缺省值
+	 * 
+	 * @param key
+	 *            该配置项的关键字
+	 * @param defaultval
+	 *            缺省值
+	 * @return 如果找到了该配置项，则返回读取的内容。否则返回缺省值
 	 */
 	public String getStringProp(String key, String defaultval) {
 		String value = props.getProperty(key);
@@ -96,36 +106,35 @@ public class Config{
 		} else
 			return defaultval;
 	}
-	
-	public String getMappedPath(String key, String defaultval){
-		String before=this.getStringProp(key, defaultval);
-		if (before!=null){
-			return mapper.getRealPath(before);
-		}else
+
+	public String getMappedPath(String key, String defaultval) {
+		String before = this.getStringProp(key, defaultval);
+		if (before != null) {
+			return getRealPath(before);
+		} else
 			return null;
 	}
-
+	private String getRealPath(String filename) {
+		return new File(root, filename).getAbsolutePath();
+	}
 	private String replace(String input) {
-		Matcher matcher  = pattern.matcher(input);
-    	StringBuffer value = new StringBuffer();
-    	while(matcher.find())
-    	{
-    		String key = matcher.group(1);
-    		String keyValue = this.getStringProp(key,key);
-    		if(keyValue!=null)
-    		{
-    			matcher.appendReplacement(value, keyValue); 
-    		}else
-    		{
-    			matcher.appendReplacement(value, key);
-    		}
-    		
-    	}
-    	matcher.appendTail(value);
+		Matcher matcher = pattern.matcher(input);
+		StringBuffer value = new StringBuffer();
+		while (matcher.find()) {
+			String key = matcher.group(1);
+			String keyValue = this.getStringProp(key, key);
+			if (keyValue != null) {
+				matcher.appendReplacement(value, keyValue);
+			} else {
+				matcher.appendReplacement(value, key);
+			}
+
+		}
+		matcher.appendTail(value);
 		return value.toString();
 	}
-	private PathMapper mapper;
 	private Properties props;
-	private static final Logger log =Logger.getLogger(Config.class);;
+	private File root;
+	private static final Logger log = Logger.getLogger(Config.class);;
 	private static final Pattern pattern = Pattern.compile("\\$\\{([^}]*)\\}");
 }

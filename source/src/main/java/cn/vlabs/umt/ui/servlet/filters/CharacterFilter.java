@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +32,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import net.duckling.cloudy.common.CommonUtils;
+
 public class CharacterFilter implements Filter {
 	public void destroy() {
 		charset = null;
@@ -52,7 +56,15 @@ public class CharacterFilter implements Filter {
 	private static class LocalRequest extends HttpServletRequestWrapper{
 		public LocalRequest(HttpServletRequest request) {
 			super(request);
-			String localeStr= getCookie("umt.locale");
+			//add by lvly
+			String localeStr= request.getParameter("locale");
+			if(CommonUtils.isNull(localeStr)||(!"en_US".equals(localeStr)&&!"zh_CN".equals(localeStr))){
+				localeStr=getCookie("umt.locale");
+			}
+			setLocaleLogic(request,localeStr);
+			
+		}
+		public void setLocaleLogic(HttpServletRequest request,String localeStr){
 			if (localeStr!=null){
 				locale = getloacle(localeStr);
 				if (locale!=null){
@@ -67,6 +79,7 @@ public class CharacterFilter implements Filter {
 			}else{
 				request.getSession(true).setAttribute("user_locale", request.getLocale().toString());
 			}
+			
 		}
 		private boolean isNotZhOrEn(Locale locale){
 			boolean result=false;

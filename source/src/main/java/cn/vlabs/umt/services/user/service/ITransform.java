@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +24,8 @@ package cn.vlabs.umt.services.user.service;
  * @creation Dec 7, 2009 1:35:42 PM
  */
 public interface ITransform {
+	static final String BEAN_ID="transform";
+	
 	 static final String TYPE_MD2 = "MD2";
 
 	 static final String TYPE_MD5 = "MD5";
@@ -35,6 +39,7 @@ public interface ITransform {
 	 static final String TYPE_SHA_384 = "SHA-384";
 
 	 static final String TYPE_SSHA = "SSHA";
+	 static final String TYPE_NT_HASH="NT-Hash";
 	/**
 	 * 变换函数
 	 * @param value 变换前的值

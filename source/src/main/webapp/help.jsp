@@ -6,8 +6,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-		<title>帮助</title>
-		<link href="images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
+		<title><fmt:message key="banner.help"/></title>
+		<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="cache-control" content="no-cache" />
 </head>
@@ -24,10 +24,12 @@
    		<div class="left-nav">
 			<ul class="nav">
 				<li class="active"><a href="help.jsp" class="commonQA">常见问题</a></li>  
-				<li><a href="help_tendays.jsp" class="tendays">十天内免登录简介</a></li>
+				<li ><a href="help_https.jsp" class="proIntro">HTTPS安全连接</a></li>
+				<!-- <li><a href="help_tendays.jsp" class="tendays">十天内免登录简介</a></li> -->
 				<li><a href="help_browser_password.jsp" class="browserPassword">浏览器记住密码</a></li>
 				<li><a href="help_updatelog.jsp" class="changeLog">更新日志</a></li>
 				<li><a href="help_oauth.jsp" class="proIntro">应用接入</a></li>
+				<li><a href="help_download.jsp" class="download">资源下载</a></li>
 			</ul>
 		</div>
 		

@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><fmt:message key="remindpass.input.title"/></title>
+<title><fmt:message key="remindpass.input.title"/></title> 
 </head>
 <body class="login">
 <jsp:include flush="true" page="../banner2013.jsp"></jsp:include>

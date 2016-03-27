@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,20 +38,18 @@ public class RoleServiceImpl implements RoleService {
 	public UMTRole[] getUserRoles(String username) {
 		return rd.getRoles(username);
 	}
-	public void addMember(String rolename, String username) {
-		User u = us.getUserByUmtId(username);
+	public void addMember(String rolename, int uid) {
 		UMTRole role = rd.getRole(rolename);
-		if (u!=null && role!=null)
+		if ( role!=null)
 		{
-			rd.addMember(role.getId(), u.getId());
+			rd.addMember(role.getId(), uid);
 		}
 	}
-	public void removeMemeber(String rolename, String username) {
-		User u = us.getUserByUmtId(username);
+	public void removeMemeber(String rolename, int uid) {
 		UMTRole role = rd.getRole(rolename);
-		if (role!=null && u!=null)
+		if (role!=null )
 		{
-			rd.removeMember(role.getId(), u.getId());
+			rd.removeMember(role.getId(), uid);
 		}
 	}
 	
@@ -64,6 +64,12 @@ public class RoleServiceImpl implements RoleService {
 				}
 			}
 		}
+	}
+	
+	
+	@Override
+	public boolean isMemberOf(String roleName, int uid) {
+		return rd.isMemberOf(roleName,uid);
 	}
 	private RoleDAO rd;
 	private UserService us;

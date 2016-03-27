@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +18,71 @@
  */
 package cn.vlabs.umt.ui;
 
+import java.lang.reflect.Field;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.PropertyConfigurator;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.apache.log4j.Logger;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 import cn.vlabs.umt.common.datasource.CreateTable;
-import cn.vlabs.umt.common.util.Config;
-import cn.vlabs.umt.services.account.ICoreMailClient;
+import cn.vlabs.umt.common.datasource.CreateOauthTokenTable;
+import cn.vlabs.umt.common.job.JobThread;
+import cn.vlabs.umt.common.util.ReflectUtils;
+
+import com.octo.captcha.CaptchaFactory;
+import com.octo.captcha.engine.image.gimpy.DefaultGimpyEngine;
+import com.octo.captcha.module.servlet.image.SimpleImageCaptchaServlet;
+import com.octo.captcha.service.image.ImageCaptchaService;
 
 public class UMTStartupListener implements ServletContextListener {
+	private JobThread thread;
+	private static final Logger LOG=Logger.getLogger(UMTStartupListener.class);
 	public void contextDestroyed(ServletContextEvent event) {
 		ServletContext context = event.getServletContext();
-		FileSystemXmlApplicationContext factory= (FileSystemXmlApplicationContext)context.getAttribute(Attributes.APPLICATION_CONTEXT_KEY);
-		if (factory!=null){
-			context.removeAttribute(Attributes.APPLICATION_CONTEXT_KEY);
-			factory.close();
-			factory=null;
-		}
+		context.removeAttribute(Attributes.APPLICATION_CONTEXT_KEY);
+		thread.interrupt();
 	}
 
 	public void contextInitialized(ServletContextEvent event) {
 		ServletContext context = event.getServletContext();
-		PropertyConfigurator.configure(context.getRealPath("/WEB-INF/conf/log4j.properties"));
-		String contextxml = context.getInitParameter("contextConfigLocation");
-		if (contextxml==null){
-			contextxml="/WEB-INF/conf/UMTContext.xml";
-		}
-		//FIX the bug in linux
-		String realpath = context.getRealPath(contextxml);
-		if (realpath!=null && realpath.startsWith("/")){
-			realpath="/"+realpath;
-		}
-		FileSystemXmlApplicationContext  factory= new FileSystemXmlApplicationContext(realpath);
-		PathMapper mapper = (PathMapper) factory.getBean("PathMapper");
-		mapper.setContext(context);
+		WebApplicationContext factory = ContextLoader.getCurrentWebApplicationContext();
 		
 		CreateTable createTable = (CreateTable) factory.getBean("CreateTable");
 		if (!createTable.isTableExist()){
-			createTable.createTable();
+			createTable.createTable(context);
 		}
+		CreateOauthTokenTable createTokenTable = (CreateOauthTokenTable) factory.getBean("CreateOauthTokenTable");
+		if (!createTokenTable.isTableExist()){
+			createTokenTable.createTable(context);
+		}
+		
 		factory.getBean("UMTCredUtil");
 		context.setAttribute(Attributes.APPLICATION_CONTEXT_KEY, factory);
 		UMTContext.setFactory(factory);
-		
+		//set jcatana gimmy engine
+		ImageCaptchaService obj=(ImageCaptchaService)(SimpleImageCaptchaServlet.service);
+		Field engineF;
+		try {
+			engineF = obj.getClass().getSuperclass().getSuperclass().getSuperclass().getDeclaredField("engine");
+			engineF.setAccessible(true);
+			DefaultGimpyEngine engine=(DefaultGimpyEngine)engineF.get(obj);
+			CaptchaFactory facs=engine.getFactories()[0];
+			ReflectUtils.setValue(facs, "caseSensitive", false);
+		} catch (NoSuchFieldException e) {
+			LOG.error("",e);
+		} catch (SecurityException e) {
+			LOG.error("",e);
+		} catch (IllegalArgumentException e) {
+			LOG.error("",e);
+		} catch (IllegalAccessException e) {
+			LOG.error("",e);
+		}
+		//start jobthread
+		thread=new JobThread();
+		thread.start();
 	}
 }

@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +20,9 @@ package cn.vlabs.umt.validate.validator.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cn.vlabs.umt.common.util.CommonUtils;
-import cn.vlabs.umt.services.session.SessionUtils;
-import cn.vlabs.umt.ui.Attributes;
 import cn.vlabs.umt.validate.validator.Validator;
+
+import com.octo.captcha.module.servlet.image.SimpleImageCaptchaServlet;
 
 /**
  * 验证码是否正确
@@ -40,11 +41,7 @@ public class ValidCodeEqualsValidator implements Validator{
 
 	@Override
 	public boolean validate(String value) {
-		String code=SessionUtils.getSessionVar(request, Attributes.VALID_CODE);
-		if(CommonUtils.isNull(code)||CommonUtils.isNull(value)){
-			return false;
-		}
-		return code.equals(value);
+		return SimpleImageCaptchaServlet.validateResponse(request,value);
 	}
 
 }

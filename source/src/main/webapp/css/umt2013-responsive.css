@@ -10,10 +10,12 @@ data:2013-02-28
 	transition:all 1s;
 } */
 
-@media (max-width:319px) {
+.btn.hide768 {/* display:none\9\0;  IE6 is not responsive */ _display:none; }
+@media screen and (max-width:319px) {
+	#loginForm.form-horizontal .controls,#createRequestForm.form-horizontal .controls {margin-left:0px;}
 }
 
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
 	.login.container {margin-top:70px; margin-bottom:10px;}
 	.login.container h2.login-title span.cstnet,
 	.login.container #loginForm .control-group span.help-block.text-quote,
@@ -30,7 +32,7 @@ data:2013-02-28
 	.form-horizontal {padding:0 5%;}
 	#changepassForm.form-horizontal {margin:0px 5%}
 	.login.container #loginForm input[type="text"],.login.container #loginForm input[type="password"],
-	.login.container #createRequestForm input[type="text"],.login.container #createRequestForm input[type="password"]{width:90%;}
+	.login.container #createRequestForm input[type="text"],.login.container #createRequestForm input[type="password"]{width:90%; *width:auto;}
 	.thirdLogin {margin-top:20px;}
 	
 	.login .login-left {padding-top:0;}
@@ -52,13 +54,9 @@ data:2013-02-28
   	.login.oauth .form-horizontal.oauth .control-group {margin-left:5%;}
 }
 
-/*case 2£ºhorizon for iphone4s(640*960) and iphone5(640*1136) as well as ipad(768)*/
-@media (min-width:481px) and (max-width: 767px) {
-	
-}
 
 /**common for the above two(fluid layout)*/
-@media (max-width:767px) {
+@media screen and (max-width:767px) {
 	.login.container, .login .container {width:auto;}
 	.login .login-right {border-left:none; border-bottom:none; display:none;}
 	.login .login-left {border-right:none;}
@@ -68,14 +66,9 @@ data:2013-02-28
   	.right-content {width:100%}
 }
 
-/*case 3£ºvertical for iphone4s and iphone5*/
-@media (min-width:768px) and (max-width: 960px) {
-  .login .login-right {border-top:none; border-bottom:none;}
-  .hide768,.btn.hide768 {display:none;}
-}
 
 /***common for the above:3*/
-@media (max-width:960px) {
+@media screen and (max-width:960px) {
 	/* body.login, #login .login.container {background:#fff;}
 	.login.container { border:0; box-shadow:none; border-bottom:1px solid #ddd; margin:50px auto;} */
 	body.login {padding-left:3.5%; padding-right:3.5%}
@@ -92,15 +85,29 @@ data:2013-02-28
 }
 
 /*case 4£ºvertical for ipad and all widescreen*/
-@media (min-width: 961px) {
+@media screen and (min-width: 961px) {
 	.login h2.login-title,.login #loginForm .control-group {margin:0 5% 10px}
 	.hide768,.btn.hide768 {display:none;}
 }
 
+/*case 3£ºvertical for iphone4s and iphone5*/
+@media screen and (min-width:768px) and (max-width: 960px) {
+  .login .login-right {border-top:none; border-bottom:none;}
+  .hide768,.btn.hide768 {display:none;}
+  #loginForm.form-horizontal .controls,#createRequestForm.form-horizontal .controls {*margin-left:0px;}
+}
+
+/*case 2£ºhorizon for iphone4s(640*960) and iphone5(640*1136) as well as ipad(768)*/
+@media screen and (min-width:481px) and (max-width: 767px) {
+	#loginForm.form-horizontal .controls,#createRequestForm.form-horizontal .controls {*margin-left:0px;}
+}
+
 /*confirm*/
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
 	/* body.login,.login.container {background:#fff;} */
 	#loginForm.form-horizontal .control-label,#createRequestForm.form-horizontal .control-label {width:auto;}
-  	#loginForm.form-horizontal .controls,#createRequestForm.form-horizontal .controls {margin:0px;}
+	#loginForm.form-horizontal .controls,#createRequestForm.form-horizontal .controls {margin-left:0px;}
+  	#loginForm.form-horizontal .controls.IE7 {*margin-left:-75px; }
+  	#loginForm.form-horizontal .controls.IE7.small-font {*margin-left:-150px}
 }
 

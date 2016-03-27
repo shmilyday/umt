@@ -12,7 +12,8 @@ font{color:#000000;}
 a{ text-decoration:none;}
 a:hover {text-decoration:underline;}
 .blue{ color:#0e3248; font-weight:bold;}
-
+/*用户管理界面的表格*/
+#sessions td{padding:8px 0 8px 0;}
 /*banner 
 body{ margin:auto;width:1000px; padding:0px; font-size:9pt; font-family:"arial,sans-serif"; }
 */

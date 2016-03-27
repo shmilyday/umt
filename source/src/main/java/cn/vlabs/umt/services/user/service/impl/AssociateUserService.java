@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +29,6 @@ import cn.vlabs.umt.services.user.service.IAssociateUserService;
  * @since 2013-3-12
  */
 public class AssociateUserService implements IAssociateUserService {
-	
 	private IAssociateUserDAO associateDAO;
 	private UserService userService;
 	

@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -127,6 +129,26 @@ public class RoleDAOImpl implements RoleDAO {
 		} finally {
 			DatabaseUtil.closeAll(rs, st, conn);
 		}
+	}
+	@Override
+	public boolean isMemberOf(String roleName, int uid) {
+		Connection conn = du.getConnection();
+		ResultSet rs = null;
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("select count(*) c from `umt_role` r left join `umt_role_member` m on r.id=m.roleid where r.rolename=? and m.userid=?");
+			st.setString(1, roleName);
+			st.setInt(2, uid);
+			rs=st.executeQuery();
+			rs.next();
+			return rs.getInt("c")>0;
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage());
+			LOGGER.debug("information:", e);
+		} finally {
+			DatabaseUtil.closeAll(rs, st, conn);
+		}
+		return false;
 	}
 	
 	public void removeMember(int roleid, int userid) {

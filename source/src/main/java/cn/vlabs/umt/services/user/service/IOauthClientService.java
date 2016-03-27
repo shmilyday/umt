@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +18,20 @@
  */
 package cn.vlabs.umt.services.user.service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 import cn.vlabs.umt.common.mail.MailException;
+import cn.vlabs.umt.services.user.bean.LogoUploadResult;
 import cn.vlabs.umt.services.user.bean.OauthClientBean;
 import cn.vlabs.umt.services.user.bean.User;
 
 public interface IOauthClientService {
 	public static final String BEAN_ID = "oauthClientService";
+
 	
 	int save(OauthClientBean bean, boolean needCache);
 	OauthClientBean findByClientId(String clientId);
@@ -41,7 +48,6 @@ public interface IOauthClientService {
 	void deleteFromCache(OauthClientBean bean);
 	void update(OauthClientBean bean);
 	List<OauthClientBean> getAll();
-	List<OauthClientBean> findByUid(int userId);
 	
 	/**
 	 * 新增时，给管理员发邮件
@@ -65,6 +71,25 @@ public interface IOauthClientService {
 	
 	/**
 	 * 管理员更改状态的时候，发送邮件给开发者
+	 * @
 	 * */
 	void sendAdminToDevelop(Locale locale,OauthClientBean bean,User user) ;
+	List<OauthClientBean> searchClientByKey(String key, int offset, int size);
+	/**
+	 * 
+	 * 根据尺寸,上传图标
+	 * @param tmpFile,备份
+	 * @param target "100p","64p","32p","16p"
+	 * @return msg 如果成功返回空
+	 * @throws FileNotFoundException 
+	 * @throws IOException 
+	 * */
+	LogoUploadResult uploadLogo(OauthClientBean bean,File tmpFile,String fileName, String target) throws FileNotFoundException, IOException;
+	void uploadLogoDefault(OauthClientBean bean,File tmpFile) throws FileNotFoundException;
+	void removeLogo(OauthClientBean bean, boolean is100Updated,boolean is64Updated, boolean is32Updated, boolean is16Updated) ;
+	void updateDefaultLogoChange(OauthClientBean bean,File file) throws FileNotFoundException;
+	List<OauthClientBean> findByUid(int userId, String type);
+	List<OauthClientBean> findEnableAppAndAccepted(String type);
+	
+	List<String> getAllCallBack();
 }

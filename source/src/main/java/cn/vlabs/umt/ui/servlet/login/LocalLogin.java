@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +25,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import net.duckling.cloudy.common.CommonUtils;
+
 import org.springframework.beans.factory.BeanFactory;
 
-import cn.vlabs.umt.common.util.CommonUtils;
-import cn.vlabs.umt.ui.Attributes;
+import com.octo.captcha.module.servlet.image.SimpleImageCaptchaServlet;
+import com.octo.captcha.service.CaptchaServiceException;
 
 public class LocalLogin extends LoginMethod {
 	public LocalLogin(BeanFactory factory) {
@@ -42,10 +45,13 @@ public class LocalLogin extends LoginMethod {
 		//检查验证码
 		String requireValid = (String)session.getAttribute(LocalLogin.REQUIRED_VALID);
 		if (requireValid != null) {
-			String savedCode = (String) session
-					.getAttribute(Attributes.VALID_CODE);
 			String validCode = request.getParameter("ValidCode");
-			if (!StringUtils.equals(savedCode, validCode)) {
+			boolean validWrong=true;
+			try{
+				validWrong=SimpleImageCaptchaServlet.validateResponse(request,validCode );
+			}catch(CaptchaServiceException e){
+			}
+			if (!validWrong) {
 				request.setAttribute("WrongValidCode", "true");
 				request.setAttribute("showValidCode", "true");
 				if(!CommonUtils.isNull(validCode)){
@@ -55,7 +61,6 @@ public class LocalLogin extends LoginMethod {
 				}
 				request.setAttribute("username", request.getParameter("username"));
 				doForward("/login.jsp", request, response);
-				session.removeAttribute(Attributes.VALID_CODE);
 				return false;
 			}
 		}
@@ -63,7 +68,7 @@ public class LocalLogin extends LoginMethod {
 	}
 	private static final String WRONG_INPUT_COUNT_KEY = "_wrongInputCountKey";
 	@Override
-	protected void onWrongPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void onWrongPassword(HttpServletRequest request, HttpServletResponse response,String errorMsg) throws ServletException, IOException {
 		String counts =(String)(request.getSession().getAttribute(WRONG_INPUT_COUNT_KEY));
 		if(counts!=null)
 		{
@@ -81,7 +86,7 @@ public class LocalLogin extends LoginMethod {
 		}else{
 			request.getSession().setAttribute(WRONG_INPUT_COUNT_KEY, "1");
 		}
-		request.setAttribute("WrongPassword", "true");
+		request.setAttribute("WrongPassword", errorMsg);
 		doForward("/login.jsp", request, response);
 	}
 }

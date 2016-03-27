@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +52,7 @@ public class AppLogin extends LoginMethod {
 		};
 		return true;
 	}
-	protected void onWrongPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	protected void onWrongPassword(HttpServletRequest request, HttpServletResponse response,String errorMsg) throws ServletException, IOException{
 		HttpSession session = request.getSession();
 		String loginURL=(String) session.getAttribute("applogin.LoginURL");
 		String vmtApp =(String) session.getAttribute("applogin.LoginAPP"); 

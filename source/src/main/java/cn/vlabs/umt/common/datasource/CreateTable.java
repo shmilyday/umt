@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,21 +23,19 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 
-import cn.vlabs.umt.ui.PathMapper;
-
 
 public class CreateTable {
-	public CreateTable(PathMapper mapper, DatabaseUtil du){
-		this.mapper=mapper;
+	public CreateTable(DatabaseUtil du){
 		this.du=du;
 	}
-	public void createTable(){
-		String sqlFile = mapper.getRealPath("/WEB-INF/conf/duckling_v7.sql");
+	public void createTable(ServletContext context){
+		String sqlFile = context.getRealPath("/WEB-INF/conf/duckling_v7.sql");
 		FileInputStream in;
 		try {
 			in = new FileInputStream(sqlFile);
@@ -74,7 +74,6 @@ public class CreateTable {
 		}
 	}
 	
-	private PathMapper mapper;
 	private DatabaseUtil du;
 	private static final Logger LOGGER = Logger.getLogger(CreateTable.class);
 }

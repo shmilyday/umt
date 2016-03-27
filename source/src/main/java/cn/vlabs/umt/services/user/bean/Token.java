@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +20,6 @@ package cn.vlabs.umt.services.user.bean;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import org.json.simple.JSONObject;
 
 /**
  * Token 可用于验证用户身份，比如在激活邮箱，修改密码等
@@ -84,6 +84,7 @@ public class Token implements Serializable{
 	 * 按照约定用即可，或者不用
 	 * */
 	private String content;
+	private String passwordType;
 	public int getUid() {
 		return uid;
 	}
@@ -113,6 +114,14 @@ public class Token implements Serializable{
 	}
 	public void setContent(String var) {
 		this.content = var;
+	}
+	
+	public String getPasswordType() {
+		return passwordType;
+	}
+
+	public void setPasswordType(String passwordType) {
+		this.passwordType = passwordType;
 	}
 	public static final int OPERATION_CHANGE_PASSWORD=1;
 	public static final int OPERATION_ACTIVATION_PRIMARY_EMAIL=2;

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 开源和duckling有差异的请记载这里，其他勿写到这里 -->
 <beans
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
 	default-lazy-init="true">
-	
+	<!-- add by lvly@2013-1-10 coreMail -->
+	<bean id="useableCoreMailClient" class="cn.vlabs.umt.services.account.CoreMailUseableClient">
+		<constructor-arg>
+			<ref bean="Config"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="coremailDAO"/>
+		</constructor-arg>
+	</bean>
 </beans>

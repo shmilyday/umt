@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +29,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author lvly
  */
 public final class RequestUtil {
+	
+	private static final int HTTPS_DEFAULT_PORT = 443;
+	private static final int HTTP_DEFAULT_PORT = 80;
+	
 	private RequestUtil(){
 		
 	}
@@ -90,4 +96,19 @@ public final class RequestUtil {
 		}  
 		return request.getHeader("x-forwarded-for");  
 	}
+	
+	
+	public static String getBaseURL(HttpServletRequest request) {
+		
+		String url = request.getScheme() + "://" + request.getServerName();
+		int port = request.getServerPort();
+		if ((port != HTTP_DEFAULT_PORT) && (port != HTTPS_DEFAULT_PORT)) {
+			url = url + ":" + port;
+		}
+		
+		return url+ request.getContextPath();
+	}
+
+	
+	
 }

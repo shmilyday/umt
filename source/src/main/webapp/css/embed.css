@@ -16,7 +16,7 @@ p.cst-title .sup a {
 	display:inline-block; text-decoration:none;
 }
 .cst-controls span.third {
-	display:block; padding:10px 0; font-size:13px;
+	display:block; padding:10px 0; font-size:13px; _padding:3px 0;
 }
 .cst-controls span.error {color:#a00; margin:5px 0 0 10px; display:inline-block;}
 .cst-controls.thirdLogin a img {
@@ -127,30 +127,30 @@ p.cst-title .sup a {
 
 /*common for the small screen and esp for */
 @media (max-width:700px) {
+	.embed label {font-size:12px;}
 	.cst-container {font-size:14px;}
 	p.cst-title {display:none;}
-	.cst-controls .control-label {width:20%; font-weight:bold; margin-top:6px; color:#888}
+	.cst-controls .control-label {width:20%; font-weight:bold; margin-top:6px; color:#888; font-size:14px;}
 	.cst-controls .controls {margin-left:22%}
 	.cst-controls .control-label.hideBig {display:none;}
 	.cst-controls .control-label.hideBig .sup a {
 		vertical-align:super; color:#08c; font-size:10px; font-family:Arial, Helvetica, sans-serif;
 		display:inline-block; text-decoration:none;}
 	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {
-		width:70%;  padding:7px 6px; height:16px; border-radius:2px;
+		width:auto;  padding:7px 6px; height:16px; border-radius:2px;
 	}
 	.cst-controls input.btn.long[type="submit"] {
 		border-radius:2px; margin-bottom:2px; margin-top:0;
 	}
-	
+	#userName,#password {height:14px;}
 }
 
 /*inline layout esp for dhome index*/
 @media (min-width:661px) and (max-width: 700px) {
-	.cst-container {font-size:13px;}
-	.cst-container { position:relative; margin-top:30px;}
-	.cst-controls .control-label {float:left;width:auto; text-align:left; margin-top:4px; font-weight:normal; margin-left:1%;}
+	.cst-container {font-size:13px;position:relative; margin-top:30px; *margin-top:10px;}
+	.cst-controls .control-label {float:left;width:auto; text-align:left; margin-top:4px; font-weight:normal; margin-left:1%; font-size:12px;}
 	.cst-controls .controls {float:left;  margin-left:1%; }
-	.cst-controls .control-label.hideBig {display:inline-block; margin-top:1px; *margin-top:-4px;}
+	.cst-controls .control-label.hideBig {display:inline-block; margin-top:-2px; *margin-top:-4px;}
 	.cst-controls .control-label.showBig {display:none;}
 	.cst-controls a.cst-forget {display:inline-block; padding:2px 0;}
 	.cst-controls span.third {display:inline-block; padding:0; font-size:13px;}
@@ -161,34 +161,61 @@ p.cst-title .sup a {
 		padding-left:0; margin-left:0;
 	}
 	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {
-		width:auto; max-width:8.5em; font-size:13px; padding:2px 6px; height:16px; border-radius:2px;
+		width:85px; max-width:8.5em; font-size:13px; padding:2px 6px; height:16px; border-radius:2px;
 	}
 	.cst-controls input.btn.long[type="submit"] {
 		padding:0px 6px; font-size:13px; 
+	}
+	#loginForm div.popover-content {padding:0 7px}
+	.popover.top {margin-top:-6px;}
+	#userName,#password {height:19px; *margin-top:-1px;} 
+	#password {*margin-left:-1px;}
+	#user {
+	  background: url(../images/user-16.png) 4px 4px no-repeat #f9f9f9;
+	  width:16px;
+	  height:15px;
+	  *margin-top:1px;
+	}
+	
+	#lockImg {
+	  background: url(../images/lock-16.png) 4px 4px no-repeat #f9f9f9;
+	  width:16px;
+	  height:15px;
+	  *margin-top:1px;
+	}
+	#unlockImg {
+	  background: url(../images/unlock-16.png) 4px 4px no-repeat #f9f9f9;
+	  width:16px;
+	  height:15px;
+	  *margin-top:1px;
 	}
 }
 
 /*max and full layout  esp for dhome login*/
 @media (min-width:701px) {
-	p.cst-title {font-size:22px; font-weight:bold; font-family:Arial,"微软雅黑"; padding-left:5%}
-	.cst-controls .control-label {float:left; width:25%; text-align:right; margin-top:4px; font-weight:bold;}
+	p.cst-title {font-size:22px; font-weight:bold; font-family:Arial,"微软雅黑"; padding-left:5%;margin:1em 0; padding-bottom:10px;}
+	.cst-controls .control-label {float:left; width:25%; text-align:right; margin-top:4px; font-weight:bold; font-size:16px;}
 	.cst-controls .control-label.hideBig {display:none;}
 	.cst-controls .control-label.showBig {display:inline;}
 	.cst-controls .controls {margin-left:27%}
-	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {max-width:20em; width:40%;}
+	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {max-width:20em;}
 }
 
 /*small layout esp for mail.cnic*/
 @media (max-width:370px) {
+	.cst-container {width:98%}
 	.cst-controls .control-label {width:100%; text-align:left; margin:4px 1% 10px; font-weight:normal; margin-left:1%;}
 	.cst-controls .controls {width:100%; margin:4px 1% 10px;}
-	.cst-controls span.error {margin-left:0;}
+	.cst-controls span.error {margin-left:0; display:block;}
 	.cst-controls .control-label.hideBig {display:none; color:#999}
 	.cst-controls .control-label.showBig {display:inline;}
 	.cst-controls .controls input[type="text"],.cst-controls .controls input[type="password"] {
-		padding:6px; max-width:auto; width:80%;
+		padding:6px; max-width:auto; width:auto; 
 	}
 	.cst-controls input.btn.long[type="submit"] {
 		padding:5px 8%; font-size:14px; 
 	}
+	#userName,#password {height:16px; width:100%} 
+	.input-append, .input-prepend {margin-bottom:0}
+	.popover.top .arrow {left:19px}
 }

@@ -9,7 +9,7 @@
 <html>
 	<head>
 		<title>更改账号</title>
-		<link href="images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
+		<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="cache-control" content="no-cache" />
 		<script type="text/javascript" src="js/ValidateCode.js"></script>
@@ -68,7 +68,8 @@
 				 rules: {
 					 username:{required:true,email:true},
 					 password:{required:true/*,minlength:6*/},
-					 ValidCode:{required:true,number:true}
+					 ValidCode:{
+						 required:true
 				 },
 				 messages: {
 					 username: {
@@ -80,8 +81,7 @@
 						 /*minlength:toRed('<fmt:message key="common.validate.password.minlength"/>')*/
 					 },
 					 ValidCode:{
-						 required:toRed('<fmt:message key="common.validate.validateCode.required"/>'),
-						 number:toRed('<fmt:message key="common.validate.validateCode.number"/>')
+						 required:toRed('<fmt:message key="common.validate.validateCode.required"/>')
 					 }
 					 
 				 },

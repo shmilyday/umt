@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +18,6 @@
  */
 package cn.vlabs.umt.services.user;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -94,6 +95,8 @@ public interface UserService {
 	 * 
 	 * */
 	void updateValueByColumn(int uid,String columnName,String value);
+	
+	void updateValueByColumn(int[] uid,String columnName,String value);
 	/**
 	 * 修改用户密码
 	 * @param username	用户名
@@ -131,9 +134,10 @@ public interface UserService {
 	 * @param userName 要发送的地址，也就是刚注册成功或者更换成功的账户
 	 * @param activeUrl 激活地址
 	 * @param loginNameInfoId 账户Id
+	 * @return 
 	 * 
 	 * */
-	void sendActivateionLoginMailAndSecurity(Locale locale,int uid,String loginName,String baseUrl,int loginNameInfoId);
+	boolean sendActivateionLoginMailAndSecurity(Locale locale,int uid,String loginName,String baseUrl,int loginNameInfoId);
 	/**
 	 * 提交确认邮件
 	 * @param locale 国际化参数
@@ -194,7 +198,7 @@ public interface UserService {
 	 * @param usernames
 	 * @return
 	 */
-	Set<String> isExist(String[] usernames);
+	Set<String> isExist(String... usernames);
 	/**
 	 * 查询用户,老方法，不建议使用
 	 * @param query
@@ -286,8 +290,14 @@ public interface UserService {
 	/**
 	 * 当前账户名，是否被使用
 	 * @param loginName
+	 * @return 1,可用, 2,已被使用,3,域名不允许注册,4,其他验证错误
+	 * 
 	 **/
-	boolean isUsed(String loginName);
+	int USER_NAME_UNUSED=1;
+	int USER_NAME_USED=2;
+	int USER_NAME_DOMAIN_NOT_ALLOWD=3;
+	int USER_NAME_VALIDATE_ERROR=4;
+	int isUsed(String loginName);
 	
 	/**
 	 * 除了本人，其他的冗余信息全部删掉，因为有抢注存在，慎用
@@ -298,6 +308,12 @@ public interface UserService {
 	 * 返回loginNameInfoId
 	 * */
 	User upgradeCoreMailUser(String loginName);
+	
+	/**
+	 * 更新用户状态
+	 * */
+	void switchGEOInfo(User user);
+	
 	
 	
 }

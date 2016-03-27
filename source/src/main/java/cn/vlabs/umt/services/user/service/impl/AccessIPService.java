@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +35,8 @@ public class AccessIPService implements IAccessIPService {
 	}
 
 	@Override
-	public void addAccessIp(int uid, String ip) {
-		dao.addAccessIp(uid, ip);
+	public void addAccessIp(int uid, String ip, String scope, String remark) {
+		dao.addAccessIp(uid, ip, scope, remark);
 	}
 
 	@Override
@@ -43,8 +45,12 @@ public class AccessIPService implements IAccessIPService {
 	}
 
 	@Override
-	public boolean canAccess(String ip) {
-		return dao.canAccess(ip);
+	public boolean canAccessScope_B(String ip) {
+		return dao.canAccess(ip,"B");
+	}
+	@Override
+	public boolean canAccess_A(String ip) {
+		return dao.canAccess(ip,"A");
 	}
 
 	@Override

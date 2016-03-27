@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>回调地址错误</title>
 </head>
 <body id="login" class="login">
 	<jsp:include flush="true" page="../banner2013.jsp"></jsp:include>

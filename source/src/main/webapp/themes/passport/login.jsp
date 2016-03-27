@@ -9,7 +9,7 @@
 		<title><fmt:message key="login.title" />
 		</title>
 		<link rel="stylesheet" type="text/css" href="css/umt.css" />
-		<link href="images/favicon.ico" rel="shortcut icon"
+		<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon"
 			type="image/x-icon" />
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="cache-control" content="no-cache" />

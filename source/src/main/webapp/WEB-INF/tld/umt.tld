@@ -125,6 +125,27 @@
         </attribute>
     </tag>
     
+    <!-- isEqualsContains -->
+    <tag >
+    	<name>isEqualsContain</name>
+    	<tag-class>cn.vlabs.umt.ui.tags.IsEqualsContainTag</tag-class>
+    	<attribute>
+        	<name>array</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+        	<name>var</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <!-- Oauth的登录界面需参数,统一放到一个上下文里面-->
+    <tag>
+	    <name>oauthContext</name>
+	    <tag-class>cn.vlabs.umt.ui.tags.OauthContextTag</tag-class>
+    </tag>
+    
     <tag>
         <name>registerLink</name>
         <tag-class>cn.vlabs.umt.ui.tags.RegisterLinkTag</tag-class>
@@ -137,5 +158,23 @@
     <tag>
     	<name>refreshUser</name>
     	<tag-class>cn.vlabs.umt.ui.tags.RefreshUserTag</tag-class>
+    </tag>
+	<tag >
+    	<name>showInLoginAuths</name>
+    	<tag-class>cn.vlabs.umt.ui.tags.ShowInLoginAuthsTag</tag-class>
+        <attribute>
+        	<name>var</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+	<tag >
+    	<name>isThirdParty</name>
+    	<tag-class>cn.vlabs.umt.ui.tags.IsThirdPartyTag</tag-class>
+        <attribute>
+        	<name>type</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 </taglib>

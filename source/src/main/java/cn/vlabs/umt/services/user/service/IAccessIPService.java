@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +30,10 @@ public interface IAccessIPService {
 	static final String BEAN_ID="accessIPService";
 	/**
 	 * 增加允许访问的ip
+	 * @param scope TODO
+	 * @param desc TODO
 	 * */
-	void addAccessIp(int uid,String ip);
+	void addAccessIp(int uid,String ip, String scope, String desc);
 	/**
 	 * 获得所有允许访问的ip
 	 * */
@@ -37,10 +41,11 @@ public interface IAccessIPService {
 	/**
 	 * 此ip是否允许访问
 	 * */
-	boolean canAccess(String ip);
+	boolean canAccessScope_B(String ip);
 	/**
 	 * 删除指定ip
 	 **/
 	void deleteIp(int ipId);
+	boolean canAccess_A(String ip);
 
 }

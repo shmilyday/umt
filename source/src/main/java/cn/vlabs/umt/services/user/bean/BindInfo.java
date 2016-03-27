@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +27,10 @@ public class BindInfo {
 	public static final String SUBFIX="@passport.escience.cn";
 	public static final String LIKE_EMAIL="tempemail"+SUBFIX;
 	public static final String TYPE_QQ="qq";
+	public static final String TYPE_WEIXIN="weixin";
 	public static final String TYPE_SINA="weibo";
 	public static final String TYPE_CASHQ_SSO="cashq";
+	public static final String TYPE_CAS_GEO="geo";
 	public static final String TYPE_UAF="uaf";
 	private int id;
 	private int uid;
@@ -34,8 +38,12 @@ public class BindInfo {
 	private String trueName;
 	private String openId;
 	private String url;
+	private String typeName;
 	public BindInfo(){
 		
+	}
+	public static boolean isSupportedThirdParty(String type){
+		return TYPE_QQ.equals(type)||TYPE_SINA.equals(type)||TYPE_CASHQ_SSO.equals(type)||TYPE_CASHQ_SSO.equals(type)||TYPE_CAS_GEO.equals(type);
 	}
 	public BindInfo(int uid, String screenName, String openId, String type){
 		this.uid=uid;
@@ -92,7 +100,16 @@ public class BindInfo {
 	 * @return
 	 */
 	public static boolean isThirdParty(String type) {
-		return BindInfo.TYPE_QQ.equals(type)||BindInfo.TYPE_SINA.equals(type)||BindInfo.TYPE_CASHQ_SSO.equals(type)||BindInfo.TYPE_UAF.equals(type);
+		return BindInfo.TYPE_QQ.equals(type)||BindInfo.TYPE_SINA.equals(type)||BindInfo.TYPE_CASHQ_SSO.equals(type)||BindInfo.TYPE_UAF.equals(type)||BindInfo.TYPE_CAS_GEO.equals(type)||BindInfo.TYPE_WEIXIN.equals(type);
+	}
+	public static boolean isBuildinThirdParty(String type){
+		return BindInfo.TYPE_QQ.equalsIgnoreCase(type)||BindInfo.TYPE_SINA.equalsIgnoreCase(type)||BindInfo.TYPE_CASHQ_SSO.equalsIgnoreCase(type)||BindInfo.TYPE_CAS_GEO.equalsIgnoreCase(type)||BindInfo.TYPE_UAF.equalsIgnoreCase(type)||BindInfo.TYPE_WEIXIN.equalsIgnoreCase(type);
+	}
+	public String getTypeName() {
+		return typeName;
+	}
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
 	}
 	
 }

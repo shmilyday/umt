@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +38,7 @@ import cn.vlabs.umt.common.util.CommonUtils;
 import cn.vlabs.umt.services.account.ICoreMailClient;
 import cn.vlabs.umt.services.user.LoginService;
 import cn.vlabs.umt.services.user.UserService;
+import cn.vlabs.umt.services.user.bean.CoreMailUserInfo;
 import cn.vlabs.umt.services.user.bean.LoginNameInfo;
 import cn.vlabs.umt.services.user.bean.User;
 import cn.vlabs.umt.services.user.bean.UserField;
@@ -60,7 +63,10 @@ public class RestUserServiceV7Impl {
 	}
 	@RestMethod("createUser")
 	public void createUser(UMTUser user) throws ServiceException{
-		if (service.isUsed(user.getCstnetId())){
+		int rtnCode=service.isUsed(user.getCstnetId());
+		if (rtnCode==UserService.USER_NAME_DOMAIN_NOT_ALLOWD){
+			throw new ServiceException(ErrorCode.DOMAIN_NOT_ALLOWD,"此域名不允许注册");
+		}else if(rtnCode!=UserService.USER_NAME_UNUSED){
 			throw new ServiceException(ErrorCode.USER_EXIST,"用户已存在");
 		}
 		try {
@@ -76,6 +82,11 @@ public class RestUserServiceV7Impl {
 			try {
 				String orgPassword=umtUser.getPassword();
 				User user=toUser(umtUser);
+				int rtnCode=service.isUsed(user.getCstnetId());
+				if (rtnCode!=UserService.USER_NAME_UNUSED){
+					users.set(index++,umtUser);
+					continue;
+				}
 				service.create(user,LoginNameInfo.STATUS_ACTIVE);
 				umtUser=toUMTUser(user);
 				umtUser.setPassword(orgPassword);
@@ -108,7 +119,11 @@ public class RestUserServiceV7Impl {
 	public UMTUser getUMTUserByLogiName(String loginName){
 		User umtUser=service.getUserByLoginName(loginName);
 		if(umtUser==null){
-			return toUMTUser(coreMailclient.getCoreMailUserInfo(loginName));
+			CoreMailUserInfo coreMailUserInfo=coreMailclient.getCoreMailUserInfo(loginName);
+			if(coreMailUserInfo==null){
+				return null;
+			}
+			return toUMTUser(coreMailUserInfo.getUser());
 		}
 		return toUMTUser(umtUser);
 	}
@@ -207,14 +222,15 @@ public class RestUserServiceV7Impl {
 	}
 	@RestMethod("updateUserWithoutPwd")
 	public synchronized void updateUserWithoutPwd(UMTUser user) throws ServiceException {
-		if (service.isUsed(user.getCstnetId())){
+		if (service.isUsed(user.getCstnetId())==UserService.USER_NAME_USED){
 			User localUser=service.getUserByLoginName(user.getCstnetId());
 			if(localUser!=null){
 				localUser.setTrueName(user.getTruename());
 				service.update(localUser, false);
 				return;
 			}
-			User coreMailUser=coreMailclient.getCoreMailUserInfo(user.getCstnetId());
+			CoreMailUserInfo coreMailUserInfo=coreMailclient.getCoreMailUserInfo(user.getCstnetId());
+			User coreMailUser=coreMailUserInfo.getUser();
 			if(coreMailUser!=null){
 				try {
 					service.create(coreMailUser, LoginNameInfo.STATUS_ACTIVE);
@@ -243,12 +259,13 @@ public class RestUserServiceV7Impl {
 		 if(CommonUtils.isNull(keyWord)){
 			  return null;
 		  }
-		keyWord=keyWord.replaceAll("%", "").replaceAll("_", "");
+		
 		if(CommonUtils.isNull(keyWord)){
 			  return null;
 		 }
 		switch(scope){
 			case UMT:{
+				keyWord=keyWord.replaceAll("%", "\\%").replaceAll("_", "\\_");
 				result=service.searchUmtOnly(keyWord, offset, size);
 				break;
 			}
@@ -278,9 +295,10 @@ public class RestUserServiceV7Impl {
 		String[] umtIds=new String[cstnetIds.size()];
 		int index=0;
 		for(String cstnetId:cstnetIds){
-			User user=service.getUserByLoginName(cstnetId);
-			if(user==null&&coreMailclient.isUserExt(cstnetId)){
-				user=coreMailclient.getCoreMailUserInfo(cstnetId);
+			String lower=cstnetId.toLowerCase();
+			User user=service.getUserByLoginName(lower);
+			if(user==null&&coreMailclient.isUserExt(lower)){
+				user=coreMailclient.getCoreMailUserInfo(lower).getUser();
 				service.create(user, LoginNameInfo.STATUS_ACTIVE);
 			}
 			if(user!=null){
@@ -303,7 +321,7 @@ public class RestUserServiceV7Impl {
 	private UMTUser toUMTUser(User user){
 		if (user!=null){
 			UMTUser umtUser= new UMTUser();
-			umtUser.setCstnetId(user.getCstnetId());
+			umtUser.setCstnetId(user.getCstnetId().toLowerCase());
 			umtUser.setUmtId(user.getUmtId());
 			umtUser.setSecondaryEmails(user.getSecondaryEmails());
 			umtUser.setSecurityEmail(user.getSecurityEmail());
@@ -327,7 +345,7 @@ public class RestUserServiceV7Impl {
 	private User toUser(UMTUser user){
 		User u = new User();
 		u.setUmtId(user.getUmtId());
-		u.setCstnetId(user.getCstnetId());
+		u.setCstnetId(user.getCstnetId().toLowerCase());
 		u.setPassword(user.getPassword());
 		u.setTrueName(user.getTruename());
 		return u;

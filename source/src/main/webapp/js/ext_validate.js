@@ -41,6 +41,25 @@ function passWordHasSpace(value){
 	var regixAllBig=/ /;
 	return regixAllBig.test(value);
 }
+/**
+ * 验证是否有小写字母
+ * **/
+function passWordHasSmall(value){
+	var regix=/[a-z]+/;
+	return regix.test(value);
+}
+function passWordHasBig(value){
+	var regix=/[A-Z]+/;
+	return regix.test(value);
+}
+function passWordHasNum(value){
+	var regix=/[0-9]+/;
+	return regix.test(value);
+}
+function passWordHasSpecial(value){
+	var regix=/[!@#$%\^&*\(\)\_+\-\=\~\`\[\]\\\{\}\|\;\':\",\.\/\<\>\?]+/; 
+	return regix.test(value);
+}
 jQuery.validator.addMethod("passwordNotEquals",  //addMethod第1个参数:方法名称
 function(value, element, params) {     //addMethod第2个参数:验证方法，参数（被验证元素的值，被验证元素，参数）
 			if(value==''||params.notEquals()==''){
@@ -80,3 +99,16 @@ jQuery.validator.addMethod("passwordHasSpace",  //addMethod第1个参数:方法�
 		}
 	    return !passWordHasSpace(value)&&params;
  },'Password has Space');
+jQuery.validator.addMethod("registDomain",  //addMethod第1个参数:方法名称
+		function(value, element, params) {     //addMethod第2个参数:验证方法，参数（被验证元素的值，被验证元素，参数）
+			var result=true;			
+			$.ajax({
+				url:'createRequest.do?act=usercheck&returnCode=true&username='+$("#username").val(),
+				async:false,
+				success:function(data){
+					result=(data==1);
+				}
+			});
+			return result;
+ });
+

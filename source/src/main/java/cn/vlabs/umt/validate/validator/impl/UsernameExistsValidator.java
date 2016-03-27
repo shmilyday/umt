@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +20,6 @@ package cn.vlabs.umt.validate.validator.impl;
 
 import org.springframework.beans.factory.BeanFactory;
 
-import cn.vlabs.umt.services.account.ICoreMailClient;
 import cn.vlabs.umt.services.user.UserService;
 import cn.vlabs.umt.validate.validator.Validator;
 
@@ -50,11 +51,7 @@ public class UsernameExistsValidator implements Validator{
 			username = username.toLowerCase();
 		}
 		UserService us = getUserService();
-		boolean isEx=us.isUsed(username);;
-		if(!isEx){
-			isEx=ICoreMailClient.getInstance().isUserExt(username);
-		}
-		return !isEx;
+		return us.isUsed(username)==UserService.USER_NAME_UNUSED;
 	}
 
 }

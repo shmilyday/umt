@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import cn.vlabs.commons.principal.UserPrincipalV7;
-import cn.vlabs.duckling.api.umt.sso.UserContext;
 import cn.vlabs.duckling.api.umt.sso.configable.msg.Message;
 import cn.vlabs.duckling.api.umt.sso.configable.service.ILoginHandle;
 

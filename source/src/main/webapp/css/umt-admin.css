@@ -156,6 +156,13 @@ ul.sub-nav {
 	margin: 30px 4%;
 	padding-left:0;
 }
+
 ul.sub-nav li a {padding:10px;font-size:12px; }
 .nav-bar ul.nav { margin:0;}
 #mailTempCnt input,#mailTempCnt  textarea, #mailTempCnt  .uneditable-input {width:520px;}
+
+#detailUserContent>tbody>tr>td:FIRST-CHILD {
+	font-weight:bold;
+	text-align:right; 
+	vertical-align: top;
+}

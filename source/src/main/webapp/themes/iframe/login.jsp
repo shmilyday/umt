@@ -11,7 +11,7 @@
 <title><fmt:message key="login.title" /></title>
 <link rel="stylesheet" type="text/css"
 	href="themes/iframe/css/umt-aone.css" />
-<link href="images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 <meta http-equiv="pragma" content="no-cache" />
 <meta http-equiv="cache-control" content="no-cache" />
 <script type="text/javascript" src="js/ValidateCode.js"></script>

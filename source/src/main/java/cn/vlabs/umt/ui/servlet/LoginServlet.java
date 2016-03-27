@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.duckling.cloudy.common.CommonUtils;
+
 import org.springframework.beans.factory.BeanFactory;
 
+import cn.vlabs.umt.common.ReturnURLUtils;
 import cn.vlabs.umt.ui.Attributes;
 import cn.vlabs.umt.ui.servlet.login.LocalLogin;
 
@@ -68,10 +73,21 @@ public class LoginServlet extends HttpServlet {
 		Map<String,String> siteInfo=new HashMap<String,String>();
 		for (String param:Attributes.SSO_PARAMS){
 			if (request.getParameter(param)!=null){
-				siteInfo.put(param, request.getParameter(param));
+				if(param.equals(Attributes.RETURN_URL)){
+					String returnUrl=request.getParameter(param);
+					returnUrl=ReturnURLUtils.checkUrl(returnUrl);
+					siteInfo.put(param, returnUrl);
+				}else{
+					siteInfo.put(param, request.getParameter(param));
+				}
 			}
 		}
+		setReturnUrl(request);
 		session.setAttribute(Attributes.SITE_INFO, siteInfo);
+	}
+	private void setReturnUrl(HttpServletRequest request){
+		String returnUrl=CommonUtils.trim(request.getParameter("returnUrl"));
+		request.setAttribute("returnUrl", ReturnURLUtils.checkUrl(returnUrl));
 	}
 	private BeanFactory factory;
 }

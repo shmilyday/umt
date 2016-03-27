@@ -34,7 +34,7 @@ function commonFooter(){
 			'				<li><a href="http://csp.escience.cn" target="_blank">会议服务平台</a></li>'+
 			'				<li><a href="http://mail.escience.cn" target="_blank">邮箱</a></li>'+
 			'				<li><a href="http://www.escience.cn/site" target="_blank">中国科技网资源导航</a></li>'+
-			'				<li><a href="http://rol.escience.cn" target="_blank">实验室信息系统</a></li>'+
+			'				<li><a href="http://dc.cstnet.cn" target="_blank">桌面会议系统</a></li>'+
 			'				<div class="clear"></div>'+			
 			'			</ul>'+
 			'		</div>'+		
@@ -50,5 +50,5 @@ function commonFooter(){
 			'		<div class="clear"></div>'+
 			'	</div>'+
 			'</div>'
-	);
+	); 
 }

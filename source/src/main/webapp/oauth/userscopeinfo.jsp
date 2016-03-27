@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>用户权限选择</title>
 </head>
 <body>
 	<jsp:include flush="true" page="../banner2013.jsp"></jsp:include>

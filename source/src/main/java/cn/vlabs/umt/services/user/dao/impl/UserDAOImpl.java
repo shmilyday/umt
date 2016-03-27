@@ -1,5 +1,23 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. 
+ *
+ */
+/*
+c * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +39,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -40,10 +59,13 @@ public class UserDAOImpl implements IUserDAO {
 		this.du = du;
 	}
 	@Override
-	public void updateValueByColumn(int uid,String columnName, String value) {
+	public void updateValueByColumn(int[] uid,String columnName, String value) {
+		String uidStr=Arrays.toString(uid);
+		uidStr=uidStr.substring(1,uidStr.length()-1);
 		String sql=" update umt_user set "+
 					columnName+"=? "+
-					" where id=? "; 
+					" where id in ("+uidStr+") ";
+		
 		Connection conn = du.getConnection();
 		ResultSet rs = null;
 		PreparedStatement st = null;
@@ -51,7 +73,6 @@ public class UserDAOImpl implements IUserDAO {
 			st = conn.prepareStatement(sql);
 			int index=0;
 			st.setString(++index,value);
-			st.setInt(++index, uid);
 			st.execute();
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(),e);
@@ -93,7 +114,7 @@ public class UserDAOImpl implements IUserDAO {
 			int index=0;
 			st.setString(++index, user.getTrueName());
 			st.setString(++index, user.getPassword());
-			st.setString(++index, user.getCstnetId());
+			st.setString(++index, user.getCstnetId().toLowerCase());
 			st.setString(++index, user.getType());
 			st.execute();
 			rs = st.getGeneratedKeys();
@@ -107,10 +128,10 @@ public class UserDAOImpl implements IUserDAO {
 				umtId=user.getUmtId();
 			}
 			user.setUmtId(umtId);
-			updateValueByColumn(uid, "umt_id", umtId);
+			updateValueByColumn(new int[]{uid}, "umt_id", umtId);
 			if(CommonUtils.isNull(user.getCstnetId())||BindInfo.LIKE_EMAIL.equals(user.getCstnetId())){
 				user.setCstnetId(BindInfo.getDummyEmail(user.getUmtId()));
-				updateValueByColumn(uid,"cstnet_id",user.getCstnetId());
+				updateValueByColumn(new int[]{uid},"cstnet_id",user.getCstnetId());
 			}
 			return uid;
 		} catch (SQLException e) {
@@ -190,6 +211,9 @@ public class UserDAOImpl implements IUserDAO {
 	}
 	@Override
 	public List<User> getUsersByUmtId(List<String> umtIds) {
+		if(CommonUtils.isNull(umtIds)){
+			return null;
+		}
 		Connection conn = du.getConnection();
 		ResultSet rs = null;
 		PreparedStatement st = null;
@@ -262,7 +286,7 @@ public class UserDAOImpl implements IUserDAO {
 	private User readUser(ResultSet rs) throws SQLException {
 		User u = new User();
 		u.setId(rs.getInt("id"));
-		u.setCstnetId(rs.getString("cstnet_id"));
+		u.setCstnetId(rs.getString("cstnet_id").toLowerCase());
 		u.setPassword(rs.getString("password"));
 		u.setTrueName(rs.getString("true_name"));
 		u.setUmtId(rs.getString("umt_id"));
@@ -271,7 +295,10 @@ public class UserDAOImpl implements IUserDAO {
 		if(!CommonUtils.isNull(secondaryEmails)){
 			u.setSecondaryEmails(secondaryEmails.split(";"));
 		}
+		u.setSendGEOEmailSwitch(rs.getBoolean("send_geo_email_switch"));
 		u.setSecurityEmail(rs.getString("security_email"));
+		u.setAccountStatus(rs.getString("account_status"));
+		u.setCreateTime(rs.getTimestamp("create_time"));
 		return u;
 	}
 	public int getUserCount() {
@@ -478,6 +505,55 @@ public class UserDAOImpl implements IUserDAO {
 		}
 		return list;
 	}
+	@Override
+	public List<User> getUsersByIds(List<String> uids) {
+		Connection conn = du.getConnection();
+		ResultSet rs = null;
+		PreparedStatement st = null;
+		List<User> list=new ArrayList<User>();
+		try {
+			StringBuffer sb=new StringBuffer(SELECT_BASE);
+			sb.append(" and id in(");
+			for(int i=0;i<uids.size();i++){
+				sb.append("?,");
+			}
+			sb.deleteCharAt(sb.length()-1);
+			sb.append(")");
+			st=conn.prepareStatement(sb.toString());
+			int index=0;
+			for(String uid:uids){
+				st.setString(++index, uid);
+			}
+			rs= st.executeQuery();
+			while(rs.next()){
+				list.add(readUser(rs));
+			}
+			return list;
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeAll(rs, st, conn);
+		}
+		return list;
+	}
+	
+	@Override
+	public void switchGEOInfo(int uid, boolean userSwitch) {
+		Connection conn = du.getConnection();
+		ResultSet rs = null;
+		PreparedStatement st = null;
+		String sql="update umt_user set send_geo_email_switch='"+userSwitch+"' where id=?";
+		try {
+			st=conn.prepareStatement(sql);
+			int index=0;
+			st.setInt(++index, uid);
+			st.executeUpdate();
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeAll(rs, st, conn);
+		}
+	}
 	
 	private DatabaseUtil du;
 
@@ -494,7 +570,7 @@ public class UserDAOImpl implements IUserDAO {
 
 	private static final  String DELETE_SQL = "delete from umt_user where id=?";
 
-
+    private static final String SELECT_BASE="select * from umt_user where 1=1 ";
 	private static final  String UPDATE_ALL_SQL = "update umt_user set true_name=?, password=? where umt_id=?";
 	private static final  String UPDATE_WITH_OUT_PASSWORD_SQL = "update umt_user set true_name=? where umt_id=?";
 	private static final  String SELECT_SQL_BY_UMT_ID="select * from `umt_user` where `umt_id` in ";

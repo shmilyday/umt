@@ -5,6 +5,7 @@ data:2013-01-15
 */
 
 /* black banner */
+
 body.login {font-family:Arial,"宋体"; font-size:14px; background:url(../images/body_bg.png) repeat-x #ebeded;}
 .clear {clear:both;}
 img {border:none;}
@@ -29,7 +30,9 @@ a.delete{margin-left:10px; cursor:pointer;}
 	margin-bottom:50px;
 }
 .nav-bar .logoDiv {float:left;}
-.login-right .duckling-logo {background:url(../images/login/logo-duckling.png) 2px 0px no-repeat; cursor:pointer; margin-top:5px; display:inline-block; width:22px; height:16px;} 
+.nav-bar .logoDiv > a.duckling-logo.logo {background:url(../images/umtIcon-24.png) 0 8px no-repeat; width:30px; height:34px; display:block; float:left;}
+.login-right .duckling-logo,
+	.duckling-logo-small {background:url(../images/duckling-logo-new.png) center 0px no-repeat; cursor:pointer; margin-top:5px; margin-bottom:-3px; display:inline-block; width:20px; height:16px;} 
 .nav-bar .logo-title {cursor:pointer;display:inline-block; width:150px; height:30px; color:#fff; font-weight:bold; vertical-align:middle; margin-top:10px;}
 .nav-bar ul.nav {float:left; list-style:none; padding-left:0em; margin:0;}
 .nav-bar ul.nav-right {float:right; list-style:none; margin:0;}
@@ -109,8 +112,8 @@ a.tendaysHelp {
 	margin-top:-1px; border-top:1px solid #ddd; border-left:1px solid #ddd;
 }
 .login .login-right a {color:#333; border-bottom:1px dotted #333; text-decoration:none;}
-.login .login-right h3 {font-size:14px; padding:30px 5% 10px 5%; margin:30px 5% 0; border-top:1px solid #f5f5f5;}
-.login .login-right p {padding:5px 10% 5px 10%; margin:5px 0; line-height:1.7em;text-align:justify; text-justify:inter-ideograph;}
+.login .login-right h3 {font-size:14px; padding:30px 5% 10px 5%; margin:30px 3% 0; border-top:1px solid #f5f5f5;}
+.login .login-right p {padding:5px 8% 5px 8%; margin:5px 0; line-height:1.7em;text-align:justify; text-justify:inter-ideograph;}
 .login .login-right p.header {margin-top:40px; margin-bottom:30px; font-weight:bold; font-size:16px; text-align:center; line-height:1em;}
 .login .login-right p.header .small-font {font-weight:normal;}
 .login .login-right p.sub-header {text-align:center; margin:-20px 20px;}
@@ -172,27 +175,29 @@ p.content-text-mid{margin:20px 5% 10px 5%; line-height:1.7em; text-align:justify
 .headerBar li:hover {border:3px solid #f90;}
 .headerBar li.active {border:3px solid #f90;}
 .headerBar li a {padding:3px 0px; text-decoration:none;}
-.headerBar .header-block {display:block; width:110px; height:100px; margin-bottom:0;}
-.headerBar .header-block .logo {background:url(../images/regist/escience-big-icon.png) 5px -10px no-repeat; width:100px; height:80px; display:block;}
-.headerBar .header-block.escience {background:url(../images/regist/escience-35.png) 8px 33px #da8302 no-repeat;}
-.headerBar .header-block.escience .logo{background-position:5px 90px;}
-.headerBar .header-block.dhome {background:#3498DB;}
-.headerBar .header-block.dhome .logo {background-position:5px -410px;}
-.headerBar .header-block.ddl {background:#16A085;}
-.headerBar .header-block.ddl .logo {background-position:5px -10px;}
-.headerBar .header-block.csp {background:#F1C40F;}
-.headerBar .header-block.csp .logo {background-position:5px -110px;}
-.headerBar .header-block.dchat {background:#7F8C8D;}
-.headerBar .header-block.dchat .logo {background-position:5px -1410px;}
-.headerBar .header-block.vmt {background:#E67E22;}
-.headerBar .header-block.vmt .logo {background-position:5px -1310px;}
-.headerBar .header-block.rol {background:#1ABC9C;}
-.headerBar .header-block.rol .logo {background-position:5px -210px;}
+.headerBar .header-block {display:block; width:160px; height:100px; margin-bottom:0;}
+.headerBar .header-block .logo {background:url(../images/regist/escience-big-icon.png) 5px -10px no-repeat; width:150px; height:80px; display:block;}
+.headerBar .header-block.escience {background:url(../images/regist/escience-35.png) 30px 33px #da8302 no-repeat;}
+.headerBar .header-block.escience .logo{background-position:30px 90px;}
+.headerBar .header-block.dhome {background:#4084C9;}
+.headerBar .header-block.dhome .logo {background-position:30px -410px;}
+.headerBar .header-block.ddl {background:#71AA00;}
+.headerBar .header-block.ddl .logo {background-position:30px -10px;}
+.headerBar .header-block.csp {background:#CC0033;}
+.headerBar .header-block.csp .logo {background-position:30px -110px;}
+.headerBar .header-block.dchat {background:#0069A2;}
+.headerBar .header-block.dchat .logo {background-position:30px -1410px;}
+.headerBar .header-block.vmt {background:#009999;}
+.headerBar .header-block.vmt .logo {background-position:30px -1310px;}
+.headerBar .header-block.dc {background:#640F6C;}
+.headerBar .header-block.dc .logo {background-position:30px -210px;}
 .headerBar .header-block.email {background:#0F5083;}
-.headerBar .header-block.email .logo {background-position:5px -1110px;}
-.headerBar .header-block.nav {background:#8E44AD;}
-.headerBar .header-block.nav .logo {background-position:5px -1210px;}
-.headerBar_s .header-block.cos {background:#BDC3C7;}
+.headerBar .header-block.email .logo {background-position:30px -1110px;}
+.headerBar .header-block.nav {background:#EC008C;}
+.headerBar .header-block.nav .logo {background-position:30px -1210px;}
+.headerBar .header-block.cos {background:#F39C12;}
+.headerBar .header-block.cos .logo {background-position:30px -1510px;}
+.headerBar_s .header-block.cos {background:#AAAAAA;}
 .headerBar_s .header-block.cos .logo {background-position:-35px -1030px;}
 .headerBar .header-block .header-text {
 	display:block; color:#fff; text-align:center; 
@@ -223,9 +228,18 @@ ul.oper li {margin-right:-1px;}
 ul.oper li a { display:block; border-bottom:1px solid #ddd; padding:10px; cursor:pointer; text-decoration:none; word-break:break-all;}
 ul.oper li.active a {background:#fff; font-weight:bold; border-right:1px solid #fff; color:#08a}
 #operListShow { margin:20px 6%; border:1px solid #ddd;}
-#operListShow .loginList {float:left; margin:0; padding:0 2%; width:70%}
+#operListShow .loginList {float:left; margin:0; padding:0 2%; width:75%} 
 #operListShow table.saftyList {margin:0 2%; width:90%}
 #operListShow table.saftyList td,#operListShow table.saftyList th {padding:10px 3%;border-bottom:1px solid #eee;}
+/*accountSafty_log*/
+.COMMMONGEO{margin:0px 0px 0px 13px;}
+.COMMMONGEO li{list-style:none;cursor:default;padding:4px 12px;background:#f0f0f0;color:#555;float:left;margin:0px 15px 10px 0px;border-radius: 5px;}
+.COMMMONGEO li a{margin-left:5px;cursor: pointer;color:#555;font-weight:bold;}
+.COMMMONGEO li a:hover,.COMMMONGEO li a:focus{text-decoration: none;}
+.COMMMONGEO li a.addCOMMMONGEO{font-weight: inherit;display: block;cursor: pointer;background: #F0F0F0;min-width: 10px;color:#08C;}
+.COMMMONGEO li a.addCOMMMONGEO span{display:inline;margin:3px 4px;color:#08C;font-weight:bold;} 
+.COMMMONGEO li a.addCOMMMONGEO:hover,.COMMMONGEO li a.addCOMMMONGEO:focus{text-decoration: none;}
+
 
 /*create_success_message*/
 .create_success,.send_mail {margin:0 5% 10px; padding:10px 2% 5px}
@@ -234,15 +248,23 @@ ul.oper li.active a {background:#fff; font-weight:bold; border-right:1px solid #
 .create_success .success_right .no_reply,.send_mail .mail_right .no_reply {border-bottom:1px solid #ccc; margin-top:60px;}
 
 .send_mail.manage {padding-top:20px}
-.send_mail.manage.second {margin-top:30px;}
+.send_mail.manage.second {margin-top:30px;border-top: 1px dotted #ccc;}
 .send_mail.manage .mail_left {background:url(../images/primary_mail.png) no-repeat; width:60px}
 .send_mail.manage.second .mail_left {background:url(../images/second_mail.png) no-repeat;}
+.send_mail.manage.second.user_name .mail_left {background:url(../images/primary_username.png) no-repeat;}
 .send_mail.manage .mail_right {line-height:1.7em}
 .send_mail .mail_detail {margin:10px 0 0;}
 .send_mail .mail_detail .success-text,.send_mail .mail_detail .small-font {margin-left:5%; font-size:13px;}
 
 .send_mail.safty {margin:10px 7% 10px;}
 .send_mail.safty .mail_left {background:url(../images/safty_mail.png) no-repeat; width:60px}
+
+
+
+
+
+
+
 
 /*find psw*/
 .findPsw {border:1px solid #ddd; margin:30px 6%;}
@@ -282,8 +304,27 @@ table.saftyList.manage.mid td {text-align:center;}
 table.saftyList.manage.mid td img {margin:-3px 5px; width:16px; height:16px;}
 table.saftyList.manage td input {padding:7px; width:15em;}
 
+table.saftyList.manage.mid.appaccess{text-align:left;border-bottom:1px solid #ddd;}
+table.saftyList.manage.mid.appaccess th{background:none;}
+table.saftyList.manage.mid.appaccess td{border:1px solid #ddd;border-bottom:none;}
+table.saftyList.manage.mid.appaccess td.left{text-align:left;border-right:none;}
+
+table.accountManage{margin-left:50px;width:80%;margin-top:20px;margin-bottom:60px;font-size: 12px;color: #555;}
+table.accountManage thead {border-bottom:2px solid #ccc;}
+
+.accountManage.tittle{margin-left:60px;color:#08C;}
+.accountManage.no{font-size:14px;text-align:center;color:gray;margin:40px;}
+
+a.btn.btn-small.btn-info {padding: 1px 6px;}
+a.btn.btn-small.btn-info.deletePwd {padding: 1px 6px;}
+
 /*umt help*/
 .help-content{margin:20px 6% 5px;}
+.help-content.readonly{font-size:13px; color:#333;}
+.help-content.readonly p.indent {margin-left:20px; }
+.help-content.readonly p.maintain {font-size:16px; color:#08c; font-family:Arial,"微软雅黑"; line-height:2em;}
+.help-content.readonly p.sign {text-align:right; margin-right:15%;}
+.help-content.readonly hr {background:#08a;}
 .left-nav {width:20%; min-width:120px; max-width:200px; float:left; background:#f8f8f8; border:1px solid #eee; margin:0px 2% 30px 2%; font-size:15px; *position:static;}
 .left-nav ul.nav {margin:0; padding:0;list-style:none}
 .left-nav ul.nav li a {list-style:none; cursor:pointer;padding:0.8em 0 0.8em 10%; border-bottom:1px solid #eee;}
@@ -292,6 +333,7 @@ table.saftyList.manage td input {padding:7px; width:15em;}
 .left-nav ul.nav li a {display:block;}
 
 .right-content {margin:0px 5% 30px 2%; width:65%; float:left; line-height:1.7em;min-height:400px}
+.right-content .commonQA > h4 {font-size:16px;}
 .right-content .commonQA > ol {font-weight:bold; }
 .right-content .commonQA > ol > li {margin-bottom:20px;}
 .right-content .commonQA > ol > li > h4 {margin:0; font-family:Arial,"宋体"; font-size:15px;}
@@ -311,22 +353,63 @@ table.saftyList.manage td input {padding:7px; width:15em;}
 .right-content .proIntro p,
 	#developDoc p { margin:15px;}
 .right-content .proIntro h4,
-	#developDoc h4 {margin:15px; font-family:Arial,"宋体"; font-size:15px;}
+	#developDoc h4 {margin:15px; font-family:Arial,"宋体"; font-size:15px; margin:0}
 .right-content .proIntro p a:hover,
 	#developDoc p a:hover {text-decoration:underline;}
+.right-content .download h4.download_title {border-bottom:1px solid #ccc; padding:0 0 8px 0; margin:0;font-size:15px; }
+.right-content .download > ul {list-style:none; padding:0; margin:0; overflow:hidden;}
+.right-content .download > ul li {float:left;  margin:15px; text-align:center;}
+.right-content .download > ul.logo_icon li {line-height:64px; height:150px;}
+.right-content .download > ul.logo_linkin li {line-height:48px; height:100px; margin:10px;}
+.right-content .download > p {margin:10px 0; font-size:13px;}
 
 #developDoc,
 	#myOauth {padding:0px 4%}
-#myOauth .oAuthList {border:1px solid #eee; margin-bottom:1em;}
+#myOauth .oAuthList {border:1px solid #eee; margin-bottom:1em;height: 365px;}
 #myOauth .oAuthList h3 {border-bottom:1px dotted #eee; margin:2%}
 #myOauth .oAuthList h3 span {margin-left:10px; font-weight:normal; font-size:14px;}
 #myOauth .oAuthList h3 button {float:right; margin-left:1em;}
-#myOauth .addNewOauth {margin:1em; text-align:center;}
+#myOauth .addNewOauth {margin: 0 auto;width: 138px;}
 .smallBottom#edit-popup .form-horizontal .control-group{margin-bottom:5px;}
+
+#myOauth .oAuthList.form-horizontal.short{height:270px;}
+#myOauth .oAuthList.form-horizontal.short div.appdescription {height: 218px;}
 
 .right-content .tendays h4 {font-size:15px; font-family:Arial,"宋体"; margin:2em 0 5px 0}
 .right-content .tendays > ol > li {margin-bottom:0.5em;}
 .right-content .tendays > ol > li > ol {list-style-type:lower-latin;}
+
+.right-content p.relativeQA {font-size:16px; font-weight:bold; margin:0 0 1em; padding:5px; background:#f7f7f7}
+.right-content .commonQA .sub {border:1px solid #eee; margin-top:0; margin-top:3em; background:#fdfdfd; }
+.right-content .commonQA .sub ol {margin:0 15px 10px 40px}
+.right-content .commonQA .sub ol li p{line-height:1.7em; margin:0.5em 0 0; text-align:justify; text-justify:auto; }
+.right-content .commonQA .sub ol li h4 {font-size:15px;}
+
+
+/* . Style changes by H, 2014 4 29 */
+.appdescription{height:308px;width:50%;float:left;margin:0;word-break: break-all;   }
+.uploadbox{float: left;width: 40%;height: 260px;border-left: 1px solid #eee;padding-left: 50px;}
+div.img-XL{clear:both;height: 150px;}
+div.img-L,.img-M,.img-S{text-align: center;float:left;width:70px;height:70px;}
+div.img-L{margin:0px;}
+div.img-M{margin-left: 48px;padding-top: 32px;}
+div.img-S{margin-left: 15px;padding-top: 45px;}
+
+p.imgupload-text{font-size:8px;color:#999;float:left;margin-top:60px;margin-left:-30px;}
+
+#imgname-XL{color:#555;clear:both;margin-left:20px;}
+#imgname-L{color:#555;}
+#imgname-M{color:#555;}
+#imgname-S{color:#555;margin-top: -1px;}
+
+#upload-XL{float:left;margin-left:20px;margin-top:20px;}
+#upload-L{float: left;margin-top: -10px;margin-left: 20px;}
+#upload-M{float: left;margin-top: -10px;margin-left: 20px;}
+#upload-S{float: left;margin-top: -10px;margin-left: 20px;}
+
+
+
+
 
 /*processBar*/
 .processBarContainer {position:relative; background:white; margin:35px 5% 15px 5%;height:70px; padding:0;}
@@ -376,6 +459,10 @@ table.saftyList.manage td input {padding:7px; width:15em;}
 .errorText {padding:2em 8%; min-height:400px;}
 .errorText p {margin:15px 0;}
 
+div.container.login.gray{width:1170px;}
+.simpleView .form-horizontal.oauth .controls {*margin-left:0;}
+BODY.login.simpleView,BODY.login.full {*margin-top:90px;}
+
 /*sth changed from bootstrap*/
 #infoForm.form-horizontal {margin:30px 0;}
 #secondaryForm.form-horizontal,#changepassForm.form-horizontal {margin:30px 5%}
@@ -393,4 +480,28 @@ table.saftyList.manage td input {padding:7px; width:15em;}
 .form-search input, .form-inline input, .form-horizontal input, .form-search textarea, .form-inline textarea, .form-horizontal textarea, .form-search select, .form-inline select, .form-horizontal select, .form-search .help-inline, .form-inline .help-inline, .form-horizontal .help-inline, .form-search .uneditable-input, .form-inline .uneditable-input, .form-horizontal .uneditable-input, .form-search .input-prepend, .form-inline .input-prepend, .form-horizontal .input-prepend, .form-search .input-append, .form-inline .input-append, .form-horizontal .input-append{
 	margin-bottom:6px;}
 	
-.duckling-logo-small {background:url(../images/login/logo-duckling.png) 2px 0px no-repeat; cursor:pointer; margin-top:5px; display:inline-block; width:22px; height:16px;} 
+.passport-logo {background:url(../images/logo/icon-16-w.png) center 0 no-repeat; display:inline-block; width:20px; height:16px; margin-bottom:-3px;}
+
+img.validateImg {max-width:100px}
+h3.quote {font-family:"Arail" 微软雅黑; color:#666; font-size:20px; line-height:40px; font-weight:normal; text-align:justify; text-justify:auto;}
+h3.quote a {color:#666; border-bottom:1px dotted #08a;}
+h3.quote span.quoteBegin,h3.quote span.quoteEnd {font-size:35px; font-family:宋体; color:#888}
+
+
+/*digital edit by hlj 2015 10 13*/
+.blackfont{color:#000000 !important;}
+
+table.saftyList.digital_manage {border: 1px solid #C4C4C4;border-bottom: none; border-right: none;margin-bottom: 20px;text-align: center;vertical-align: middle;}
+table.saftyList.digital_manage td {border-right: 1px solid #c4c4c4;    padding: 10px;}
+table.saftyList.digital_manage tr {border-bottom: 1px solid #c4c4c4;}
+table.saftyList.digital_manage>tbody>tr>td>a.btn.btn-small.btn-info{color:#fff;} 
+table.saftyList.digital_manage>tbody>tr>td>a.btn.btn-small.btn-info:nth-child(1) {margin-right: 10px;}
+table.saftyList.digital_manage.width>thead>tr>td:nth-child(1){width:41%;}
+table.saftyList.digital_manage.width>thead>tr>td:nth-child(2){width:18%;}
+table.saftyList.digital_manage.width>thead>tr>td:nth-child(3){width:10%;}
+table.saftyList.digital_manage.width>thead>tr>td:nth-child(4){width:10%;}
+table.saftyList.digital_manage.width>thead>tr>td:nth-child(5){width:6%;}
+table.saftyList.digital_manage.width>thead>tr>td:nth-child(6){width:15%;}
+
+p.sub-text.blackfont>label#passwordText {float: left;margin-right: 300px;}
+p.sub-text.blackfont>input#textPassword {margin-right: 135px;}

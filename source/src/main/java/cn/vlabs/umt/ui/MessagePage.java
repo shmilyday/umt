@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +25,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-
 public final class MessagePage {
 	private MessagePage(){}
-	public static ActionForward showNoMenuPage(String messagekey, HttpServletRequest request,ActionMapping mapping){
-		request.setAttribute("WithoutMenu", "true");
-		request.setAttribute("message", messagekey);
-		return mapping.findForward("message");
-	}
-	
-	public static ActionForward showMenuMessagePage(String messagekey, HttpServletRequest request,ActionMapping mapping){
-		request.setAttribute("message", messagekey);
-		return mapping.findForward("message");
-	}
 	
 	public static void showNoMenuPage(String messagekey, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		request.setAttribute("WithoutMenu", "true");

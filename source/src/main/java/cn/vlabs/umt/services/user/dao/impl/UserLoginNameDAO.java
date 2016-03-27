@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +111,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 			st = conn.prepareStatement(SELECT_BASE+BY_UID+BY_LOGIN_NAME+LIMIT_1);
 			int index=0;
 			st.setInt(++index, uid);
-			st.setString(++index, loginName);
+			st.setString(++index, loginName.toLowerCase());
 			rs=st.executeQuery();
 			if(rs.next()){
 				return readLoginInfo(rs);
@@ -130,7 +132,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 		try {
 			st = conn.prepareStatement(DELETE_SQL+BY_LOGIN_NAME+BY_STATUS);
 			int index=0;
-			st.setString(++index, loginName);
+			st.setString(++index, loginName.toLowerCase());
 			st.setString(++index, LoginNameInfo.STATUS_TEMP);
 			st.execute();
 		} catch (SQLException e) {
@@ -150,7 +152,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 			int index=0;
 			st.setString(++index, LoginNameInfo.STATUS_ACTIVE);
 			st.setInt(++index, uid);
-			st.setString(++index, loginName);
+			st.setString(++index, loginName.toLowerCase());
 			st.setString(++index, type);
 			st.execute();
 		} catch (SQLException e) {
@@ -170,7 +172,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 			st = conn.prepareStatement(INSERT_SQL);
 			int index=0;
 			st.setInt(++index, uid);
-			st.setString(++index, loginName);
+			st.setString(++index, loginName.toLowerCase());
 			st.setString(++index, type);
 			st.setString(++index, status);
 			st.execute();
@@ -194,7 +196,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 			int index=0;
 			st.setInt(++index, uid);
 			st.setString(++index, LoginNameInfo.LOGINNAME_TYPE_SECONDARY);
-			st.setString(++index,email);
+			st.setString(++index,email.toLowerCase());
 			st.execute();
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage());
@@ -250,9 +252,9 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 		try {
 			st = conn.prepareStatement(UPDATE_LOGIN_NAME_SQL+BY_UID+BY_LOGIN_NAME);
 			int index=0;
-			st.setString(++index, newloginName);
+			st.setString(++index, newloginName.toLowerCase());
 			st.setInt(++index, uid);
-			st.setString(++index, oldLoginName);
+			st.setString(++index, oldLoginName.toLowerCase());
 			return st.execute();
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage());
@@ -270,7 +272,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 		try{
 			st=conn.prepareStatement(SELECT_USER_SQL+BY_LOGIN_NAME+" order by `create_time` desc limit 0,1");
 			int index=0;
-			st.setString(++index, loginName);
+			st.setString(++index, loginName.toLowerCase());
 			rs=st.executeQuery();
 			if(rs.next()){
 				return readUser(rs);
@@ -297,6 +299,8 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 			user.setTrueName(rs.getString("true_name"));
 			user.setUmtId(rs.getString("umt_id"));
 			user.setType(rs.getString("type"));
+			user.setAccountStatus(rs.getString("account_status"));
+			user.setSendGEOEmailSwitch(rs.getBoolean("send_geo_email_switch"));
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(),e);
 		}
@@ -311,7 +315,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 		try{
 			st=conn.prepareStatement(SELECT_COUNT_SQL+BY_LOGIN_NAME+BY_STATUS);
 			int index=0;
-			st.setString(++index, loginName);
+			st.setString(++index, loginName.toLowerCase());
 			st.setString(++index, LoginNameInfo.STATUS_ACTIVE);
 			rs=st.executeQuery();
 			if(rs.next()){
@@ -349,7 +353,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 			st = conn.prepareStatement(buildSetString(loginNames.length));
 			int index=0;
 			for(String loginName:loginNames){
-				st.setString(++index, loginName);
+				st.setString(++index, loginName.toLowerCase());
 			}
 			rs = st.executeQuery();
 			while (rs.next()){
@@ -423,9 +427,9 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 		try {
 			st = conn.prepareStatement(UPDATE_TO_LOGINNAME_SQL+BY_UID+BY_LOGIN_NAME);
 			int index=0;
-			st.setString(++index, newLoginName);
+			st.setString(++index, CommonUtils.killNull(newLoginName).toLowerCase());
 			st.setInt(++index, uid);
-			st.setString(++index, oldLoginName);
+			st.setString(++index, oldLoginName.toLowerCase());
 			st.execute();
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage(),e);
@@ -483,7 +487,7 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 			st = conn.prepareStatement(SELECT_BASE+BY_UID+BY_LOGIN_NAME+BY_TYPE);
 			int index=0;
 			st.setInt(++index, uid);
-			st.setString(++index, loginName);
+			st.setString(++index, loginName.toLowerCase());
 			st.setString(++index, type);
 			rs=st.executeQuery();
 			if(rs.next()){
@@ -495,6 +499,57 @@ public class UserLoginNameDAO implements IUserLoginNameDAO{
 			DatabaseUtil.closeAll(rs, st, conn);
 		}
 		return -1;
+	}	
+	@Override
+	public void removeLdapLoginName(int uid) {
+		Connection conn = dbUtil.getConnection();
+		ResultSet rs = null;
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement(DELETE_SQL+BY_UID+BY_TYPE);
+			int index=0;
+			st.setInt(++index, uid);
+			st.setString(++index, LoginNameInfo.LOGINNAME_TYPE_LDAP);
+			st.executeUpdate();
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeAll(rs, st, conn);
+		}
+	}	
+	@Override
+	public List<LoginNameInfo> getLoginNameInfos(List<String> uids,
+			String type) {
+		Connection conn = dbUtil.getConnection();
+		ResultSet rs = null;
+		PreparedStatement st = null;
+		try {
+			
+			StringBuffer sb=new StringBuffer(SELECT_BASE+BY_TYPE);
+			sb.append(" and uid in(");
+			for(int i=0;i<uids.size();i++){
+				sb.append("?,");
+			}
+			sb.deleteCharAt(sb.length()-1);
+			sb.append(")");
+			st = conn.prepareStatement(sb.toString());
+			int index=0;
+			st.setString(++index, type);
+			for(String uid:uids){
+				st.setString(++index, uid);
+			}
+			rs=st.executeQuery();
+			List<LoginNameInfo> result=new ArrayList<LoginNameInfo>();
+			while(rs.next()){
+				result.add(readLoginInfo(rs));
+			}
+			return result;
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage(),e);
+		} finally {
+			DatabaseUtil.closeAll(rs, st, conn);
+		}
+		return null;
 	}
 	
 

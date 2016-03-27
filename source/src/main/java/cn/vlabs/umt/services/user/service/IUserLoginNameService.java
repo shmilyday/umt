@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +21,7 @@ package cn.vlabs.umt.services.user.service;
 import java.util.List;
 
 import cn.vlabs.umt.services.user.bean.LoginNameInfo;
+import cn.vlabs.umt.services.user.bean.User;
 
 
 /**
@@ -33,6 +36,8 @@ public interface IUserLoginNameService {
 	 * @param type User.LOGINNAME_XXX
 	 * */
 	List<LoginNameInfo> getLoginNameInfo(int uid,String type);
+	
+	LoginNameInfo getLdapLoginName(int uid);
 	
 	/**
 	 * 获取用户的一个信息;
@@ -123,5 +128,11 @@ public interface IUserLoginNameService {
 	 * 删除一个用户的所有登陆名信息
 	 * */
 	void removeLoginNamesByUid(int uid);
+
+	boolean isUsed(String parameter);
+
+	void removeLdapLoginName(int id);
+
+	User getUserByName(String loginName);
 
 }

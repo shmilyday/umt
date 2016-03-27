@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,22 +29,23 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.mysql.jdbc.Statement;
-
 import cn.vlabs.umt.common.datasource.DatabaseUtil;
 import cn.vlabs.umt.services.user.bean.OauthToken;
 import cn.vlabs.umt.services.user.dao.IOauthTokenDAO;
 
+import com.mysql.jdbc.Statement;
+
 public class OauthTokenDAO implements IOauthTokenDAO {
 	private static final Logger LOG = Logger.getLogger(OauthTokenDAO.class);
-	private static final String INSERT_SQL="insert into umt_oauth_token(access_token,refresh_token,create_time,access_expired,refresh_expired,uid,client_id,scope,redirect_uri) values(?,?,?,?,?,?,?,?,?)";
+	private static final String INSERT_SQL="insert into umt_oauth_token(access_token,refresh_token,create_time,access_expired,refresh_expired,uid,client_id,scope,redirect_uri,password_type) values(?,?,?,?,?,?,?,?,?,?)";
 	private static final String QUERY_BY_ACCESS_TOKEN="select * from umt_oauth_token where access_token=?";
 	private static final String QUERY_BY_REFRESH_TOKEN="select * from umt_oauth_token where refresh_token=?";
-	private static final String UPDATE_BY_ID="update umt_oauth_token set access_token=?,refresh_token=?,create_time=?,access_expired=?,refresh_expired=?,uid=?,client_id=?,scope=?,redirect_uri=? where id=?";
-	private static final String DELETE_BY_ID="delete from umt_oauth_token where id=? ";
+	private static final String UPDATE_BY_ID="update umt_oauth_token set access_token=?,refresh_token=?,create_time=?,access_expired=?,refresh_expired=?,uid=?,client_id=?,scope=?,redirect_uri=?,password_type=? where id=?";
+	private static final String DELETE_BY_ID="delete from umt_oauth_token where id=?";
 	private static final String DELETE_BY_ACCESS_EXPIRED="delete from umt_oauth_token where access_expired<?";
 	private static final String DELETE_BY_REFRESH_EXPIRED="delete from umt_oauth_token where refresh_expired<?";
 	private static final String QUERY_BY_ID="select * from umt_oauth_token where id=?";
+	private static final String QUERY_LAST_LOGIN="select * from umt_oauth_token where uid=? and client_id=? order by id desc";
 	private DatabaseUtil du;
 	
 	public OauthTokenDAO(DatabaseUtil du){
@@ -84,6 +87,7 @@ public class OauthTokenDAO implements IOauthTokenDAO {
 			token.setClientId(rs.getString("client_id"));
 			token.setScope(rs.getString("scope"));
 			token.setRedirectURI(rs.getString("redirect_uri"));
+			token.setPasswordType(rs.getString("password_type"));
 			result.add(token);
 		}
 		return result;
@@ -128,6 +132,7 @@ public class OauthTokenDAO implements IOauthTokenDAO {
 			st.setString(i++, token.getClientId());
 			st.setString(i++, token.getScope());
 			st.setString(i++, token.getRedirectURI());
+			st.setString(i++, token.getPasswordType());
 			st.execute();
 			rs = st.getGeneratedKeys();
 			if(rs.next()){
@@ -162,6 +167,7 @@ public class OauthTokenDAO implements IOauthTokenDAO {
 			st.setString(i++, token.getClientId());
 			st.setString(i++, token.getScope());
 			st.setString(i++, token.getRedirectURI());
+			st.setString(i++, token.getPasswordType());
 			st.setInt(i++, token.getId());
 			st.execute();
 		} catch (SQLException e) {
@@ -231,6 +237,29 @@ public class OauthTokenDAO implements IOauthTokenDAO {
 		try {
 			st = conn.prepareStatement(QUERY_BY_ID);
 			st.setInt(1, id);
+			rs = st.executeQuery();
+			List<OauthToken> result = getOauthToken(rs);
+			if(result==null||result.isEmpty()){
+				return null;
+			}else{
+				return result.get(0);
+			}
+		} catch (SQLException e) {
+			LOG.error("获取token数据库错误",e);
+		}finally{
+			DatabaseUtil.closeAll(rs, st, conn);
+		}
+		return null;
+	}
+	@Override
+	public OauthToken getLastTokenByUidAndClientId(int uid, String clientId) {
+		Connection conn = du.getConnection();
+		ResultSet rs = null;
+		PreparedStatement st=null;
+		try {
+			st = conn.prepareStatement(QUERY_LAST_LOGIN);
+			st.setInt(1, uid);
+			st.setString(2, clientId);
 			rs = st.executeQuery();
 			List<OauthToken> result = getOauthToken(rs);
 			if(result==null||result.isEmpty()){

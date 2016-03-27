@@ -29,18 +29,6 @@
 						<span class="header-text"><fmt:message key="common.csp"/></span>
 					</a>
 				</li>
-				<li class="${!empty appName&&appName=='dchat'?'active':''}">
-					<a class="header-block dchat" href="http://dchat.escience.cn/" target="_blank">
-						<span class="logo"></span> 
-						<span class="header-text"><fmt:message key="common.dchat"/></span>
-					</a>
-				</li>
-				<li class="${!empty appName&&appName=='vmt'?'active':''}">
-					<a class="header-block vmt" href="http://vmt.escience.cn" target="_blank">
-						<span class="logo"></span> 
-						<span class="header-text"><fmt:message key="common.vmt"/></span>
-					</a>
-				</li>
 				<li class="${!empty appName&&appName=='mail'?'active':''}">
 					<a class="header-block email" href="${mail_loginUrl }" target="_blank">
 						<span class="logo"></span> 
@@ -53,10 +41,28 @@
 						<span class="header-text" style="font-size:12px"><fmt:message key='common.science.source'/></span>
 					</a>
 				</li>
-				<li class="${!empty appName&&appName=='rol'?'active':''}">
-					<a class="header-block rol" href="${rol_loginUrl }" target="_blank">
+				<li class="${!empty appName&&appName=='dc'?'active':''}">
+					<a class="header-block dc" href="${dc_loginUrl }" target="_blank">
 						<span class="logo"></span> 
 						<span class="header-text"><fmt:message key="common.test.info"/></span>
+					</a>
+				</li>
+				<li class="${!empty appName&&appName=='dchat'?'active':''}">
+					<a class="header-block dchat" href="http://dchat.escience.cn/" target="_blank">
+						<span class="logo"></span> 
+						<span class="header-text"><fmt:message key="common.dchat"/></span>
+					</a>
+				</li>
+				<li class="${!empty appName&&appName=='vmt'?'active':''}">
+					<a class="header-block vmt" href="http://vmt.escience.cn" target="_blank">
+						<span class="logo"></span> 
+						<span class="header-text"><fmt:message key="common.vmt"/></span>
+					</a>
+				</li>
+				<li>
+					<a class="header-block cos" href="http://service.cstnet.cn" target="_blank">
+						<span class="logo"></span> 
+						<span class="header-text"><fmt:message key="common.cos"/></span>
 					</a>
 				</li>
 				<div class="clear"></div>

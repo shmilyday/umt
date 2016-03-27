@@ -59,8 +59,16 @@ pageContext.setAttribute("ContextPath", request.getContextPath());
 						<a href="${ContextPath}/admin/accessIps.do?act=showAccessIps">Access Ips</a>
 					</li>
 					<li id="oauthMenu">
-						
 						<a href="${ContextPath}/admin/addClient?act=setParameter"><fmt:message key="admin.oauth.menu"/></a>
+					</li>
+					<li id="ladpMenu">
+						<a href="${ContextPath}/admin/ldap.do?act=display">LDAP应用管理</a>
+					</li>
+					<li id="thirdpartyMenu">
+						<a href="${ContextPath}/admin/manageAuth.do">第三方认证管理</a>
+					</li>
+					<li id="unitMenu">
+						<a href="${ContextPath}/admin/manageUnit?act=showAllUnit">单位管理</a>
 					</li>
 				</ul>
 				

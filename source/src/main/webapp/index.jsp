@@ -13,23 +13,27 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title><fmt:message key='index.title'/></title>
-		<link href="images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+		<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 		<f:css href="css/jqModal.css"/>
 		<meta http-equiv="pragma" content="no-cache" />
 		<meta http-equiv="cache-control" content="no-cache" />
 	</head>
-	<body class="login">
+	<body class="login">   
 		<jsp:include flush="true" page="banner2013.jsp">
 			<jsp:param name="DecludeMenu" value="true"/>
 		</jsp:include>
 		<div class="container login gray">
+			<c:if test="${isReadonly==true }">
+				<div class="alert alert-warning" style="text-align:center; width:300px;margin:0 auto; font-size:13px;">
+					系统升级维护中。<a href="<%=request.getContextPath() %>/maintain.jsp">查看详情</a>
+				</div>
+			</c:if>
 			<c:if test="${!empty msg }">
 				<h3 class="success slide"><fmt:message key='${msg }'/></h3>
 			</c:if>
 			<h2 class="total-title">${loginInfo.user.trueName }<span class="small-font"><a href="<umt:url value="/user/info.do?act=show"/>"/><fmt:message key='common.change'/></a></span></h2>
 			<div class="form-horizontal" style="padding:30px 5% 0">
 				<jsp:include flush="true" page="loginEmailActive.jsp"/>
-				
 				<c:forEach items="${secondaryEmail}" var="loginName" varStatus="index" >
 					<div class="control-group">
 						<label class="control-label nopadding">
@@ -54,6 +58,18 @@
 						</div>
 						</div>
 				</c:forEach>
+				<c:if test="${!empty ldapName }">
+					<div class="control-group">
+						<label class="control-label nopadding">
+								<fmt:message key='app.ldap.account'/><fmt:message key="common.maohao"/>
+						</label>
+						<div class="controls">
+							<strong><c:out value="${ldapName.loginName }"/></strong>
+							&nbsp;
+							<a class="small-font"  href="<%=request.getContextPath() %>/user/manage.do?act=showManage"><fmt:message key='safeItems.change' /></a> 
+						</div>
+						</div>
+				</c:if>
 	            
 				<div class="control-group">
 	              	<label class="control-label nopadding">
@@ -73,6 +89,33 @@
 				<jsp:include flush="true" page="safeItems.jsp">
 					<jsp:param value="index" name="from"/>
 				</jsp:include>
+			</c:if>
+			<c:if test="${!empty lastLog }">
+				<h3 class="success"><fmt:message key='index.diff.regist.title'/></h3>
+				<div class="form-horizontal" style="padding:30px 5% 0">
+		<div class="control-group">
+			<c:choose>
+				<c:when test="${empty warnLog }">
+				<span style="font-size:16px;color:green;margin-left:7%">
+					<fmt:message key='index.diff.regist.none'/>
+				</span>
+				</c:when>
+				<c:otherwise>
+				<span style="font-size:16px;color:red;margin-left:7%">
+					<fmt:message key='index.diff.regist.has'/>
+				</span>
+				</c:otherwise>
+			</c:choose>
+			
+			<span style="float:right;margin-right:10px;color:#999">
+				<fmt:message key='index.diff.regist.last.login'/>
+				<fmt:formatDate value="${lastLog.occurTime }" pattern="yyyy-MM-dd HH:mm:ss" />
+				${lastLog.displayGEO() }
+				&nbsp;&nbsp;&nbsp;
+				<a href="<umt:url value="/user/safe.do?act=showLog"></umt:url>"><fmt:message key='index.diff.view.detail'/></a>
+		    </span>
+	    </div>
+			</div>
 			</c:if>
 			<%--<c:if test="${!empty myAppList }" >
 				<h3 class="success"><fmt:message key='index.my.application'/></h3>
@@ -105,6 +148,7 @@
 			//	alert(result);
 			//});
 			//$('#dialog').jqm();
+			$('#banner_index').addClass('active');
 		});
 		</script>
 	</body>

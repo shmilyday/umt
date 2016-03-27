@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +48,10 @@ public class UMTUser {
 		this.username = username;
 	}
 	public String getUsername() {
-		return username;
+		if(username==null){
+			return null;
+		}
+		return username.toLowerCase();
 	}
 	public void setEmail(String email) {
 		this.email = email;

@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +44,7 @@ public class RegisterLinkTag extends TagSupport {
 				String otherAppRegisterLink = params.get(Attributes.APP_REGISTER_URL_KEY);
 				link = otherAppRegisterLink!=null?otherAppRegisterLink:link;
 			}
-			pageContext.getOut().print("<a href="+link+">");
+			pageContext.getOut().print("<a tabindex=10 href="+link+">");
 			
 		} catch (IOException e) {
 		}

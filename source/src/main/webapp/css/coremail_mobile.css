@@ -3,11 +3,12 @@ version:umt-coremail
 author:zhangshixiang@cstnet.cn
 data:2013-04-27
 */
+body.mobile {background:transparent;}
 
 .MainR {
     white-space: nowrap;
-    width:288px;
-    margin:0 auto;
+    width:318px;
+    margin:0px auto 0 auto;
     min-height:100px;
     border:1px solid #b5b5b5;
     border-radius:5px;
@@ -80,12 +81,12 @@ data:2013-04-27
     line-height: 28px;
     margin-right: 10px;
     text-align: right;
-    width: 60px;
+    width: 80px;
 }
 #logArea label.for {
     float: none;
 }
-.Button {
+.Button,input[type="button"].Button {
     background-color: lightskyblue;
     background-image: url("../images/btn.png");
     border: medium none;
@@ -107,7 +108,7 @@ data:2013-04-27
     font-family: helvetica,arial,sans-serif;
     font-size: 14px;
     padding: 10px 3px;
-    width: 180px;
+    width: 150px;
     background:transparent;
     margin-top:-5px;
 }
@@ -129,3 +130,9 @@ a.tendaysHelp {
 #logArea .loginHint a{
 	margin:0 2px 0 2px;
 }
+
+
+.mobile #user,
+	.mobile #lockImg,
+	.mobile #unlockImg {margin-top:-5px; *margin-top:-4px;}
+.mobile #userName, .mobile #password {height:20px; width:150px;}

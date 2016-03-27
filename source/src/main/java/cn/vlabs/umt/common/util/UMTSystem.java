@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +18,16 @@
  */
 package cn.vlabs.umt.common.util;
 
+import java.io.File;
+
 import cn.vlabs.installer.version.ProductInfo;
 import cn.vlabs.installer.version.VersionUtil;
-import cn.vlabs.umt.ui.PathMapper;
 
 public class UMTSystem {
-	public UMTSystem(PathMapper mapper){
-		String file = mapper.getRealPath("/WEB-INF/umt.ver");
-		pi =  VersionUtil.fromFile(file);
+	public UMTSystem(String rootPath){
+		File root = new File(rootPath);
+		File file = new File(root, "/WEB-INF/umt.ver");
+		pi =  VersionUtil.fromFile(file.getAbsolutePath());
 	}
 	public String getDucklingVersion(){
 		return "2.3";

@@ -1,5 +1,4 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <fmt:setBundle basename="application" />
@@ -10,7 +9,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title><fmt:message key='regist.title'/></title>
-<link href="images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
+<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon"	type="image/x-icon" />
 <link href="css/umt.css" rel="stylesheet" type="text/css"/>
 </head>
 
@@ -22,7 +21,7 @@
 	<c:if test="${message!=null}">
 		<div class="messagebar"><fmt:message key="${message}"/></div>
 	</c:if>
-	<html:form action="createRequest" method="post" styleId="createRequestForm">
+	<form action="createRequest.do" method="post" class="createRequestForm">
 	<div class="loginbox" style="margin:80px 230px;width:550px;">
 	<table class="form_table">
 			<tr><td class="td_background">
@@ -74,7 +73,7 @@
 		</div>
 		</td></tr></table>
 	</div>
-</html:form>
+</form>
 <jsp:include flush="true" page="../../bottom.jsp"></jsp:include>
 <script type="text/javascript">
 	var imageObj;

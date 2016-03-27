@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +38,11 @@ public final class ErrorCode {
 	 * 要创建的用户已存在
 	 */
 	public static final int USER_EXIST = 404;
+	
+	
 	/**
 	 * 用户不存在
 	 */
 	public static final int USER_NOT_FOUND = 405;
+	public static final int DOMAIN_NOT_ALLOWD=406;
 }

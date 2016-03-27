@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +32,7 @@ import cn.vlabs.umt.services.user.service.ITokenService;
  */
 public class TokenService implements ITokenService{
 	
-	public static final long HOURS_24=24*60*60*1000;
+	public static final long HOURS_24=24*60*60*1000l;
 	private ITokenDAO tokenDAO;
 	
 	public ITokenDAO getTokenDAO() {

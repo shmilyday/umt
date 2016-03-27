@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +19,7 @@
 package cn.vlabs.umt.ui.servlet.filters;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.duckling.cloudy.common.UrlUtils;
 import cn.vlabs.umt.common.util.CommonUtils;
 import cn.vlabs.umt.common.util.RequestUtil;
 import cn.vlabs.umt.services.session.SessionUtils;
@@ -70,8 +74,14 @@ public class LoginFilter implements Filter {
 			}
 			return;
 		}else{
+			String requestUrl=CommonUtils.trim(UrlUtils.getFullRequestUrl(req));
 			HttpServletResponse resp = (HttpServletResponse)response;
-			resp.sendRedirect(contexPath+"/login");
+			if(!requestUrl.endsWith("/index.jsp")&&
+					!req.getRequestURI().replaceAll("/", "").equals(req.getContextPath().replaceAll("/",""))){
+				resp.sendRedirect(contexPath+"/login?returnUrl="+URLEncoder.encode(requestUrl,"UTF-8"));
+			}else{
+				resp.sendRedirect(contexPath+"/login");
+			}
 		}
 	}
 

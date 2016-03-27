@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +26,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import cn.vlabs.umt.common.util.CommonUtils;
-import cn.vlabs.umt.common.util.RandomUtil;
-
 public class OauthClientBean implements Serializable{
 	/**
 	 * 
@@ -38,10 +37,15 @@ public class OauthClientBean implements Serializable{
 	public static final String APP_TYPE_WEB_APP="webapp";
 	public static final String APP_TYPE_PHONE_APP="phoneapp";
 	
+	
 	private int id;
 	private String clientId;
 	private String clientSecret;
 	private String scope;
+	/**
+	 * 访问ddl的权限
+	 * */
+	public static final String DDL_SERVICE="ddlService";
 	private String redirectURI;
 	private String clientName;
 	private String applicant;
@@ -57,8 +61,94 @@ public class OauthClientBean implements Serializable{
 	private int uid;
 	private String company;
 	private String appType;
+	private String pwdType=PWD_TYPE_NONE;
+	public static final String PWD_TYPE_NONE="none";
+	public static final String PWD_TYPE_SHA="SHA";
+	public static final String PWD_TYPE_MD5="MD5";
+	public static final String PWD_TYPE_CRYPT="crypt";
+	//tmp 2014-2-2
+	private String userName;
 	
+	//add by lvly 140403,0为不需要,1为需要
+	private int needOrgInfo;
+	//add by lvly 140428
+	private int logo100m100;
 	
+	private int logo64m64;
+	
+	private int logo32m32;
+	
+	private int logo16m16;
+	
+	private String logoCustom;
+	
+	private int defaultLogo;
+	
+	private String enableAppPwd="no";
+	
+	private boolean compulsionStrongPwd;
+	
+	public boolean isCompulsionStrongPwd() {
+		return compulsionStrongPwd;
+	}
+	public void setCompulsionStrongPwd(boolean compulsionStrongPwd) {
+		this.compulsionStrongPwd = compulsionStrongPwd;
+	}
+	public String getEnableAppPwd() {
+		return enableAppPwd;
+	}
+	public void setEnableAppPwd(String enableAppPwd) {
+		this.enableAppPwd = enableAppPwd;
+	}
+	public int getDefaultLogo() {
+		return defaultLogo;
+	}
+	public void setDefaultLogo(int defaultLogo) {
+		this.defaultLogo = defaultLogo;
+	}
+	public int getLogo100m100() {
+		return logo100m100;
+	}
+	public void setLogo100m100(int logo100m100) {
+		this.logo100m100 = logo100m100;
+	}
+	public int getLogo64m64() {
+		return logo64m64;
+	}
+	public void setLogo64m64(int logo64m64) {
+		this.logo64m64 = logo64m64;
+	}
+	public int getLogo32m32() {
+		return logo32m32;
+	}
+	public void setLogo32m32(int logo32m32) {
+		this.logo32m32 = logo32m32;
+	}
+	public int getLogo16m16() {
+		return logo16m16;
+	}
+	public void setLogo16m16(int logo16m16) {
+		this.logo16m16 = logo16m16;
+	}
+	public int getNeedOrgInfo() {
+		return needOrgInfo;
+	}
+	public boolean isNeedOrgInfo(){
+		return needOrgInfo==1;
+	}
+
+	public void setNeedOrgInfo(int needOrgInfo) {
+		this.needOrgInfo = needOrgInfo;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	public String getAppTypeDesc(){
 		if(APP_TYPE_PHONE_APP.equals(this.getAppType())){
 			return "移动应用";
@@ -68,6 +158,14 @@ public class OauthClientBean implements Serializable{
 		return "";
 	}
 	
+	public String getPwdType() {
+		return pwdType;
+	}
+
+	public void setPwdType(String pwdType) {
+		this.pwdType = pwdType;
+	}
+
 	public String getAppType() {
 		return appType;
 	}
@@ -218,5 +316,24 @@ public class OauthClientBean implements Serializable{
 		}
 		return all;
 	}
+	public boolean is64LogoDefault(){
+		return this.defaultLogo==this.logo64m64;
+	}
+	public boolean is32LogoDefault(){
+		return this.defaultLogo==this.logo32m32;
+	}
+	public boolean is16LogoDefault(){
+		return this.defaultLogo==this.logo16m16;
+	}
+	public boolean is100LogoDefault(){
+		return this.defaultLogo==this.logo100m100;
+	}
+	public String getLogoCustom() {
+		return logoCustom;
+	}
+	public void setLogoCustom(String logoCustom) {
+		this.logoCustom = logoCustom;
+	}
+	
 	
 }

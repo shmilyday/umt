@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +18,7 @@
  */
 package cn.vlabs.umt.services.account;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -23,8 +26,10 @@ import org.springframework.beans.factory.BeanFactory;
 import cn.vlabs.duckling.api.umt.rmi.userv7.SearchField;
 import cn.vlabs.umt.common.util.CommonUtils;
 import cn.vlabs.umt.common.util.Config;
+import cn.vlabs.umt.services.user.bean.CoreMailUserInfo;
 import cn.vlabs.umt.services.user.bean.User;
 import cn.vlabs.umt.ui.UMTContext;
+import cn.vlabs.umt.validate.validator.ValidatorFactory;
 
 /**
  * @author lvly
@@ -36,6 +41,39 @@ public abstract class ICoreMailClient {
 	public static boolean useable;
 	public static Config config;
 	
+	public static final List<String> BLACK_LIST=new ArrayList<String>();
+	static{
+		BLACK_LIST.add("@sina.com");
+		BLACK_LIST.add("@163.com");
+		BLACK_LIST.add("@qq.com");
+		BLACK_LIST.add("@126.com");
+		BLACK_LIST.add("@vip.sina.com");
+		BLACK_LIST.add("@sina.cn");
+		BLACK_LIST.add("@hotmail.com");
+		BLACK_LIST.add("@gmail.com");
+		BLACK_LIST.add("@sohu.com");
+		BLACK_LIST.add("@yahoo.cn");
+		BLACK_LIST.add("@139.com");
+		BLACK_LIST.add("@wo.com.cn");
+		BLACK_LIST.add("@189.cn");
+		BLACK_LIST.add("@21cn.com");
+		BLACK_LIST.add("@umt.root");
+		BLACK_LIST.add("@root.umt");
+	}
+	public static boolean isBlack(String email){
+		if(CommonUtils.isNull(email)){
+			return true;
+		}
+		if(!ValidatorFactory.getEmailRegixValidator().validate(email)){
+			return true;
+		}
+		for(String domain:BLACK_LIST){
+			if(email.endsWith(domain)){
+				return true;
+			}
+		}
+		return false;
+	}
 	public static void init(BeanFactory factory){
 		if(config==null){
 			config=(Config)factory.getBean("Config");
@@ -109,7 +147,7 @@ public abstract class ICoreMailClient {
 	 * @param userName
 	 * @return 用户信息
 	 * */
-	public abstract User getCoreMailUserInfo(String userName);
+	public abstract CoreMailUserInfo getCoreMailUserInfo(String userName);
 	/**
 	 * 获取次关键字有多少结果
 	 * @param keyword

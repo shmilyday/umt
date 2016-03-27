@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,4 +34,5 @@ public interface IOauthTokenService {
 	void deleteBeforeRefreshToken(Date refreshExpired);
 	boolean isAccessExpired(OauthToken token);
 	boolean isRefreshExpired(OauthToken token);
+	OauthToken getLastTokenByUidAndClientId(int uid,String clientId);
 }

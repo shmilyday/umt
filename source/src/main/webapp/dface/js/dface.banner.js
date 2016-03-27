@@ -64,7 +64,7 @@ function commonBanner(){
 			'		</a>'+
 			'	</li>'+
 			'	<li>'+
-			'		<a class="header-block rol" href="http://rol.escience.cn" target="_blank">'+
+			'		<a class="header-block dc" href="http://rol.escience.cn" target="_blank">'+
 			'			<span class="logo"></span> '+
 			'			<span class="header-text">实验室信息系统</span>'+
 			'		</a>'+

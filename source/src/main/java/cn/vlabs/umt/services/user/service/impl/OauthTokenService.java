@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +21,6 @@ package cn.vlabs.umt.services.user.service.impl;
 import java.util.Date;
 
 import net.duckling.falcon.api.cache.ICacheService;
-
 import cn.vlabs.umt.services.user.bean.OauthToken;
 import cn.vlabs.umt.services.user.dao.IOauthTokenDAO;
 import cn.vlabs.umt.services.user.service.IOauthTokenService;
@@ -135,5 +136,9 @@ public class OauthTokenService implements IOauthTokenService {
 	public boolean isRefreshExpired(OauthToken token) {
 		Date access = token.getRefreshExpired();
 		return System.currentTimeMillis()>access.getTime();
+	}
+	@Override
+	public OauthToken getLastTokenByUidAndClientId(int uid, String clientId) {
+		return oauthTokenDAO.getLastTokenByUidAndClientId(uid, clientId);
 	}
 }

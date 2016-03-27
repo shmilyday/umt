@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +18,7 @@
  */
 package cn.vlabs.umt.ui.tags;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +26,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import cn.vlabs.umt.common.util.CommonUtils;
+import cn.vlabs.umt.domain.UMTLog;
+import cn.vlabs.umt.services.account.IAccountService;
 import cn.vlabs.umt.services.session.SessionUtils;
 import cn.vlabs.umt.services.user.UserService;
 import cn.vlabs.umt.services.user.bean.LoginNameInfo;
@@ -48,12 +53,57 @@ public class RefreshUserTag extends TagSupport {
 			SessionUtils.setSessionVar(request,Attributes.USER_TEMP_SECURITY_EMAIL, getUserService(request).getTempSecurityEmail(user.getId()));
 			SessionUtils.setSessionVar(request,Attributes.IS_USER_LOGIN_ACTIVE, getUserService(request).isActivePrimaryEmail(user.getCstnetId()));
 			IUserLoginNameService loginNameService=ServiceFactory.getLoginNameService(request);
-			SessionUtils.setSessionVar(request, Attributes.USER_PRIMARY_EMAIL,CommonUtils.first(loginNameService.getLoginNameInfo(uid, LoginNameInfo.LOGINNAME_TYPE_PRIMARY)));
+			LoginNameInfo primary=CommonUtils.first(loginNameService.getLoginNameInfo(uid, LoginNameInfo.LOGINNAME_TYPE_PRIMARY));
+			SessionUtils.setSessionVar(request, Attributes.USER_PRIMARY_EMAIL,primary);
 			List<LoginNameInfo> secondaryEmails=loginNameService.getLoginNameInfo(uid, LoginNameInfo.LOGINNAME_TYPE_SECONDARY);
 			SessionUtils.setSessionVar(request, Attributes.USER_SECONDARY_EMAIL,secondaryEmails);
+			LoginNameInfo ldapName=CommonUtils.first(loginNameService.getLoginNameInfo(uid, LoginNameInfo.LOGINNAME_TYPE_LDAP));
+			SessionUtils.setSessionVar(request,Attributes.USER_LDAP_NAME,ldapName);
 			SessionUtils.setSessionVar(request, Attributes.MY_APP_LIST, getAccessService(request).getMyAppAccesses(user.getId()));
+			request.setAttribute("canUseLoginName", canUsedLoginName(primary,secondaryEmails,ldapName));
+			//the last login log
+			UMTLog last=getAccountService(request).getLastLogByEventType(uid,UMTLog.EVENT_TYPE_LOG_IN);
+			request.setAttribute("lastLog",last);
+			request.setAttribute("warnLog", getWarnLog(uid, request));
 		}
 		return EVAL_BODY_INCLUDE;
+	}
+	private UMTLog getWarnLog(int uid,HttpServletRequest request){
+		List<UMTLog> logs=getAccountService(request).getTopTenLogByEventType(uid, UMTLog.EVENT_TYPE_LOG_IN);
+		if(CommonUtils.isNull(logs)){
+			return null;
+		}
+		for(UMTLog log:logs){
+			if(log.isSendWarnEmail()){
+				return log;
+			}
+		}
+		return null;
+		
+		
+	}
+	private List<LoginNameInfo> canUsedLoginName(LoginNameInfo primary,List<LoginNameInfo> nameInfo,LoginNameInfo ldapName){
+		List<LoginNameInfo> lnis=new ArrayList<LoginNameInfo>();
+		if(primary!=null){
+			lnis.add(primary);
+		}
+		if(!CommonUtils.isNull(nameInfo)){
+			for(LoginNameInfo n:nameInfo){
+				if(n.getStatus().equals(LoginNameInfo.STATUS_ACTIVE)){
+					lnis.add(n);
+				}
+			}
+		}
+		if(ldapName!=null){
+			lnis.add(ldapName);
+		}
+		if(lnis.size()==0){
+			return null;
+		}
+		return lnis;
+	}
+	private IAccountService getAccountService(HttpServletRequest request){
+		return ServiceFactory.getAccountService(request);
 	}
 	private IAppAccessService getAccessService(HttpServletRequest request){
 		return ServiceFactory.getAppAccessService(request);
@@ -61,6 +111,5 @@ public class RefreshUserTag extends TagSupport {
 	private UserService getUserService(HttpServletRequest request){
 		return ServiceFactory.getUserService(request);
 	}
-
 	private static final long serialVersionUID = 145678765434567L;
 }

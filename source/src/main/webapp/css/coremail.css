@@ -6,8 +6,8 @@ data:2013-04-27
 
 .MainR {
     float: left;
-    height: 415px; _height:370px;
-    margin-top: 20px;
+    height: 355px; _height:310px;
+    margin-top: 20px; _margin-top:0;
     white-space: nowrap;
     width: 367px; _width:350px;
 }
@@ -34,11 +34,13 @@ data:2013-04-27
     height: 15px;
     margin: 0;
     padding: 45px 0 2px 120px;
+    _padding:10px 0 2px 120px;
     font-size: 12px;
 }
 #logArea .inptr {
     height: 25px;
     margin: 0 0 15px;
+    _margin:0 0 5px;
     padding: 0 0 0 50px;
 }
 #logArea .indent {
@@ -69,12 +71,14 @@ data:2013-04-27
     line-height: 28px; _line-height:32px;
     margin-right: 10px;
     text-align: right;
-    width: 60px;
+    width: 70px;
 }
 #logArea label.for {
     float: none;
+    padding-left:10px; 
+    text-align:left;
 }
-.Button {
+.Button,input[type="button"].Button {
     background-color: lightskyblue;
     background-image: url("../images/button.gif");
     border: medium none;
@@ -111,4 +115,24 @@ a.tendaysHelp {
 
 #logArea .loginHint a{
 	margin:0 2px 0 2px;
+}
+
+#userName,#password {height:15px; border-radius:0; width:138px; font-size:13px; _width:120px;}
+#password {_width:140px;}
+.popover.top {border-radius:0}
+#user,#lockImg,#unlockImg {
+  background: url(../images/user-16.png) 4px 4px no-repeat #f9f9f9;
+  width:16px;
+  height:15px;
+  *margin-top:1px;
+  border-radius:0;
+  _width:20px;
+  _height:22px;
+}
+
+#lockImg {
+  background: url(../images/lock-16.png) 4px 4px no-repeat #f9f9f9;
+}
+#unlockImg {
+  background: url(../images/unlock-16.png) 4px 4px no-repeat #f9f9f9;
 }

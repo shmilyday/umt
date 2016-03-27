@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,13 +31,16 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import cn.vlabs.umt.common.datasource.DatabaseUtil;
+import cn.vlabs.umt.common.util.Config;
 import cn.vlabs.umt.domain.UMTLog;
 import cn.vlabs.umt.services.ticket.impl.TicketDAOImpl;
 
 public class AccountDAOImpl implements IAccountDAO{
-	public AccountDAOImpl(DatabaseUtil du){
+	public AccountDAOImpl(DatabaseUtil du,Config config){
 		this.du=du;
+		this.config=config;
 	}
+	private Config config;
 	public Collection<StatisticBean> getLoginCount(Date begin, Date end) {
 		Connection conn = du.getConnection();
 		PreparedStatement pst = null;
@@ -55,77 +60,160 @@ public class AccountDAOImpl implements IAccountDAO{
 			}
 		} catch (SQLException e) {
 			LOGGER.error("记录记账信息时发生错误:"+e.getMessage());
-			LOGGER.debug("详细信息:", e);
+			LOGGER.error("详细信息:", e);
 		}finally{
 			DatabaseUtil.closeAll(rs, pst, conn);
 		}
 		return stats;
 	}
+	
 
-	public void log(String eventType, String appname, String appurl, int uid, String userip, Date logintime, String browserType, String remark) {
-		Connection conn = du.getConnection();
-		PreparedStatement pst = null;
-		ResultSet rs = null;
-		try{
-			pst = conn.prepareStatement(LOG_SQL);
-			int index=0;
-			pst.setString(++index, eventType);
-			pst.setString(++index, appname);
-			pst.setString(++index, appurl);
-			pst.setInt(++index, uid);
-			pst.setString(++index, userip);
-			pst.setTimestamp(++index, new Timestamp(logintime.getTime()));
-			pst.setString(++index, browserType);
-			pst.setString(++index, remark);
-			pst.execute();
-		} catch (SQLException e) {
-			LOGGER.error("记录记账信息时发生错误:"+e.getMessage());
-			LOGGER.debug("详细信息:", e);
-		}finally{
-			DatabaseUtil.closeAll(rs, pst, conn);
-		}
-	}
+
+	private int hashLength=10;
 	private static final String STATISTIC_SQL="select appname, count(id) from umt_log where eventType=? and occurTime>? and occurTime<? group by appname;";
-	private static final String LOG_SQL="insert into umt_log(eventType, appname, appurl, uid, ipaddress, occurTime, browserType, remark) values(?,?,?,?,?,?,?,?)";
-	private static final String SELECT_SQL="select * from umt_log where 1=1";
-	private static final String BY_EVENT_TYPE=" and eventType=? ";
-	private static final String BY_UID=" and uid=? ";
-	private static final String ORDER_BY_OCCUR_TIME=" order by id desc ";
-	private static final String TOP_TEN="limit 0,10 ";
 	private static final Logger LOGGER = Logger.getLogger(TicketDAOImpl.class);
 	private DatabaseUtil du;
 	
+	
 	@Override
-	public List<UMTLog> getLastLogByEventType(int uid, String eventType) {
+	public List<UMTLog> getMyPreference(int uid) {
 		Connection conn = du.getConnection();
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try{
-			pst = conn.prepareStatement(SELECT_SQL+BY_UID+BY_EVENT_TYPE+ORDER_BY_OCCUR_TIME+TOP_TEN);
+			pst = conn.prepareStatement("select * from umt_common_use_geo where uid=?");
 			int index=0;
 			pst.setInt(++index, uid);
-			pst.setString(++index, eventType);
 			rs=pst.executeQuery();
-			List<UMTLog> logs=new ArrayList<UMTLog>();
+			List<UMTLog> geos=new ArrayList<UMTLog>();
 			while(rs.next()){
-				UMTLog umtLog=new UMTLog();
-				umtLog.setAppName(rs.getString("appname"));
-				umtLog.setAppUrl(rs.getString("appurl"));
-				umtLog.setBrowserType(rs.getString("browserType"));
-				umtLog.setEventType(rs.getString("eventType"));
-				umtLog.setOccurTime(rs.getTimestamp("occurTime"));
-				umtLog.setRemark(rs.getString("remark"));
-				umtLog.setUserIp(rs.getString("ipaddress"));
-				umtLog.setUid(rs.getInt("uid"));
-				logs.add(umtLog);
+				UMTLog g=new UMTLog();
+				g.setId(rs.getInt("id"));
+				g.setCountry(rs.getString("country"));
+				g.setProvince(rs.getString("province"));
+				g.setCity(rs.getString("city"));
+				g.setUid(rs.getInt("uid"));
+				geos.add(g);
 			}
-			return logs;
+			return geos;
 		} catch (SQLException e) {
 			LOGGER.error("记录记账信息时发生错误:"+e.getMessage());
-			LOGGER.debug("详细信息:", e);
+			LOGGER.error("详细信息:", e);
 		}finally{
 			DatabaseUtil.closeAll(rs, pst, conn);
 		}
 		return null;
 	}
+	@Override
+	public void removeCommonGEO(int id, int uid) {
+		Connection conn = du.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try{
+			pst = conn.prepareStatement("delete from umt_common_use_geo where uid=? and id=?");
+			int index=0;
+			pst.setInt(++index, uid);
+			pst.setInt(++index, id);
+			pst.execute();
+		} catch (SQLException e) {
+			LOGGER.error("记录记账信息时发生错误:"+e.getMessage());
+			LOGGER.error("详细信息:", e);
+		}finally{
+			DatabaseUtil.closeAll(rs, pst, conn);
+		}
+	}
+	@Override
+	public List<UMTLog> readCommonGEO(int uid) {
+		Connection conn = du.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try{
+			String sql= "select distinct uid, country,province,city from umt_log{0} where uid=? and eventType='"+UMTLog.EVENT_TYPE_LOG_IN+"' and country is not null and province is not null and city is not null order by id";
+			pst = conn.prepareStatement(sql.replace("{0}", config.getBooleanProp("is.myself.log.spilit", false)?"_"+uid%hashLength:""));
+			int index=0;
+			pst.setInt(++index, uid);
+			rs=pst.executeQuery();
+			List<UMTLog> logs=new ArrayList<UMTLog>();
+			while(rs.next()){
+				UMTLog g=new UMTLog();
+				g.setCountry(rs.getString("country"));
+				g.setProvince(rs.getString("province"));
+				g.setCity(rs.getString("city"));
+				g.setUid(rs.getInt("uid"));
+				logs.add(g);
+			}
+			return logs;
+		} catch (SQLException e) {
+			LOGGER.error("记录记账信息时发生错误:"+e.getMessage());
+			LOGGER.error("详细信息:", e);
+		}finally{
+			DatabaseUtil.closeAll(rs, pst, conn);
+		}
+		return null;
+	}
+	@Override
+	public void addCommonGEO(UMTLog umtLog) {
+		Connection conn = du.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try{
+			pst = conn.prepareStatement("insert into umt_common_use_geo(`uid`,`country`,`province`,`city`) values(?,?,?,?)");
+			int index=0;
+			pst.setInt(++index, umtLog.getUid());
+			pst.setString(++index, umtLog.getCountry());
+			pst.setString(++index,umtLog.getProvince());
+			pst.setString(++index, umtLog.getCity());
+			pst.execute();
+		} catch (SQLException e) {
+			LOGGER.error("记录记账信息时发生错误:"+e.getMessage());
+			LOGGER.error("详细信息:", e);
+		}finally{
+			DatabaseUtil.closeAll(rs, pst, conn);
+		}
+		
+	}
+	@Override
+	public int countCommonGEO(int uid) {
+		Connection conn = du.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try{
+			pst = conn.prepareStatement("select count(*) c from  umt_common_use_geo where `uid`=? ");
+			int index=0;
+			pst.setInt(++index, uid);
+			rs=pst.executeQuery();
+			rs.next();
+			return rs.getInt("c");
+		} catch (SQLException e) {
+			LOGGER.error("记录记账信息时发生错误:"+e.getMessage());
+			LOGGER.error("详细信息:", e);
+		}finally{
+			DatabaseUtil.closeAll(rs, pst, conn);
+		}
+		return 0;
+	}
+	@Override
+	public boolean isExitsCommonGEO(UMTLog umtLog) {
+		Connection conn = du.getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try{
+			pst = conn.prepareStatement("select count(*) c from  umt_common_use_geo where `uid`=? and `country`=? and `province`=? and `city`=?");
+			int index=0;
+			pst.setInt(++index, umtLog.getUid());
+			pst.setString(++index, umtLog.getCountry());
+			pst.setString(++index,umtLog.getProvince());
+			pst.setString(++index, umtLog.getCity());
+			rs=pst.executeQuery();
+			rs.next();
+			return rs.getInt("c")>0;
+		} catch (SQLException e) {
+			LOGGER.error("记录记账信息时发生错误:"+e.getMessage());
+			LOGGER.error("详细信息:", e);
+		}finally{
+			DatabaseUtil.closeAll(rs, pst, conn);
+		}
+		return false;
+	}
+		
 }

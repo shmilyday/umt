@@ -8,6 +8,10 @@
 		<name>UserV7</name>
 		<class>cn.vlabs.umt.ui.rest.RestUserServiceV7Impl</class>
 	</service>
+	<service>
+		<name>Oauth</name>
+		<class>cn.vlabs.umt.ui.rest.RestOauthServiceImpl</class>
+	</service>
     <service>
 		<name>Verify</name>
 		<class>cn.cnic.uaf.common.http.rest.RestVerifyServiceImpl</class>
@@ -30,5 +34,7 @@
 		<service>User</service>
 		<service>Verify</service>
 		<service>Register</service>
+		<service>UserV7</service>
+		<service>Oauth</service>
 	</filter-mapping>
 </ServiceConfig>

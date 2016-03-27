@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +19,7 @@
 package cn.vlabs.umt.services.user.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import cn.vlabs.commons.principal.UserPrincipal;
 
@@ -50,6 +53,7 @@ public class User implements Serializable{
 	 * 密保邮箱，激活成功则在这里记一下，如果没有激活或者未设置，则为空
 	 * */
 	private String securityEmail;
+	private Date createTime;
 	/**
 	 * 主邮箱地址
 	 * */
@@ -58,6 +62,10 @@ public class User implements Serializable{
 	 * 辅助邮箱地址
 	 * */
 	private String[] secondaryEmails;
+	/**
+	 * 发送开关
+	 * */
+	private boolean sendGEOEmailSwitch;
 	/**
 	 * 用户来源是UMT
 	 * */
@@ -71,6 +79,28 @@ public class User implements Serializable{
 	 * */
 	public static final String USER_TYPE_MAIL_AND_UMT="uc";
 	
+	/**
+	 * 用户锁定与否状态
+	 * */
+	private String accountStatus;
+	
+	public static final String ACCOUNT_STATUS_NORMAL="normal";
+	public static final String ACCOUNT_STATUS_LOCKED="locked";
+	public static final String ACCOUNT_STATUS_LIMIT="limit";
+	
+	
+	public boolean isSendGEOEmailSwitch() {
+		return sendGEOEmailSwitch;
+	}
+	public void setSendGEOEmailSwitch(boolean sendGEOEmailSwitch) {
+		this.sendGEOEmailSwitch = sendGEOEmailSwitch;
+	}
+	public String getAccountStatus() {
+		return accountStatus;
+	}
+	public void setAccountStatus(String accountStatus) {
+		this.accountStatus = accountStatus;
+	}
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -121,7 +151,10 @@ public class User implements Serializable{
 		this.securityEmail = securityEmail;
 	}
 	public String getCstnetId() {
-		return cstnetId;
+		if(cstnetId==null){
+			return null;
+		}
+		return cstnetId.toLowerCase();
 	}
 	public void setCstnetId(String cstnetId) {
 		this.cstnetId = cstnetId;
@@ -136,8 +169,17 @@ public class User implements Serializable{
 			this.secondaryEmails=secondaryEmail.clone();
 		}
 	}
+	public static boolean isBuildinAuthBy(String type){
+		return USER_TYPE_CORE_MAIL.equalsIgnoreCase(type)||USER_TYPE_MAIL_AND_UMT.equalsIgnoreCase(type)||USER_TYPE_UMT.equalsIgnoreCase(type);
+	}
 	public boolean isCoreMailOrUc(){
 		return USER_TYPE_CORE_MAIL.equals(this.getType())||USER_TYPE_MAIL_AND_UMT.equals(this.getType());
+	}
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 	/**
 	 * 为了兼容老接口，最好不要用这个方法，里面的值都在user提取就好

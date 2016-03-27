@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2008-2013 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * Copyright (c) 2008-2016 Computer Network Information Center (CNIC), Chinese Academy of Sciences.
+ * 
+ * This file is part of Duckling project.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +20,12 @@ package cn.vlabs.umt.common.util;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+
 
 
 /**常用的工具类了
@@ -195,5 +199,26 @@ public final class CommonUtils {
 	public static String trim(String str){
 		return str==null?null:str.trim();
 	}
-	 
+	public static <T> Map<String,T> extractSthFieldToMap(List<T> list,String fieldName){
+		if(CommonUtils.isNull(list)){
+			return new HashMap<String,T>();
+		}
+		Map<String,T> result=new HashMap<String,T>();
+		for(T t:list){
+			Object obj=ReflectUtils.getValue(t, fieldName);
+			result.put(obj==null?null:obj.toString(),t);
+		}
+		return result;
+	}
+	public static <T>  List<String> extractSthField(List<T> list,String fieldName){
+		if(CommonUtils.isNull(list)){
+			return null;
+		}
+		List<String> result=new ArrayList<String>();
+		for(T t:list){
+			Object obj=ReflectUtils.getValue(t, fieldName);
+			result.add(obj==null?null:obj.toString());
+		}
+		return result;
+	}
 }

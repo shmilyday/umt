@@ -10,7 +10,7 @@
 	<head>
 		<title><fmt:message key="remindpass.title"/></title>
 		<!-- <link href="css/umt.css" rel="stylesheet" type="text/css"/> -->
-		<link href="images/favicon.ico" rel="shortcut icon"
+		<link href="<%= request.getContextPath() %>/images/favicon.ico" rel="shortcut icon"
 			type="image/x-icon" />
 		<meta http-equiv="pragma" content="no-cache"/>
 		<meta http-equiv="cache-control" content="no-cache"/>
@@ -103,7 +103,7 @@
 					 },
 					 rules: {
 						 username:{required:true,email:true},
-						 ValidCode:{required:true,number:true}
+						 ValidCode:{required:true}
 					 },
 					 messages: {
 						 username: {
@@ -111,8 +111,7 @@
 							 email:toRed('<fmt:message key="common.validate.email.invalid"/>')
 						 },
 						 ValidCode:{
-							 required:toRed('<fmt:message key="common.validate.validateCode.required"/>'),
-							 number:toRed('<fmt:message key="common.validate.validateCode.number"/>')
+							 required:toRed('<fmt:message key="common.validate.validateCode.required"/>')
 						 }
 						 
 					 },
