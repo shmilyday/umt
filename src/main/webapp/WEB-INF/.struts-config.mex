@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowViewLayout Version="1.2">
+  <StrutsActivity path="/user/updateUser.do" location="30,30" dimension="286,84" />
+  <StrutsActivity path="/user/closeUser.do" location="390,30" dimension="256,84" />
+  <StrutsActivity path="/user/userSessions.do" location="720,30" dimension="328,84" />
+  <StrutsActivity path="/admin/manageApplication.do" location="30,285" dimension="286,84" />
+  <StrutsActivity path="/admin/manageUser.do" location="390,285" dimension="256,84" />
+  <StrutsActivity path="/admin/manageRequests.do" location="720,285" dimension="271,84" />
+  <StrutsActivity path="/createRequest.do" location="15,495" dimension="280,84" />
+  <StrutsActivity path="/admin/batchCreate.do" location="720,570" dimension="304,84" />
+  <StrutsActivity path="/admin/manageRole.do" location="350,550" dimension="298,84" />
+  <StrutsActivity path="message;6" location="1065,30" dimension="118,72" />
+  <StrutsActivity path="/user/userinfo.jsp" location="90,165" dimension="148,48" />
+  <StrutsActivity path="/user/closeuser.jsp" location="420,180" dimension="154,48" />
+  <StrutsActivity path="/user/sessions.jsp" location="780,180" dimension="148,48" />
+  <StrutsActivity path="/admin/appmanage.jsp" location="105,435" dimension="160,48" />
+  <StrutsActivity path="/admin/usermanage.jsp" location="435,435" dimension="166,48" />
+  <StrutsActivity path="/admin/requests.jsp" location="735,420" dimension="154,48" />
+  <StrutsActivity path="/regist.jsp" location="45,600" dimension="106,48" />
+  <StrutsActivity path="/admin/displayuser.jsp" location="780,690" dimension="172,48" />
+  <StrutsActivity path="/admin/batch.jsp" location="750,480" dimension="136,48" />
+  <StrutsActivity path="/admin/managerole.jsp" location="405,690" dimension="166,48" />
+  <StrutsActivity path="/message.jsp" location="1245,45" dimension="112,48" />
+  <StrutsTransition id="/admin/batchCreate.do,changePage,/admin/batchCreate.do,1" routingType="1">
+    <Bendpoints>
+      <Point rDim1="43,-57" rDim2="43,-57" />
+      <Point rDim1="163,-57" rDim2="163,-57" />
+      <Point rDim1="223,-57" rDim2="223,-57" />
+      <Point rDim1="223,3" rDim2="223,3" />
+    </Bendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/admin/usermanage.jsp,null,/admin/manageUser.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="518,435" />
+      <AbsolutePoint location="518,369" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/user/closeuser.jsp,null,/user/closeUser.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="497,180" />
+      <AbsolutePoint location="497,114" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/user/userinfo.jsp,null,/user/updateUser.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="164,165" />
+      <AbsolutePoint location="164,114" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/regist.jsp,null,/createRequest.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="98,600" />
+      <AbsolutePoint location="98,579" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/admin/batchCreate.do,displayusers,/admin/displayuser.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="872,654" />
+      <AbsolutePoint location="872,690" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/user/sessions.jsp,null,/user/userSessions.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="854,180" />
+      <AbsolutePoint location="854,114" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="message;6,null,/message.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="1183,66" />
+      <AbsolutePoint location="1245,66" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/admin/managerole.jsp,null,/admin/manageRole.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="488,690" />
+      <AbsolutePoint location="488,634" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/admin/appmanage.jsp,null,/admin/manageApplication.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="185,435" />
+      <AbsolutePoint location="185,369" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/admin/requests.jsp,null,/admin/manageRequests.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="812,420" />
+      <AbsolutePoint location="812,369" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/admin/batch.jsp,null,/admin/batchCreate.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="818,528" />
+      <AbsolutePoint location="818,570" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+</FlowViewLayout>
+

@@ -1,0 +1,138 @@
+/*
+version:umt-coremail
+author:zhangshixiang@cstnet.cn
+data:2013-04-27
+*/
+
+.MainR {
+    float: left;
+    height: 355px; _height:310px;
+    margin-top: 20px; _margin-top:0;
+    white-space: nowrap;
+    width: 367px; _width:350px;
+}
+.MainR .Header {
+    height: 15px;
+    padding: 0 0 0 64px;
+}
+.MainR .Header .iconL {
+    background-image: url("iconL.gif");
+    float: left;
+    height: 26px;
+    margin-right: 12px;
+    width: 26px;
+}
+.MainR .Header .title {
+    color: #5B5B5B;
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 2px;
+}
+#logArea .Error {
+    color: #FF0000;
+    height: 15px;
+    margin: 0;
+    padding: 45px 0 2px 120px;
+    _padding:10px 0 2px 120px;
+    font-size: 12px;
+}
+#logArea .inptr {
+    height: 25px;
+    margin: 0 0 15px;
+    _margin:0 0 5px;
+    padding: 0 0 0 50px;
+}
+#logArea .indent {
+    height: auto;
+    padding-left: 120px;
+}
+#logArea .inpreg {
+    height: 15px;
+}
+#logArea .inpreg hr {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-color: #FFFFFF #FFFFFF #CCCCCC;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    margin-left: 48px;
+}
+#logArea .inpreg a {
+    color: #507EA4;
+}
+#logArea label {
+    color: #65696C;
+    float: left;
+    font-size: 12px;
+    line-height: 28px; _line-height:32px;
+    margin-right: 10px;
+    text-align: right;
+    width: 70px;
+}
+#logArea label.for {
+    float: none;
+    padding-left:10px; 
+    text-align:left;
+}
+.Button,input[type="button"].Button {
+    background-color: lightskyblue;
+    background-image: url("../images/button.gif");
+    border: medium none;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    height: 28px;
+    margin-right: 10px;
+    width: 100px;
+}
+
+.input {
+    border: 1px solid #7F9DB9;
+    font-family: verdana,simsun,sans-serif;
+    font-size: 12px;
+    padding: 5px 3px;
+    width: 170px;
+}
+.sup a {
+		vertical-align:super; color:#333; font-size:10px; font-family:Arial, Helvetica, sans-serif;
+		display:inline-block; text-decoration:none;}
+		
+a.tendaysHelp {
+	width:20px; height:20px; display:inline-block;
+	background:url("../images/icon_help.gif") no-repeat scroll 0 -30px transparent
+}
+#logArea .loginHint{
+	margin:10px 0 0 70px;
+	color:#65696C;
+	font-size:14px;
+	line-height:20px;
+}
+
+#logArea .loginHint a{
+	margin:0 2px 0 2px;
+}
+
+#userName,#password {height:15px; border-radius:0; width:138px; font-size:13px; _width:120px;}
+#password {_width:140px;}
+.popover.top {border-radius:0}
+#user,#lockImg,#unlockImg {
+  background: url(../images/user-16.png) 4px 4px no-repeat #f9f9f9;
+  width:16px;
+  height:15px;
+  *margin-top:1px;
+  border-radius:0;
+  _width:20px;
+  _height:22px;
+}
+
+#lockImg {
+  background: url(../images/lock-16.png) 4px 4px no-repeat #f9f9f9;
+}
+#unlockImg {
+  background: url(../images/unlock-16.png) 4px 4px no-repeat #f9f9f9;
+}

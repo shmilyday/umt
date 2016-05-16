@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE taglib PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+    <tlib-version>2.0</tlib-version>
+    <jsp-version>1.2</jsp-version>
+    <short-name>umt</short-name>
+    <uri>WEB-INF/tld/umt.tld</uri>
+    <description></description>
+    <tag>
+        <name>RequestCount</name>
+        <tag-class>cn.vlabs.umt.ui.tags.RequestCount</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+    <tag>
+        <name>CurrentUserEmail</name>
+        <tag-class>cn.vlabs.umt.ui.tags.CurrentUserEmailTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+     <tag>
+        <name>CurrentUserName</name>
+        <tag-class>cn.vlabs.umt.ui.tags.CurrentUserNameTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+    <tag>
+        <name>SsoParams</name>
+        <tag-class>cn.vlabs.umt.ui.tags.SsoParamsTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+    <tag>
+        <name>HasLogin</name>
+        <tag-class>cn.vlabs.umt.ui.tags.HasLoginTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+    <tag>
+        <name>NotLogin</name>
+        <tag-class>cn.vlabs.umt.ui.tags.NotLoginTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+    <tag>
+        <name>IsAdmin</name>
+        <tag-class>cn.vlabs.umt.ui.tags.IsAdminTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+    <tag>
+        <name>system</name>
+        <tag-class>cn.vlabs.umt.ui.tags.SystemTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+        	<name>var</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>Loop</name>
+        <tag-class>cn.vlabs.umt.ui.tags.LoopTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+        	<name>start</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+        	<name>end</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>AppList</name>
+        <tag-class>cn.vlabs.umt.ui.tags.AppListTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+    <!-- 通过邮件地址，判断是否知道邮件的网址 -->
+    <tag>
+        <name>iKnowUrl</name>
+        <tag-class>cn.vlabs.umt.ui.tags.EmailIknowLinkTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+        	<name>email</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <!-- 通过邮件知道，获取邮件网址 -->
+    <tag>
+        <name>emailUrl</name>
+        <tag-class>cn.vlabs.umt.ui.tags.EmailLinkTag</tag-class>
+        <attribute>
+        	<name>email</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <!-- 格式化成绝对地址 -->
+    <tag>
+        <name>url</name>
+        <tag-class>cn.vlabs.umt.ui.tags.AbsoluteUrlTag</tag-class>
+        <attribute>
+        	<name>value</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <!-- 读取umt.properties的配置项 -->
+    <tag>
+        <name>config</name>
+        <tag-class>cn.vlabs.umt.ui.tags.ConfigTag</tag-class>
+        <attribute>
+        	<name>key</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <!-- 隐藏email标签 -->
+    <tag>
+    	 <name>hideEmail</name>
+        <tag-class>cn.vlabs.umt.ui.tags.EmailTag</tag-class>
+        <attribute>
+        	<name>email</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <!-- isEqualsContains -->
+    <tag >
+    	<name>isEqualsContain</name>
+    	<tag-class>cn.vlabs.umt.ui.tags.IsEqualsContainTag</tag-class>
+    	<attribute>
+        	<name>array</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+        	<name>var</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <!-- Oauth的登录界面需参数,统一放到一个上下文里面-->
+    <tag>
+	    <name>oauthContext</name>
+	    <tag-class>cn.vlabs.umt.ui.tags.OauthContextTag</tag-class>
+    </tag>
+    
+    <tag>
+        <name>registerLink</name>
+        <tag-class>cn.vlabs.umt.ui.tags.RegisterLinkTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag> <tag>
+        <name>registerLink</name>
+        <tag-class>cn.vlabs.umt.ui.tags.RegisterLinkTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+    <tag>
+    	<name>refreshUser</name>
+    	<tag-class>cn.vlabs.umt.ui.tags.RefreshUserTag</tag-class>
+    </tag>
+	<tag >
+    	<name>showInLoginAuths</name>
+    	<tag-class>cn.vlabs.umt.ui.tags.ShowInLoginAuthsTag</tag-class>
+        <attribute>
+        	<name>var</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+	<tag >
+    	<name>isThirdParty</name>
+    	<tag-class>cn.vlabs.umt.ui.tags.IsThirdPartyTag</tag-class>
+        <attribute>
+        	<name>type</name>
+        	<required>true</required>
+        	<rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+</taglib>

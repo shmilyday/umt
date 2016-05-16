@@ -1,0 +1,122 @@
+#
+# Database Config
+# tables will be inited at the first time
+#
+database.dbhost=10.10.1.1
+database.username=root
+database.password=root
+database.dbname=test
+database.conn-url=jdbc:mysql://${database.dbhost}/${database.dbname}?useUnicode=true&characterEncoding=UTF-8
+
+#
+# Database Token Config
+#
+database.token.dbhost=10.10.1.1
+database.token.username=root
+database.token.password=root
+database.token.dbname=token
+database.token.conn-url=jdbc:mysql://${database.token.dbhost}/${database.token.dbname}?useUnicode=true&characterEncoding=UTF-8
+
+# use coremail's database or not - false is not
+use.coremail.db=false
+
+database.coremail.username=root
+database.coremail.password=root
+database.coremail.dbhost=10.10.1.2
+database.coremail.dbname=coremailtest
+database.coremail.conn-url=jdbc:mysql://${database.coremail.dbhost}/${database.coremail.dbname}?useUnicode=true&characterEncoding=UTF-8
+
+#
+# Database parameters
+#
+database.driver=com.mysql.jdbc.Driver
+database.maxconn=10
+database.maxidle=3
+
+#
+# Mail Config
+#
+mail.host=smtp.domain.com
+mail.username=user@domain.com
+mail.password=password_text
+mail.boxname=user@domain.com
+mail.temlate.dir=/WEB-INF/message
+
+#
+# Certificate Config
+#
+# UMT's cert, used by uaf in umt, not third party uaf
+umt.cert.keyfile=/WEB-INF/umtcert.txt
+# UMT DES key file, never used by java file, don't edit it
+umt.des.keyfile=/WEB-INF/umtkey.bin
+# can be MD2,MD5,SHA,SHA-256,SHA-384,SSHA,NONE
+PASSWORDS_ENCRYPTION_ALGORITHM=SHA
+
+#
+# CoreMail API Config
+#
+umt.coremail.api.ip=mailtest.escience.cn
+umt.coremail.api.port=6195
+umt.coremail.api.providerId=cstnet.cn
+# regist user will insert into this org
+umt.coremail.api.orgId=a
+# regist user will registed by this domain 
+umt.coremail.api.email.domain=cstnet.cn
+# regist user init status: 0-normal,4-stop,2-lock
+umt.coremail.api.user.status=0
+umt.coremail.api.user.cosId=9
+umt.coremail.api.user.quotaDelta=0
+
+umt.coremail.enable=true
+
+# please set absolute url,don't end with '/',it used by send email
+umt.this.base.url=https://passporttest.escience.cn/
+
+# memcache url
+umt.memcachedURL=10.10.1.3:11211
+
+# Third party-uaf param, if you need
+uaf.login.url=http://passporttest.escience.cn/sp-broker/login
+uaf.logout.url=http://passporttest.escience.cn/sp-broker/logout
+
+# wifi baseurl
+wifi.base.url=http://159.226.190.5
+
+# for dcloud calendar
+dcloud.calendar.product.name=calendar
+
+# logs split into multi-tables
+is.myself.log.spilit=true
+
+# vmt service api url
+vmt.api.url=https://vmttest.escience.cn/services
+
+# clb config
+clb.base.url=http://10.10.1.156:8080/clb/ServiceServlet
+clb.username=CLB_USER
+clb.passwd=CLB_USER_PASSWORD
+
+# ldap config
+ldap.url=ldap://159.226.11.87:10389
+ldap.base.dn=DC=passport,DC=cstnet
+ldap.username=uid=admin,ou=system
+ldap.password=PASSWORD
+ldap.maxActive=15
+ldap.maxTotal=20
+ldap.maxIdle=15
+
+# dip url
+dip.url=http://ip.escience.cn/dip/ip/search?ip=
+
+# geodata cas config
+geo.cas.server.url.prefix=http://auth.geodata.cn
+geo.cas.server.url.login=${geo.cas.server.url.prefix}/login
+geo.cas.server.url.callBack=${umt.this.base.url}/geo
+
+compulsion.pwd.strong.scope=cstnet.cn
+
+system.readonly=false
+system.readonly.recovery.time=22:00
+
+umt.ca.serverUrl=https://10.10.1.92
+umt.ca.endDN=@eduroam.cstnet.cn, DC=eduroam, DC=Grid, DC=CN
