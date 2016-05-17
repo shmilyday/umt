@@ -1,0 +1,5 @@
+#/bin/sh
+
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get \
+    -DrepoUrl=http://10.10.1.49/nexus/content/groups/cerc/ \
+    -Dartifact=net.duckling:clb:6.2.0

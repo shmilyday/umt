@@ -2,7 +2,7 @@
 # Database Config
 # tables will be inited at the first time
 #
-database.dbhost=10.10.1.1
+database.dbhost=localhost
 database.username=root
 database.password=root
 database.dbname=test
@@ -11,7 +11,7 @@ database.conn-url=jdbc:mysql://${database.dbhost}/${database.dbname}?useUnicode=
 #
 # Database Token Config
 #
-database.token.dbhost=10.10.1.1
+database.token.dbhost=localhost
 database.token.username=root
 database.token.password=root
 database.token.dbname=token
@@ -22,7 +22,7 @@ use.coremail.db=false
 
 database.coremail.username=root
 database.coremail.password=root
-database.coremail.dbhost=10.10.1.2
+database.coremail.dbhost=localhost
 database.coremail.dbname=coremailtest
 database.coremail.conn-url=jdbc:mysql://${database.coremail.dbhost}/${database.coremail.dbname}?useUnicode=true&characterEncoding=UTF-8
 
@@ -36,10 +36,10 @@ database.maxidle=3
 #
 # Mail Config
 #
-mail.host=smtp.domain.com
-mail.username=user@domain.com
-mail.password=password_text
-mail.boxname=user@domain.com
+mail.host=smtp.domain.cn
+mail.username=USER@DOMAIN.CN
+mail.password=PASSWORD
+mail.boxname=USER@DOMAIN.CN
 mail.temlate.dir=/WEB-INF/message
 
 #
@@ -92,12 +92,12 @@ is.myself.log.spilit=true
 vmt.api.url=https://vmttest.escience.cn/services
 
 # clb config
-clb.base.url=http://10.10.1.156:8080/clb/ServiceServlet
+clb.base.url=http://localhost:8080/clb/ServiceServlet
 clb.username=CLB_USER
 clb.passwd=CLB_USER_PASSWORD
 
 # ldap config
-ldap.url=ldap://159.226.11.87:10389
+ldap.url=ldap://localhost:10389
 ldap.base.dn=DC=passport,DC=cstnet
 ldap.username=uid=admin,ou=system
 ldap.password=PASSWORD
