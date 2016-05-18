@@ -1,14 +1,14 @@
 Duckling UMT
-=======
+========
 User Management tools (UMT) Version 8 @2016
 
-####Prerequisities:
-To be updated
+Prerequisities:
+========
 
-#####Java Development Kit
+####Java Development Kit
 `Version 7.0+`
 
-#####Tomcat
+####Tomcat
 ```
 # vi /etc/profile                  //environment setting
 #-------------------------- 
@@ -27,7 +27,7 @@ ulimit -HSn 102400
 # /usr/local/tomcat/bin/shutdown.sh         //shutdown
 ```
 
-#####Memcache
+####Memcache
 ```
 # yum install wget gcc gcc-c++ make libevent*   //packages installation
 # vi /etc/security/limits.conf   //add the following lines to the file
@@ -46,25 +46,27 @@ ulimit -HSn 102400
 	customConverter="net.duckling.serializer.CustomKryoRegistration" />
 ```
 
-#####MySQL
+####MySQL
 ```
 MySQL version 5.5 and above. Please refer to the MySQL installation. 
 Please modify max_connections to above 1000 in the MySQL configuration
 ```
 
-####Installation:
+Installation:
+========
 - Option 1:
 - Option 2:
 
-####Optional:
+Optional:
+========
 
-#####Nginx
+####Nginx
 ```
-# yum install wget gcc gcc-c++ pcre pcre-devel zlib* openssl openssl-devel make  //packages installation
+# yum install wget gcc gcc-c++ pcre pcre-devel zlib* openssl openssl-devel make  //env installation
 # downloading the nginx software
 # useradd nginx
 # ./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_gunzip_module 
---with-http_gzip_static_module --with-http_realip_module --user=nginx --group=nginx --with-ipv6       //configure 
+--with-http_gzip_static_module --with-http_realip_module --user=nginx --group=nginx --with-ipv6 //conf     
 # make && make install
 # vi /usr/local/nginx/sbin/logcut.sh     //log cutting shell for nginx
 #!/bin/bash
